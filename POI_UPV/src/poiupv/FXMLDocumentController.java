@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-//Que tal
 package poiupv;
 //Hola
 import java.net.URL;
