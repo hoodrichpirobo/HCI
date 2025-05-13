@@ -15,6 +15,10 @@ import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,6 +27,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -39,6 +44,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import poiupv.Poi;
@@ -51,15 +57,14 @@ public class FXMLDocumentController implements Initializable {
 
     //=======================================
     // hashmap para guardar los puntos de interes POI
-    private final HashMap<String, Poi> hm = new HashMap<>();
-    private ObservableList<Poi> data;
+    //private final HashMap<String, Poi> hm = new HashMap<>();
+    //private ObservableList<Poi> data;
     // ======================================
     // la variable zoomGroup se utiliza para dar soporte al zoom
     // el escalado se realiza sobre este nodo, al escalar el Group no mueve sus nodos
     private Group zoomGroup;
 
-    @FXML
-    private ListView<Poi> map_listview;
+    //private ListView<Poi> map_listview;
     @FXML
     private ScrollPane map_scrollpane;
     @FXML
@@ -72,6 +77,24 @@ public class FXMLDocumentController implements Initializable {
     private SplitPane splitPane;
     @FXML
     private Label mousePosition;
+    @FXML
+    private VBox seccionPreguntas;
+    @FXML
+    private Text tituloTest;
+    @FXML
+    private HBox botonesSeleccionPregunta;
+    @FXML
+    private Button seleccionarPregunta;
+    @FXML
+    private Button preguntaRandom;
+    @FXML
+    private Text enunciadoPregunta;
+    
+
+    private final BooleanProperty sesionIniciada = new SimpleBooleanProperty(false); //Hay que ponerla a true cuando un usuario inicie sesión para que pueda usar la función de las preguntas
+    
+    private ChangeListener<Number> bloqueoDivisor;
+    
 
     @FXML
     void zoomIn(ActionEvent event) {
@@ -104,8 +127,7 @@ public class FXMLDocumentController implements Initializable {
         map_scrollpane.setVvalue(scrollV);
     }
 
-    @FXML
-    void listClicked(MouseEvent event) {
+    /*void listClicked(MouseEvent event) {
         Poi itemSelected = map_listview.getSelectionModel().getSelectedItem();
 
         // Animación del scroll hasta la mousePosistion del item seleccionado
@@ -134,12 +156,12 @@ public class FXMLDocumentController implements Initializable {
         data.add(new Poi("1F", "Edificion del DSIC", 275, 250));
         data.add( new Poi("Agora", "Agora", 575, 350));
         data.add( new Poi("Pista", "Pista de atletismo y campo de futbol", 950, 350));
-    }
+    }*/
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        initData();
+        //initData();
         //==========================================================
         // inicializamos el slider y enlazamos con el zoom
         zoom_slider.setMin(0.5);
@@ -155,6 +177,49 @@ public class FXMLDocumentController implements Initializable {
         contentGroup.getChildren().add(zoomGroup);
         zoomGroup.getChildren().add(map_scrollpane.getContent());
         map_scrollpane.setContent(contentGroup);
+        
+        /*
+        Para mostrar la sección donde se mostrarán las preguntas tipo test
+        cuando el usuario inicie sesión en la aplicación
+        */
+        Platform.runLater(() -> {
+            seccionPreguntas.setVisible(false);
+            tituloTest.setVisible(false);
+            botonesSeleccionPregunta.setVisible(false);
+            seleccionarPregunta.setVisible(false);
+            preguntaRandom.setVisible(false);
+            enunciadoPregunta.setVisible(false);
+            splitPane.setDividerPositions(0.0);
+            bloqueoDivisor = (obs, oldVal, newVal) -> {
+                if(Math.abs(newVal.doubleValue() - 0.0) > 0.0001){
+                    splitPane.setDividerPositions(0.0);
+                }
+            };
+            splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+            sesionIniciada.addListener((obs, oldVal, newVal) -> {
+                if(newVal){
+                    splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
+                    splitPane.setDividerPositions(0.3);
+                    seccionPreguntas.setVisible(true);
+                    tituloTest.setVisible(true);
+                    botonesSeleccionPregunta.setVisible(true);
+                    seleccionarPregunta.setVisible(true);
+                    preguntaRandom.setVisible(true);
+                    enunciadoPregunta.setVisible(true);
+                }
+                else{
+                    splitPane.setDividerPositions(0.0);
+                    splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+                    seccionPreguntas.setVisible(false);
+                    tituloTest.setVisible(false);
+                    botonesSeleccionPregunta.setVisible(false);
+                    seleccionarPregunta.setVisible(false);
+                    preguntaRandom.setVisible(false);
+                    enunciadoPregunta.setVisible(false);
+                }
+            });
+        });
+        
 
     }
 
@@ -216,7 +281,7 @@ public class FXMLDocumentController implements Initializable {
                 Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
                 Poi poi=result.get();
                 poi.setPosition(localPoint);
-                map_listview.getItems().add(poi);
+                //map_listview.getItems().add(poi);
             }
         }
     }
