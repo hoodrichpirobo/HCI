@@ -5,7 +5,19 @@
  */
 
 package poiupv;
-//eyeyey pequeña, eres preciosa
+import javafx.application.Platform;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.TextField;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
+import java.sql.SQLException;
+import java.util.Optional;
+import poiupv.User;
+import poiupv.UserDAO;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +53,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import poiupv.Poi;
 
 /**
@@ -52,9 +66,11 @@ public class FXMLDocumentController implements Initializable {
     //=======================================
     // hashmap para guardar los puntos de interes POI
     private final HashMap<String, Poi> hm = new HashMap<>();
+    private final BooleanProperty sesionIniciada = new SimpleBooleanProperty(false);
     private ObservableList<Poi> data;
     // ======================================
     // la variable zoomGroup se utiliza para dar soporte al zoom
+    
     // el escalado se realiza sobre este nodo, al escalar el Group no mueve sus nodos
     private Group zoomGroup;
 
@@ -221,5 +237,71 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
+    @FXML
+    private void onLogin(ActionEvent event) {
+        // 1) Creamos el diálogo
+        Dialog<Pair<String,String>> loginDialog = new Dialog<>();
+        loginDialog.setTitle("Iniciar sesión");
+        loginDialog.setHeaderText("Introduce tus credenciales");
+
+        // 2) Botones Entrar / Cancelar
+        ButtonType loginButtonType = 
+            new ButtonType("Entrar", ButtonData.OK_DONE);
+        loginDialog.getDialogPane()
+                   .getButtonTypes()
+                   .addAll(loginButtonType, ButtonType.CANCEL);
+
+        // 3) Formulario dentro de un GridPane
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        TextField userField = new TextField();
+        userField.setPromptText("Usuario");
+        PasswordField passField = new PasswordField();
+        passField.setPromptText("Contraseña");
+
+        grid.add(new Label("Usuario:"),      0, 0);
+        grid.add(userField,                  1, 0);
+        grid.add(new Label("Contraseña:"),   0, 1);
+        grid.add(passField,                  1, 1);
+
+        loginDialog.getDialogPane().setContent(grid);
+
+        // 4) Ponemos el foco en el campo usuario
+        Platform.runLater(userField::requestFocus);
+
+        // 5) Convertimos el resultado del diálogo
+        loginDialog.setResultConverter(dialogButton -> {
+            if (dialogButton == loginButtonType) {
+                return new Pair<>(userField.getText().trim(),
+                                  passField.getText());
+            }
+            return null;
+        });
+
+        // 6) Mostramos el diálogo y procesamos credenciales
+        Optional<Pair<String,String>> result = loginDialog.showAndWait();
+        result.ifPresent(creds -> {
+            String usuario = creds.getKey();
+            String clave   = creds.getValue();
+            try {
+                Optional<User> optUser = new UserDAO().findByUsername(usuario);
+                if (optUser.isPresent()
+                 && optUser.get().getPassword().equals(clave)) {
+                    // ¡Login OK! activamos sección de preguntas
+                    sesionIniciada.set(true);
+                } else {
+                    new Alert(Alert.AlertType.ERROR,
+                      "Usuario o contraseña incorrectos")
+                      .showAndWait();
+                }
+            } catch (SQLException ex) {
+                new Alert(Alert.AlertType.ERROR,
+                  "Error de base de datos: " + ex.getMessage())
+                  .showAndWait();
+            }
+        });
+    }
 
 }

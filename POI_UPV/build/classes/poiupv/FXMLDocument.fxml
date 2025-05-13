@@ -19,70 +19,104 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="poiupv.FXMLDocumentController">
+<VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="poiupv.FXMLDocumentController">
    <children>
       <VBox prefHeight="83.0" prefWidth="853.0">
          <children>
             <HBox prefHeight="44.0" prefWidth="853.0">
                <children>
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Button mnemonicParsing="false" text="Button" />
-                  <Button mnemonicParsing="false" style="-fx-background-color: blue;" styleClass="contrast" text="Register">
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </Button>
-                  <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: blue;" styleClass="contrast" stylesheets="@../resources/estilos.css" text="Log in" textAlignment="CENTER" textFill="WHITE">
+                  <Button mnemonicParsing="false" text="Button"/>
+                  <Button mnemonicParsing="false" text="Button"/>
+                  <Button mnemonicParsing="false" text="Button"/>
+                  <Button mnemonicParsing="false" text="Button"/>
+                  <Button mnemonicParsing="false"
+                          style="-fx-background-color: blue;"
+                          styleClass="contrast"
+                          text="Register"/>
+                  <Button alignment="CENTER_RIGHT"
+                          contentDisplay="CENTER"
+                          mnemonicParsing="false"
+                          nodeOrientation="LEFT_TO_RIGHT"
+                          onAction="#onLogin"
+                          style="-fx-background-color: blue;"
+                          styleClass="contrast"
+                          text="Log in"
+                          textAlignment="CENTER"
+                          textFill="WHITE">
                      <HBox.margin>
-                        <Insets left="550.0" />
+                        <Insets left="550.0"/>
                      </HBox.margin>
                   </Button>
                </children>
             </HBox>
+
             <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
                <children>
                   <MenuBar>
-                    <menus>
-                      <Menu mnemonicParsing="false" text="Ayuda">
-                        <items>
-                          <MenuItem mnemonicParsing="false" onAction="#about" text="Acerca de" />
-                        </items>
-                      </Menu>
-                    </menus>
+                     <menus>
+                        <Menu mnemonicParsing="false" text="Ayuda">
+                           <items>
+                              <MenuItem mnemonicParsing="false"
+                                        onAction="#about"
+                                        text="Acerca de"/>
+                           </items>
+                        </Menu>
+                     </menus>
                   </MenuBar>
-                  <Region HBox.hgrow="ALWAYS" />
-                  <Label text="Zoom" />
-                  <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />
-                  <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
-                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label text="Zoom"/>
+                  <Button mnemonicParsing="false" onAction="#zoomOut" text="-"/>
+                  <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES"/>
+                  <Button layoutX="10.0" layoutY="10.0"
+                          mnemonicParsing="false"
+                          onAction="#zoomIn"
+                          text="+"/>
                </children>
                <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                </VBox.margin>
             </HBox>
          </children>
       </VBox>
+
       <SplitPane fx:id="splitPane" dividerPositions="0.10266457680250783" VBox.vgrow="ALWAYS">
          <items>
-            <ListView fx:id="map_listview" onMouseClicked="#listClicked" prefHeight="399.0" prefWidth="87.0" />
-            <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" prefHeight="398.0" prefWidth="358.0" vbarPolicy="ALWAYS">
+            <ListView fx:id="map_listview"
+                      onMouseClicked="#listClicked"
+                      prefHeight="399.0"
+                      prefWidth="87.0"/>
+            <ScrollPane fx:id="map_scrollpane"
+                        hbarPolicy="ALWAYS"
+                        onMouseMoved="#showPosition"
+                        onMousePressed="#addPoi"
+                        pannable="true"
+                        prefHeight="398.0"
+                        prefWidth="358.0"
+                        vbarPolicy="ALWAYS">
                <content>
                   <Pane>
                      <children>
                         <ImageView layoutY="7.0" pickOnBounds="true">
                            <image>
-                              <Image url="@../resources/carta_nautica.jpg" />
+                              <Image url="@../resources/carta_nautica.jpg"/>
                            </image>
                         </ImageView>
-                        <MenuButton fx:id="map_pin" mnemonicParsing="false" prefHeight="60.0" prefWidth="48.0" visible="false">
+                        <MenuButton fx:id="map_pin"
+                                    mnemonicParsing="false"
+                                    prefHeight="60.0"
+                                    prefWidth="48.0"
+                                    visible="false">
                            <items>
-                              <MenuItem fx:id="pin_info" mnemonicParsing="false" text="Action 1" />
+                              <MenuItem fx:id="pin_info"
+                                        mnemonicParsing="false"
+                                        text="Action 1"/>
                            </items>
                            <styleClass>
-                              <String fx:value="menu-button" />
-                              <String fx:value="map-pin" />
+                              <String fx:value="menu-button"/>
+                              <String fx:value="map-pin"/>
                            </styleClass>
                         </MenuButton>
                      </children>
@@ -91,12 +125,18 @@
             </ScrollPane>
          </items>
       </SplitPane>
+
       <HBox alignment="CENTER_RIGHT">
          <children>
-            <Label fx:id="mousePosition" minHeight="-Infinity" minWidth="-Infinity" text="SceneX:     ScenY:     " wrapText="true" HBox.hgrow="ALWAYS" />
+            <Label fx:id="mousePosition"
+                   minHeight="-Infinity"
+                   minWidth="-Infinity"
+                   text="SceneX:     ScenY:     "
+                   wrapText="true"
+                   HBox.hgrow="ALWAYS"/>
          </children>
          <VBox.margin>
-            <Insets bottom="12.0" right="12.0" top="6.0" />
+            <Insets bottom="12.0" right="12.0" top="6.0"/>
          </VBox.margin>
       </HBox>
    </children>
