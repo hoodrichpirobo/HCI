@@ -1,1 +1,8 @@
-/POI_UPV/nbproject/private/
+/POI_UPV/nbproject/
+!/POI_UPV/nbproject/project.properties
+!/POI_UPV/nbproject/project.xml
+/POI_UPV/build
+# Ignorar la carpeta build del proyecto
+POI_UPV/build/
+*.classPOI_UPV/build/
+*.class
