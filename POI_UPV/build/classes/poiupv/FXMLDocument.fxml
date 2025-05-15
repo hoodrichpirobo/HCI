@@ -85,8 +85,8 @@
 
           <HBox fx:id="botonesSeleccionPregunta" alignment="CENTER" spacing="10">
             <children>
-              <Button fx:id="seleccionarPregunta" mnemonicParsing="false" text="Seleccionar pregunta" />
-              <Button fx:id="preguntaRandom" mnemonicParsing="false" text="Pregunta aleatoria" />
+              <Button fx:id="seleccionarPregunta" mnemonicParsing="false" onAction="#seleccionarAccion" text="Seleccionar pregunta" />
+              <Button fx:id="preguntaRandom" mnemonicParsing="false" onAction="#seleccionRandom" text="Pregunta aleatoria" />
             </children>
             <VBox.margin>
               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
