@@ -55,6 +55,7 @@
             </menus>
           </MenuBar>
           <Region HBox.hgrow="ALWAYS" />
+               <Button fx:id="centerButton" mnemonicParsing="false" onAction="#center" text="Centrar" />
           <Label text="Zoom" />
           <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />
           <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
@@ -71,7 +72,7 @@
   <SplitPane fx:id="splitPane" dividerPositions="0.35" VBox.vgrow="ALWAYS">
     <items>
       <!-- 1) Sección de preguntas -->
-      <VBox fx:id="seccionPreguntas" prefWidth="250.0">
+      <VBox fx:id="seccionPreguntas" alignment="CENTER" prefWidth="250.0">
         <children>
           <Text fx:id="tituloTest" strokeType="OUTSIDE" strokeWidth="0.0" text="Test">
             <font>
@@ -108,7 +109,7 @@
         <content>
           <Pane>
             <children>
-              <ImageView layoutY="7.0" pickOnBounds="true">
+              <ImageView fitHeight="5577.0" fitWidth="8674.0" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/carta_nautica.jpg" />
                 </image>

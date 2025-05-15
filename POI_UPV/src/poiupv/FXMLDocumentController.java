@@ -19,7 +19,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -27,6 +29,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -66,13 +70,15 @@ public class FXMLDocumentController implements Initializable {
     private Group zoomGroup;
     private final BooleanProperty sesionIniciada = new SimpleBooleanProperty(false);
     private ChangeListener<Number> bloqueoDivisor;
+    @FXML
+    private Button centerButton;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Configuración del zoom
-        zoom_slider.setMin(0.5);
+        zoom_slider.setMin(0.015);
         zoom_slider.setMax(1.5);
-        zoom_slider.setValue(1.0);
+        zoom_slider.setValue(0.5);
         zoom_slider.valueProperty().addListener((obs, oldVal, newVal) -> applyZoom(newVal.doubleValue()));
 
         // Inicialización del zoom
@@ -81,11 +87,44 @@ public class FXMLDocumentController implements Initializable {
         contentGroup.getChildren().add(zoomGroup);
         zoomGroup.getChildren().add(map_scrollpane.getContent());
         map_scrollpane.setContent(contentGroup);
-
+        configurarContenidoMapa();
         // Ocultar sección de preguntas al inicio
         configurarSeccionPreguntas();
     }
-
+    private void configurarContenidoMapa() {
+    // Obtener el contenido original (asumo que es un ImageView)
+    Node contenidoOriginal = map_scrollpane.getContent();
+    
+    // Crear un contenedor que centre el contenido
+    StackPane centeringPane = new StackPane();
+    centeringPane.getChildren().add(contenidoOriginal);
+    centeringPane.setAlignment(Pos.CENTER);
+    
+    // Configurar el Group para el zoom
+    zoomGroup = new Group(centeringPane);
+    
+    // Crear el contenedor principal
+    StackPane contentPane = new StackPane();
+    contentPane.getChildren().add(zoomGroup);
+    
+    // Configurar el ScrollPane
+    map_scrollpane.setContent(contentPane);
+    map_scrollpane.setFitToWidth(true);
+    map_scrollpane.setFitToHeight(true);
+    map_scrollpane.setPannable(true);
+    
+    // Aplicar zoom mínimo inicial
+    Platform.runLater(() -> {
+        zoomGroup.setScaleX(0.1);
+        zoomGroup.setScaleY(0.1);
+        centrarContenido();
+    });
+}
+    private void centrarContenido() {
+    // Centrar el contenido en el ScrollPane
+    map_scrollpane.setHvalue(0.5);
+    map_scrollpane.setVvalue(0.5);
+}
     private void configurarSeccionPreguntas() {
         Platform.runLater(() -> {
             seccionPreguntas.setVisible(false);
@@ -113,23 +152,62 @@ public class FXMLDocumentController implements Initializable {
     }
 
     // === Zoom y control del mapa ===
+
     private void applyZoom(double scale) {
-        double h = map_scrollpane.getHvalue();
-        double v = map_scrollpane.getVvalue();
-        zoomGroup.setScaleX(scale);
-        zoomGroup.setScaleY(scale);
-        map_scrollpane.setHvalue(h);
-        map_scrollpane.setVvalue(v);
+    scale = Math.max(0.1, Math.min(scale, 10.0));
+
+    Node content = map_scrollpane.getContent();
+    
+    // Obtener las coordenadas del puntero relativas al contenido antes del zoom
+    double mouseX = map_scrollpane.getWidth() / 2;
+    double mouseY = map_scrollpane.getHeight() / 2;
+
+    Point2D scrollOffset = figureScrollOffset(map_scrollpane, zoomGroup);
+
+    // Aplicar el nuevo zoom
+    zoomGroup.setScaleX(scale);
+    zoomGroup.setScaleY(scale);
+
+    // Ajustar los valores de scroll para mantener la posición
+    repositionScroller(map_scrollpane, zoomGroup, scrollOffset, scale);
+}
+private Point2D figureScrollOffset(ScrollPane scrollPane, Node content) {
+    double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
+    double hScrollProportion = scrollPane.getHvalue();
+    double scrollXOffset = hScrollProportion * Math.max(0, extraWidth);
+
+    double extraHeight = content.getBoundsInLocal().getHeight() - scrollPane.getViewportBounds().getHeight();
+    double vScrollProportion = scrollPane.getVvalue();
+    double scrollYOffset = vScrollProportion * Math.max(0, extraHeight);
+
+    return new Point2D(scrollXOffset, scrollYOffset);
+}
+
+private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scrollOffset, double scale) {
+    double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
+    if (extraWidth > 0) {
+        scrollPane.setHvalue(scrollOffset.getX() / extraWidth);
+    } else {
+        scrollPane.setHvalue(0);
     }
+
+    double extraHeight = content.getBoundsInLocal().getHeight() - scrollPane.getViewportBounds().getHeight();
+    if (extraHeight > 0) {
+        scrollPane.setVvalue(scrollOffset.getY() / extraHeight);
+    } else {
+        scrollPane.setVvalue(0);
+    }
+}
+
 
     @FXML
     private void zoomIn(ActionEvent event) {
-        zoom_slider.setValue(zoom_slider.getValue() + 0.1);
+        zoom_slider.setValue(zoom_slider.getValue() + 0.05);
     }
 
     @FXML
     private void zoomOut(ActionEvent event) {
-        zoom_slider.setValue(zoom_slider.getValue() - 0.1);
+        zoom_slider.setValue(zoom_slider.getValue() - 0.05);
     }
 
     private void listClicked(MouseEvent event) {
@@ -242,6 +320,11 @@ public class FXMLDocumentController implements Initializable {
         );
     }
 
+    @FXML
+    private void center(ActionEvent event) {
+        centrarContenido();
+        zoom_slider.setValue(zoom_slider.getMin());
+        
     @FXML
     private void seleccionarAccion(ActionEvent event) throws NavDAOException {
         try {
