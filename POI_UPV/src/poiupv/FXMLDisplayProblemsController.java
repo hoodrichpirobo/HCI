@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.stage.Stage;
 import model.Navigation;
 import static model.Navigation.getInstance;
 import model.Problem;
@@ -35,13 +36,21 @@ public class FXMLDisplayProblemsController implements Initializable{
     //Navigation obj;
     private ObservableList<Problem> datos = null;
     private List<Problem> problemas;
+    private int index = -1;
+    private Stage stage;
 
     @FXML
     private ListView<Problem> listaProblemas;
     @FXML
     private Button seleccionarProblema;
 
+    public int getIndex(){
+        return index;
+    }
     
+    public void setStage(Stage stage){
+        this.stage = stage;
+    }
     
     class ProblemListCell extends ListCell<Problem>{
         private final Label label = new Label();
@@ -87,7 +96,10 @@ public class FXMLDisplayProblemsController implements Initializable{
 
     @FXML
     private void seleccionarAccion(ActionEvent event) {
-        
+        index = listaProblemas.getSelectionModel().getSelectedIndex();
+        if(index >= 0 && stage != null){
+            stage.close();
+        }
     }
     
 }
