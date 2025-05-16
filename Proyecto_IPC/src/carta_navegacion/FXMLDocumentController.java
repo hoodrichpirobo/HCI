@@ -42,6 +42,7 @@ import model.Answer;
 import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
 import java.time.Period;
+import javafx.beans.binding.Bindings;
 import model.User;
 
 
@@ -112,9 +113,15 @@ public class FXMLDocumentController implements Initializable {
         configurarSeccionPreguntas();
         
         
-        // Disable the auth buttons once we're logged in
-        loginButton.disableProperty().bind(sesionIniciada);
+        // Sólo deshabilitamos Register cuando la sesión esté iniciada
         registerButton.disableProperty().bind(sesionIniciada);
+
+        // El texto de loginButton cambia entre "Log in" y "Log out"
+        loginButton.textProperty().bind(
+            Bindings.when(sesionIniciada)
+                    .then("Log out")
+                    .otherwise("Log in")
+        );
 
     }
     private void configurarContenidoMapa() {
@@ -295,6 +302,16 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     // === Login ===
     @FXML
     private void onLogin(ActionEvent event) {
+        if (sesionIniciada.get()) {
+            // Ya estaba logueado → hacemos logout
+            sesionIniciada.set(false);
+            // (Opcional) limpia la sección de preguntas:
+            seccionPreguntas.setVisible(false);
+            splitPane.setDividerPositions(0.0);
+            return;
+        }
+
+        // === LOGIN SIN SESIÓN ===
         Dialog<Pair<String,String>> dlg = new Dialog<>();
         dlg.setTitle("Iniciar sesión");
         dlg.setHeaderText("Introduce tus credenciales");
@@ -305,16 +322,19 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         passField.setPromptText("Contraseña");
 
         GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.add(new Label("Usuario:"), 0, 0);
-        grid.add(userField,           1, 0);
-        grid.add(new Label("Contraseña:"), 0, 1);
-        grid.add(passField,           1, 1);
+        grid.setHgap(10); grid.setVgap(10);
+        grid.add(new Label("Usuario:"),      0, 0);
+        grid.add(userField,                  1, 0);
+        grid.add(new Label("Contraseña:"),   0, 1);
+        grid.add(passField,                  1, 1);
 
-        dlg.getDialogPane().setContent(grid);
-        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-        dlg.setResultConverter(btn -> btn == ButtonType.OK
+        dlg.getDialogPane()
+           .setContent(grid);
+        dlg.getDialogPane()
+           .getButtonTypes()
+           .addAll(ButtonType.OK, ButtonType.CANCEL);
+        dlg.setResultConverter(btn ->
+            btn == ButtonType.OK
             ? new Pair<>(userField.getText().trim(), passField.getText())
             : null
         );
