@@ -1,7 +1,9 @@
 package poiupv;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
@@ -14,11 +16,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
@@ -31,6 +36,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import model.NavDAOException;
+import model.Navigation;
+import model.Problem;
 
 /**
  * Controlador para:
@@ -40,8 +48,9 @@ import javafx.util.Pair;
  */
 public class FXMLDocumentController implements Initializable {
 
+    Navigation obj;
     // === Campos FXML ===
-private ListView<Poi> map_listview;
+    private ListView<Poi> map_listview;
     @FXML private ScrollPane map_scrollpane;
     @FXML private Slider zoom_slider;
     @FXML private MenuButton map_pin;
@@ -316,5 +325,37 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         centrarContenido();
         zoom_slider.setValue(zoom_slider.getMin());
         
+    @FXML
+    private void seleccionarAccion(ActionEvent event) throws NavDAOException {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLDisplayProblems.fxml"));
+            Parent root = loader.load();
+
+            Stage nuevaVentana = new Stage();
+            FXMLDisplayProblemsController controller = loader.getController();
+            controller.setStage(nuevaVentana);
+            nuevaVentana.setTitle("Seleccionar problema");
+            nuevaVentana.setScene(new Scene(root));
+            nuevaVentana.show();
+            
+            int i = controller.getIndex();
+            if(i >= 0){
+                obj = Navigation.getInstance();
+                List<Problem> problemas = obj.getProblems();
+                enunciadoPregunta.setText(problemas.get(i).getText());
+                enunciadoPregunta.setVisible(true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void seleccionRandom(ActionEvent event) throws NavDAOException {
+        obj = Navigation.getInstance();
+        List<Problem> problemas = obj.getProblems();
+        int i = (int)(Math.random() * problemas.size());
+        enunciadoPregunta.setText(problemas.get(i).getText());
+        enunciadoPregunta.setVisible(true);
     }
 }
