@@ -6,3 +6,5 @@
 POI_UPV/build/
 *.classPOI_UPV/build/
 *.class
+/Proyecto_IPC/nbproject/private/
+/Proyecto_IPC/build/
