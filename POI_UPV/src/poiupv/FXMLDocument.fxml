@@ -25,26 +25,8 @@
   <!-- Barra superior -->
   <VBox prefHeight="83.0" prefWidth="853.0">
     <children>
-      <HBox prefHeight="44.0" prefWidth="853.0">
-        <children>
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" style="-fx-background-color: blue;" styleClass="contrast" text="Register">
-            <opaqueInsets>
-              <Insets />
-            </opaqueInsets>
-          </Button>
-          <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#onLogin" style="-fx-background-color: blue;" styleClass="contrast" text="Log in" textAlignment="CENTER" textFill="WHITE">
-            <HBox.margin>
-              <Insets left="550.0" />
-            </HBox.margin>
-          </Button>
-        </children>
-      </HBox>
-      <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
-        <children>
+         <HBox prefHeight="23.0" prefWidth="853.0">
+            <children>
           <MenuBar>
             <menus>
               <Menu mnemonicParsing="false" text="Ayuda">
@@ -54,6 +36,15 @@
               </Menu>
             </menus>
           </MenuBar>
+          <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#onLogin" style="-fx-background-color: blue;" styleClass="contrast" text="Log in" textAlignment="CENTER" textFill="WHITE">
+            <HBox.margin>
+              <Insets left="550.0" />
+            </HBox.margin>
+          </Button>
+            </children>
+         </HBox>
+      <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
+        <children>
           <Region HBox.hgrow="ALWAYS" />
                <Button fx:id="centerButton" mnemonicParsing="false" onAction="#center" text="Centrar" />
           <Label text="Zoom" />
@@ -64,6 +55,14 @@
         <VBox.margin>
           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
         </VBox.margin>
+      </HBox>
+      <HBox prefHeight="44.0" prefWidth="853.0">
+        <children>
+          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Button" />
+        </children>
       </HBox>
     </children>
   </VBox>
