@@ -22,99 +22,118 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carta_navegacion.FXMLDocumentController">
+<VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="carta_navegacion.FXMLDocumentController">
 
   <!-- Barra superior -->
   <VBox prefHeight="83.0" prefWidth="853.0">
     <children>
-         <HBox prefHeight="23.0" prefWidth="853.0">
-            <children>
+      <HBox prefHeight="23.0" prefWidth="853.0">
+        <children>
           <MenuBar>
             <menus>
               <Menu mnemonicParsing="false" text="Ayuda">
                 <items>
-                  <MenuItem mnemonicParsing="false" onAction="#about" text="Acerca de" />
+                  <MenuItem mnemonicParsing="false" onAction="#about" text="Acerca de"/>
                 </items>
               </Menu>
             </menus>
           </MenuBar>
-               <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="787.0">
-                  <children>
-                <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#onLogin" style="-fx-background-color: blue;" styleClass="contrast" text="Log in" textAlignment="CENTER" textFill="WHITE">
-                  <HBox.margin>
-                    <Insets left="550.0" />
-                  </HBox.margin>
-                </Button>
-                  </children>
-               </HBox>
+          <!-- ← REPLACED THIS HBOX WITH BOTH LOGIN + REGISTER -->
+          <HBox alignment="TOP_RIGHT" spacing="10" prefHeight="25.0" prefWidth="853.0">
+            <children>
+              <Region HBox.hgrow="ALWAYS"/>
+              <Button fx:id="loginButton"
+                      mnemonicParsing="false"
+                      onAction="#onLogin"
+                      styleClass="contrast"
+                      text="Log in"/>
+              <Button fx:id="registerButton"
+                      mnemonicParsing="false"
+                      onAction="#onRegister"
+                      styleClass="contrast"
+                      text="Register"/>
             </children>
-         </HBox>
+            <padding>
+              <Insets top="5" right="10" bottom="5" left="10"/>
+            </padding>
+          </HBox>
+        </children>
+      </HBox>
+
       <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
         <children>
-          <Region HBox.hgrow="ALWAYS" />
-               <Button fx:id="centerButton" mnemonicParsing="false" onAction="#center" text="Centrar" />
-          <Label text="Zoom" />
-          <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />
-          <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
-          <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+          <Region HBox.hgrow="ALWAYS"/>
+          <Button fx:id="centerButton" mnemonicParsing="false" onAction="#center" text="Centrar"/>
+          <Label text="Zoom"/>
+          <Button mnemonicParsing="false" onAction="#zoomOut" text="-"/>
+          <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES"/>
+          <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+"/>
         </children>
         <VBox.margin>
-          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
         </VBox.margin>
       </HBox>
+
       <HBox prefHeight="44.0" prefWidth="853.0">
         <children>
-               <ToggleButton fx:id="transButton" mnemonicParsing="false" onAction="#addTrans" prefHeight="38.0" prefWidth="46.0">
-                  <graphic>
-                     <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                           <Image url="@../resources/transportador.png" />
-                        </image>
-                     </ImageView>
-                  </graphic>
-               </ToggleButton>
-               <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="puntito" mnemonicParsing="false" onAction="#puntoPulsado" onMousePressed="#addPuntito">
-                  <graphic>
-                     <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                           <Image url="@../resources/marcador-de-posicion.png" />
-                        </image>
-                     </ImageView>
-                  </graphic>
-               </ToggleButton>
-               <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton mnemonicParsing="false">
-                  <graphic>
-                     <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                           <Image url="@../resources/105120.png" />
-                        </image>
-                     </ImageView>
-                  </graphic>
-               </ToggleButton>
-               <Region prefHeight="36.0" prefWidth="7.0" />
+          <ToggleButton fx:id="transButton" mnemonicParsing="false" onAction="#addTrans"
+                        prefHeight="38.0" prefWidth="46.0">
+            <graphic>
+              <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@../resources/transportador.png"/>
+                </image>
+              </ImageView>
+            </graphic>
+          </ToggleButton>
+          <Region prefHeight="36.0" prefWidth="7.0"/>
+          <ToggleButton fx:id="puntito" mnemonicParsing="false" onAction="#puntoPulsado"
+                        onMousePressed="#addPuntito">
+            <graphic>
+              <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@../resources/marcador-de-posicion.png"/>
+                </image>
+              </ImageView>
+            </graphic>
+          </ToggleButton>
+          <Region prefHeight="36.0" prefWidth="7.0"/>
+          <ToggleButton mnemonicParsing="false">
+            <graphic>
+              <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@../resources/105120.png"/>
+                </image>
+              </ImageView>
+            </graphic>
+          </ToggleButton>
+          <Region prefHeight="36.0" prefWidth="7.0"/>
           <Button mnemonicParsing="false">
-                  <graphic>
-                     <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                           <Image url="@../resources/32341.png" />
-                        </image>
-                     </ImageView>
-                  </graphic></Button>
-               <Region prefHeight="36.0" prefWidth="7.0" />
+            <graphic>
+              <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@../resources/32341.png"/>
+                </image>
+              </ImageView>
+            </graphic>
+          </Button>
+          <Region prefHeight="36.0" prefWidth="7.0"/>
           <Button mnemonicParsing="false">
-                  <graphic>
-                     <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                        <image>
-                           <Image url="@../resources/68001.png" />
-                        </image>
-                     </ImageView>
-                  </graphic></Button>
+            <graphic>
+              <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                  <Image url="@../resources/68001.png"/>
+                </image>
+              </ImageView>
+            </graphic>
+          </Button>
         </children>
-            <VBox.margin>
-               <Insets bottom="10.0" />
-            </VBox.margin>
+        <VBox.margin>
+          <Insets bottom="10.0"/>
+        </VBox.margin>
       </HBox>
     </children>
   </VBox>
@@ -127,81 +146,88 @@
         <children>
           <Text fx:id="tituloTest" strokeType="OUTSIDE" strokeWidth="0.0" text="Test">
             <font>
-              <Font name="System Bold" size="20.0" />
+              <Font name="System Bold" size="20.0"/>
             </font>
             <VBox.margin>
-              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </VBox.margin>
           </Text>
 
           <HBox fx:id="botonesSeleccionPregunta" alignment="CENTER" spacing="10">
             <children>
-              <Button fx:id="seleccionarPregunta" mnemonicParsing="false" onAction="#seleccionarAccion" text="Seleccionar pregunta" />
-              <Button fx:id="preguntaRandom" mnemonicParsing="false" onAction="#seleccionRandom" text="Pregunta aleatoria" />
+              <Button fx:id="seleccionarPregunta" mnemonicParsing="false"
+                      onAction="#seleccionarAccion" text="Seleccionar pregunta"/>
+              <Button fx:id="preguntaRandom" mnemonicParsing="false"
+                      onAction="#seleccionRandom" text="Pregunta aleatoria"/>
             </children>
             <VBox.margin>
-              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </VBox.margin>
           </HBox>
 
           <Text fx:id="enunciadoPregunta" strokeType="OUTSIDE" strokeWidth="0.0">
             <font>
-              <Font size="15.0" />
+              <Font size="15.0"/>
             </font>
             <VBox.margin>
-              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
             </VBox.margin>
           </Text>
-               <VBox prefHeight="133.0" prefWidth="283.0">
-                  <children>
-                     <RadioButton fx:id="ans1" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="ans2" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="ans3" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="ans4" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                  </children>
-                  <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                  </VBox.margin>
-                  <padding>
-                     <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                  </padding>
-               </VBox>
+          <VBox prefHeight="133.0" prefWidth="283.0">
+            <children>
+              <RadioButton fx:id="ans1" mnemonicParsing="false">
+                <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </VBox.margin>
+              </RadioButton>
+              <RadioButton fx:id="ans2" mnemonicParsing="false">
+                <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </VBox.margin>
+              </RadioButton>
+              <RadioButton fx:id="ans3" mnemonicParsing="false">
+                <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </VBox.margin>
+              </RadioButton>
+              <RadioButton fx:id="ans4" mnemonicParsing="false">
+                <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </VBox.margin>
+              </RadioButton>
+            </children>
+            <VBox.margin>
+              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </VBox.margin>
+            <padding>
+              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
+            </padding>
+          </VBox>
         </children>
       </VBox>
 
-                  <!-- ScrollPane con la carta náutica -->
-      <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
+      <!-- ScrollPane con la carta náutica -->
+      <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS"
+                  onMouseMoved="#showPosition" onMousePressed="#addPoi"
+                  pannable="true" vbarPolicy="ALWAYS">
         <content>
           <Pane onMouseClicked="#handleMapClick">
             <children>
-              <ImageView fitHeight="5577.0" fitWidth="8674.0" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fitHeight="5577.0" fitWidth="8674.0"
+                         layoutX="70.0" layoutY="49.0"
+                         pickOnBounds="true" preserveRatio="true">
                 <image>
-                  <Image url="@../resources/carta_nautica.jpg" />
+                  <Image url="@../resources/carta_nautica.jpg"/>
                 </image>
               </ImageView>
-              <MenuButton fx:id="map_pin" mnemonicParsing="false" prefHeight="60.0" prefWidth="48.0" visible="false">
+              <MenuButton fx:id="map_pin" mnemonicParsing="false"
+                          prefHeight="60.0" prefWidth="48.0" visible="false">
                 <items>
-                  <MenuItem fx:id="pin_info" mnemonicParsing="false" text="Action 1" />
+                  <MenuItem fx:id="pin_info" mnemonicParsing="false" text="Action 1"/>
                 </items>
                 <styleClass>
-                  <String fx:value="menu-button" />
-                  <String fx:value="map-pin" />
+                  <String fx:value="menu-button"/>
+                  <String fx:value="map-pin"/>
                 </styleClass>
               </MenuButton>
             </children>
@@ -214,10 +240,11 @@
   <!-- Barra inferior con posición del ratón -->
   <HBox alignment="CENTER_RIGHT">
     <children>
-      <Label fx:id="mousePosition" text="SceneX:    SceneY:" wrapText="true" HBox.hgrow="ALWAYS" />
+      <Label fx:id="mousePosition" text="SceneX:    SceneY:" wrapText="true"
+             HBox.hgrow="ALWAYS"/>
     </children>
     <VBox.margin>
-      <Insets bottom="12" right="12" top="6" />
+      <Insets bottom="12" right="12" top="6"/>
     </VBox.margin>
   </HBox>
 

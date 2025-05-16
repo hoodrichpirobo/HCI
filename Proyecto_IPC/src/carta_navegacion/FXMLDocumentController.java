@@ -2,7 +2,6 @@ package carta_navegacion;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -13,7 +12,6 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -41,6 +39,11 @@ import model.Navigation;
 import model.Problem;
 import carta_navegacion.FXMLDisplayProblemsController;
 import model.Answer;
+import javafx.scene.control.DatePicker;
+import java.time.LocalDate;
+import java.time.Period;
+import model.User;
+
 
 /**
  * Controlador para:
@@ -59,6 +62,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML private MenuItem pin_info;
     @FXML private SplitPane splitPane;
     @FXML private Label mousePosition;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
 
     // Sección de preguntas
     @FXML private VBox seccionPreguntas;
@@ -105,6 +110,12 @@ public class FXMLDocumentController implements Initializable {
         configurarContenidoMapa();
         // Ocultar sección de preguntas al inicio
         configurarSeccionPreguntas();
+        
+        
+        // Disable the auth buttons once we're logged in
+        loginButton.disableProperty().bind(sesionIniciada);
+        registerButton.disableProperty().bind(sesionIniciada);
+
     }
     private void configurarContenidoMapa() {
     // Obtener el contenido original (asumo que es un ImageView)
@@ -284,9 +295,9 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     // === Login ===
     @FXML
     private void onLogin(ActionEvent event) {
-        Dialog<Pair<String, String>> loginDialog = new Dialog<>();
-        loginDialog.setTitle("Iniciar sesión");
-        loginDialog.setHeaderText("Introduce tus credenciales");
+        Dialog<Pair<String,String>> dlg = new Dialog<>();
+        dlg.setTitle("Iniciar sesión");
+        dlg.setHeaderText("Introduce tus credenciales");
 
         TextField userField = new TextField();
         userField.setPromptText("Usuario");
@@ -297,24 +308,125 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         grid.setHgap(10);
         grid.setVgap(10);
         grid.add(new Label("Usuario:"), 0, 0);
-        grid.add(userField, 1, 0);
+        grid.add(userField,           1, 0);
         grid.add(new Label("Contraseña:"), 0, 1);
-        grid.add(passField, 1, 1);
+        grid.add(passField,           1, 1);
 
-        loginDialog.getDialogPane().setContent(grid);
-        loginDialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dlg.getDialogPane().setContent(grid);
+        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dlg.setResultConverter(btn -> btn == ButtonType.OK
+            ? new Pair<>(userField.getText().trim(), passField.getText())
+            : null
+        );
 
-        loginDialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK) {
-                return new Pair<>(userField.getText().trim(), passField.getText());
+        dlg.showAndWait().ifPresent(creds -> {
+          try {
+            Navigation nav = Navigation.getInstance();
+            User u = nav.authenticate(creds.getKey(), creds.getValue());
+            if (u == null) {
+              new Alert(Alert.AlertType.ERROR,
+                        "Usuario o contraseña incorrectos",
+                        ButtonType.OK)
+                .showAndWait();
+            } else {
+              sesionIniciada.set(true);
             }
-            return null;
+          } catch (NavDAOException e) {
+            new Alert(Alert.AlertType.ERROR,
+                      "Error de base de datos:\n" + e.getMessage(),
+                      ButtonType.OK)
+              .showAndWait();
+          }
+        });
+    }
+    
+    @FXML
+    private void onRegister(ActionEvent event) {
+        Dialog<User> dlg = new Dialog<>();
+        dlg.setTitle("Registro de usuario");
+        dlg.setHeaderText("Rellena tus datos");
+
+        TextField nickField  = new TextField();
+        nickField.setPromptText("Nickname (6–15 caracteres)");
+
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email válido");
+
+        PasswordField passField = new PasswordField();
+        passField.setPromptText("Password (8–20 caracteres)");
+
+        DatePicker dobPicker = new DatePicker();
+        dobPicker.setPromptText("Fecha de nacimiento");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(new Label("Nickname:"), 0, 0);
+        grid.add(nickField,               1, 0);
+        grid.add(new Label("Email:"),    0, 1);
+        grid.add(emailField,             1, 1);
+        grid.add(new Label("Password:"), 0, 2);
+        grid.add(passField,              1, 2);
+        grid.add(new Label("Nacimiento:"),0, 3);
+        grid.add(dobPicker,              1, 3);
+
+        dlg.getDialogPane().setContent(grid);
+        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // Disable OK until all fields are non-empty
+        Node okButton = dlg.getDialogPane().lookupButton(ButtonType.OK);
+        okButton.disableProperty().bind(
+          nickField.textProperty().isEmpty()
+          .or(emailField.textProperty().isEmpty())
+          .or(passField.textProperty().isEmpty())
+          .or(dobPicker.valueProperty().isNull())
+        );
+
+        // Convert result and do all validation/registration here
+        dlg.setResultConverter(btn -> {
+          if (btn == ButtonType.OK) {
+            // 1) Field-format checks
+            if (!User.checkNickName(nickField.getText().trim()))
+              throw new IllegalArgumentException("Nickname inválido");
+            if (!User.checkEmail(emailField.getText().trim()))
+              throw new IllegalArgumentException("Email inválido");
+            if (!User.checkPassword(passField.getText()))
+              throw new IllegalArgumentException("Password inválida");
+            if (Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16)
+              throw new IllegalArgumentException("Debes tener al menos 16 años");
+
+            // 2) Attempt to register
+            try {
+              Navigation nav = Navigation.getInstance();
+              // (we’re skipping the existsNickName check here,
+              // in case your Navigation API doesn’t expose it)
+              return nav.registerUser(
+                nickField.getText().trim(),
+                emailField.getText().trim(),
+                passField.getText(),
+                null,                     // no avatar for now
+                dobPicker.getValue()
+              );
+            } catch (NavDAOException e) {
+              throw new RuntimeException("Error de base de datos: " + e.getMessage(), e);
+            }
+          }
+          return null;
         });
 
-        loginDialog.showAndWait().ifPresent(creds -> {
-            // Aquí puedes integrar la autenticación real
-            sesionIniciada.set(true);
-        });
+        // Show dialog & handle success or validation/runtime errors
+        try {
+          Optional<User> result = dlg.showAndWait();
+          result.ifPresent(u ->
+            new Alert(Alert.AlertType.INFORMATION,
+                      "Registro completado. Ya puedes hacer Log in.",
+                      ButtonType.OK)
+            .showAndWait()
+          );
+        } catch (RuntimeException ex) {
+          new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK)
+            .showAndWait();
+        }
     }
 
     // === Información Acerca de ===
