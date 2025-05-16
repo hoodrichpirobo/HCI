@@ -73,7 +73,12 @@ public class FXMLDocumentController implements Initializable {
     private ChangeListener<Number> bloqueoDivisor;
     @FXML
     private Button centerButton;
+    @FXML
+    private ToggleButton puntito;
+    @FXML
+    private ToggleButton transButton;
 
+  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Configuración del zoom
@@ -326,6 +331,8 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         centrarContenido();
         zoom_slider.setValue(zoom_slider.getMin());
     }
+
+  
     @FXML
     private void seleccionarAccion(ActionEvent event) throws NavDAOException {
         try {
@@ -359,4 +366,31 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         enunciadoPregunta.setText(problemas.get(i).getText());
         enunciadoPregunta.setVisible(true);
     }
+
+    @FXML
+    private void addPuntito(MouseEvent event) {
+        TextField texto = new TextField("X");
+        zoomGroup.getChildren().add(texto);
+        texto.setLayoutX(event.getX());
+        texto.setLayoutY(event.getY());
+        //texto.requestFocus();
+    }
+
+    @FXML
+    private void puntoPulsado(ActionEvent event) {
+        
+    }
+
+    @FXML
+    private void handleMapClick(MouseEvent event) {
+        
+        
+    
+    }
+
+    @FXML
+    private void addTrans(ActionEvent event) {
+      
+    }
+
 }
