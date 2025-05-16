@@ -39,6 +39,7 @@ import javafx.util.Pair;
 import model.NavDAOException;
 import model.Navigation;
 import model.Problem;
+import poiupv.FXMLDisplayProblemsController;
 
 /**
  * Controlador para:
@@ -324,7 +325,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     private void center(ActionEvent event) {
         centrarContenido();
         zoom_slider.setValue(zoom_slider.getMin());
-        
+    }
     @FXML
     private void seleccionarAccion(ActionEvent event) throws NavDAOException {
         try {
