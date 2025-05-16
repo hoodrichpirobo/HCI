@@ -40,6 +40,7 @@ import model.NavDAOException;
 import model.Navigation;
 import model.Problem;
 import carta_navegacion.FXMLDisplayProblemsController;
+import model.Answer;
 
 /**
  * Controlador para:
@@ -77,6 +78,14 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton puntito;
     @FXML
     private ToggleButton transButton;
+    @FXML
+    private RadioButton ans1;
+    @FXML
+    private RadioButton ans2;
+    @FXML
+    private RadioButton ans3;
+    @FXML
+    private RadioButton ans4;
 
   
     @Override
@@ -352,6 +361,11 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
                 List<Problem> problemas = obj.getProblems();
                 enunciadoPregunta.setText(problemas.get(i).getText());
                 enunciadoPregunta.setVisible(true);
+                List<Answer> opciones = problemas.get(i).getAnswers();
+                ans1.setText(opciones.get(0).getText());
+                ans2.setText(opciones.get(1).getText());
+                ans3.setText(opciones.get(2).getText());
+                ans4.setText(opciones.get(3).getText());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -365,6 +379,11 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         int i = (int)(Math.random() * problemas.size());
         enunciadoPregunta.setText(problemas.get(i).getText());
         enunciadoPregunta.setVisible(true);
+        List<Answer> opciones = problemas.get(i).getAnswers();
+        ans1.setText(opciones.get(0).getText());
+        ans2.setText(opciones.get(1).getText());
+        ans3.setText(opciones.get(2).getText());
+        ans4.setText(opciones.get(3).getText());
     }
 
     @FXML

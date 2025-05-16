@@ -8,6 +8,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
@@ -46,11 +47,6 @@
                 </Button>
                   </children>
                </HBox>
-          <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#onLogin" style="-fx-background-color: blue;" styleClass="contrast" text="Log in" textAlignment="CENTER" textFill="WHITE">
-            <HBox.margin>
-              <Insets left="550.0" />
-            </HBox.margin>
-          </Button>
             </children>
          </HBox>
       <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
@@ -119,17 +115,11 @@
             <VBox.margin>
                <Insets bottom="10.0" />
             </VBox.margin>
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" text="Button" />
-          <Button mnemonicParsing="false" text="Button" />
-        </children>
       </HBox>
     </children>
   </VBox>
 
   <!-- Panel dividido principal -->
-  <SplitPane fx:id="splitPane" dividerPositions="0.5" VBox.vgrow="ALWAYS">
   <SplitPane fx:id="splitPane" dividerPositions="0.35" VBox.vgrow="ALWAYS">
     <items>
       <!-- 1) Sección de preguntas -->
@@ -159,9 +149,39 @@
               <Font size="15.0" />
             </font>
             <VBox.margin>
-              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
             </VBox.margin>
           </Text>
+               <VBox prefHeight="133.0" prefWidth="283.0">
+                  <children>
+                     <RadioButton fx:id="ans1" mnemonicParsing="false">
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </RadioButton>
+                     <RadioButton fx:id="ans2" mnemonicParsing="false">
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </RadioButton>
+                     <RadioButton fx:id="ans3" mnemonicParsing="false">
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </RadioButton>
+                     <RadioButton fx:id="ans4" mnemonicParsing="false">
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                     </RadioButton>
+                  </children>
+                  <VBox.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </VBox.margin>
+                  <padding>
+                     <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                  </padding>
+               </VBox>
         </children>
       </VBox>
 
@@ -169,10 +189,6 @@
       <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
         <content>
           <Pane onMouseClicked="#handleMapClick">
-      <!-- ScrollPane con la carta náutica -->
-      <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
-        <content>
-          <Pane>
             <children>
               <ImageView fitHeight="5577.0" fitWidth="8674.0" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
                 <image>
