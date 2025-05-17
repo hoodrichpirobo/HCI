@@ -122,68 +122,100 @@
   <!-- Panel dividido principal -->
   <SplitPane fx:id="splitPane" dividerPositions="0.35" VBox.vgrow="ALWAYS">
     <items>
-      <!-- 1) Sección de preguntas -->
-      <VBox fx:id="seccionPreguntas" alignment="CENTER" prefWidth="250.0">
-        <children>
-          <Text fx:id="tituloTest" strokeType="OUTSIDE" strokeWidth="0.0" text="Test">
-            <font>
-              <Font name="System Bold" size="20.0" />
-            </font>
-            <VBox.margin>
-              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </VBox.margin>
-          </Text>
-
-          <HBox fx:id="botonesSeleccionPregunta" alignment="CENTER" spacing="10">
-            <children>
-              <Button fx:id="seleccionarPregunta" mnemonicParsing="false" onAction="#seleccionarAccion" text="Seleccionar pregunta" />
-              <Button fx:id="preguntaRandom" mnemonicParsing="false" onAction="#seleccionRandom" text="Pregunta aleatoria" />
-            </children>
-            <VBox.margin>
-              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </VBox.margin>
-          </HBox>
-
-          <Text fx:id="enunciadoPregunta" strokeType="OUTSIDE" strokeWidth="0.0">
-            <font>
-              <Font size="15.0" />
-            </font>
-            <VBox.margin>
-              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-            </VBox.margin>
-          </Text>
-               <VBox prefHeight="133.0" prefWidth="283.0">
+         <ScrollPane fx:id="scrollTest" fitToWidth="true" vbarPolicy="AS_NEEDED" prefHeight="200.0" prefWidth="200.0">
+            <content>
+            <!-- 1) Sección de preguntas -->
+            <VBox fx:id="seccionPreguntas" alignment="TOP_CENTER" minWidth="0.0" prefHeight="409.0" prefWidth="285.0">
+              <children>
+                <Text fx:id="tituloTest" strokeType="OUTSIDE" strokeWidth="0.0" text="Test">
+                  <font>
+                    <Font name="System Bold" size="20.0" />
+                  </font>
+                  <VBox.margin>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </VBox.margin>
+                </Text>
+      
+                                  <HBox fx:id="botonesSeleccionPregunta" alignment="CENTER" minWidth="0.0" spacing="10">
                   <children>
-                     <RadioButton fx:id="ans1" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="ans2" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="ans3" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
-                     <RadioButton fx:id="ans4" mnemonicParsing="false">
-                        <VBox.margin>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </VBox.margin>
-                     </RadioButton>
+                    <Button fx:id="seleccionarPregunta" minWidth="0.0" mnemonicParsing="false" onAction="#seleccionarAccion" text="Seleccionar pregunta" />
+                    <Button fx:id="preguntaRandom" minWidth="0.0" mnemonicParsing="false" onAction="#seleccionRandom" text="Pregunta aleatoria" />
                   </children>
                   <VBox.margin>
-                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </VBox.margin>
-                  <padding>
-                     <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-                  </padding>
-               </VBox>
-        </children>
-      </VBox>
+                </HBox>
+      
+                                  <Text fx:id="enunciadoPregunta" strokeType="OUTSIDE" strokeWidth="0.0">
+                  <font>
+                    <Font size="13.0" />
+                  </font>
+                  <VBox.margin>
+                    <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                  </VBox.margin>
+                </Text>
+                     <VBox minWidth="0.0" prefHeight="156.0" prefWidth="283.0">
+                        <children>
+                           <RadioButton fx:id="ans1" minWidth="0.0" mnemonicParsing="false">
+                              <VBox.margin>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </VBox.margin>
+                           </RadioButton>
+                           <RadioButton fx:id="ans2" minWidth="0.0" mnemonicParsing="false">
+                              <VBox.margin>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </VBox.margin>
+                           </RadioButton>
+                           <RadioButton fx:id="ans3" minWidth="0.0" mnemonicParsing="false">
+                              <VBox.margin>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </VBox.margin>
+                           </RadioButton>
+                           <RadioButton fx:id="ans4" minWidth="0.0" mnemonicParsing="false">
+                              <VBox.margin>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </VBox.margin>
+                           </RadioButton>
+                           <HBox alignment="CENTER" minWidth="0.0" prefHeight="100.0" prefWidth="200.0">
+                              <children>
+                                 <HBox alignment="CENTER_LEFT" minWidth="0.0" prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                       <Button fx:id="borrarSeleccion" minWidth="0.0" mnemonicParsing="false" text="Borrar selección">
+                                          <font>
+                                             <Font size="10.0" />
+                                          </font>
+                                       </Button>
+                                    </children>
+                                 </HBox>
+                                 <HBox alignment="CENTER_RIGHT" minWidth="0.0" prefHeight="100.0" prefWidth="200.0">
+                                    <children>
+                                       <Button fx:id="botonEnviar" minWidth="0.0" mnemonicParsing="false" onAction="#enviarRespuesta" text="Aceptar">
+                                          <HBox.margin>
+                                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                          </HBox.margin>
+                                       </Button>
+                                    </children>
+                                 </HBox>
+                              </children>
+                              <VBox.margin>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </VBox.margin>
+                              <padding>
+                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                              </padding>
+                           </HBox>
+                        </children>
+                        <VBox.margin>
+                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                        </VBox.margin>
+                        <padding>
+                           <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                        </padding>
+                     </VBox>
+              </children>
+            </VBox>
+            </content>
+         </ScrollPane>
 
                   <!-- ScrollPane con la carta náutica -->
       <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">

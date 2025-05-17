@@ -40,6 +40,9 @@ import model.NavDAOException;
 import model.Navigation;
 import model.Problem;
 import carta_navegacion.FXMLDisplayProblemsController;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Answer;
 
 /**
@@ -67,6 +70,16 @@ public class FXMLDocumentController implements Initializable {
     @FXML private Button seleccionarPregunta;
     @FXML private Button preguntaRandom;
     @FXML private Text enunciadoPregunta;
+    @FXML
+    private RadioButton ans1;
+    @FXML
+    private RadioButton ans2;
+    @FXML
+    private RadioButton ans3;
+    @FXML
+    private RadioButton ans4;
+    @FXML
+    private Button botonEnviar;
 
     // === Estado interno ===
     private Group zoomGroup;
@@ -79,13 +92,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ToggleButton transButton;
     @FXML
-    private RadioButton ans1;
+    private Button borrarSeleccion;
     @FXML
-    private RadioButton ans2;
-    @FXML
-    private RadioButton ans3;
-    @FXML
-    private RadioButton ans4;
+    private ScrollPane scrollTest;
+    
 
   
     @Override
@@ -104,8 +114,9 @@ public class FXMLDocumentController implements Initializable {
         map_scrollpane.setContent(contentGroup);
         configurarContenidoMapa();
         // Ocultar sección de preguntas al inicio
-        configurarSeccionPreguntas();
+        configurarSeccionPreguntas();  
     }
+    
     private void configurarContenidoMapa() {
     // Obtener el contenido original (asumo que es un ImageView)
     Node contenidoOriginal = map_scrollpane.getContent();
@@ -143,6 +154,14 @@ public class FXMLDocumentController implements Initializable {
     private void configurarSeccionPreguntas() {
         Platform.runLater(() -> {
             seccionPreguntas.setVisible(false);
+            enunciadoPregunta.setVisible(false);
+            ans1.setVisible(false);
+            ans2.setVisible(false);
+            ans3.setVisible(false);
+            ans4.setVisible(false);
+            botonEnviar.setVisible(false);
+            borrarSeleccion.setVisible(false);
+            scrollTest.setVisible(false);
             splitPane.setDividerPositions(0.0);
 
             bloqueoDivisor = (obs, oldVal, newVal) -> {
@@ -157,11 +176,25 @@ public class FXMLDocumentController implements Initializable {
                     splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
                     splitPane.setDividerPositions(0.35);
                     seccionPreguntas.setVisible(true);
+                    scrollTest.setVisible(true);
                 } else {
                     splitPane.setDividerPositions(0.0);
                     splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
                     seccionPreguntas.setVisible(false);
+                    scrollTest.setVisible(false);
                 }
+            });
+            
+            seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
+                enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
+                ans1.setWrapText(true);
+                ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans2.setWrapText(true);
+                ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans3.setWrapText(true);
+                ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans4.setWrapText(true);
+                ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
             });
         });
     }
@@ -354,19 +387,32 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
             nuevaVentana.setTitle("Seleccionar problema");
             nuevaVentana.setScene(new Scene(root));
             nuevaVentana.show();
-            
-            int i = controller.getIndex();
-            if(i >= 0){
-                obj = Navigation.getInstance();
-                List<Problem> problemas = obj.getProblems();
-                enunciadoPregunta.setText(problemas.get(i).getText());
-                enunciadoPregunta.setVisible(true);
-                List<Answer> opciones = problemas.get(i).getAnswers();
-                ans1.setText(opciones.get(0).getText());
-                ans2.setText(opciones.get(1).getText());
-                ans3.setText(opciones.get(2).getText());
-                ans4.setText(opciones.get(3).getText());
-            }
+            nuevaVentana.setOnHidden(e -> {
+                int i = controller.getIndex();
+                if(i >= 0){
+                    try {
+                        obj = Navigation.getInstance();
+                    } catch (NavDAOException ex) {
+                        Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    List<Problem> problemas = obj.getProblems();
+                    enunciadoPregunta.setText(problemas.get(i).getText());
+                    enunciadoPregunta.setVisible(true);
+                    ans1.setVisible(true);
+                    ans2.setVisible(true);
+                    ans3.setVisible(true);
+                    ans4.setVisible(true);
+                    esperarRespuesta();
+                    botonEnviar.setVisible(true);
+                    borrarSeleccion.setVisible(true);
+                    List<Answer> opciones = problemas.get(i).getAnswers();
+                    Collections.shuffle(opciones);
+                    ans1.setText(opciones.get(0).getText());
+                    ans2.setText(opciones.get(1).getText());
+                    ans3.setText(opciones.get(2).getText());
+                    ans4.setText(opciones.get(3).getText());
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -379,11 +425,35 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         int i = (int)(Math.random() * problemas.size());
         enunciadoPregunta.setText(problemas.get(i).getText());
         enunciadoPregunta.setVisible(true);
+        ans1.setVisible(true);
+        ans2.setVisible(true);
+        ans3.setVisible(true);
+        ans4.setVisible(true);
+        esperarRespuesta();
+        botonEnviar.setVisible(true);
+        borrarSeleccion.setVisible(true);
         List<Answer> opciones = problemas.get(i).getAnswers();
+        Collections.shuffle(opciones);
         ans1.setText(opciones.get(0).getText());
         ans2.setText(opciones.get(1).getText());
         ans3.setText(opciones.get(2).getText());
         ans4.setText(opciones.get(3).getText());
+    }
+    
+    private void esperarRespuesta(){
+        ToggleGroup opciones = new ToggleGroup();
+        ans1.setToggleGroup(opciones);
+        ans2.setToggleGroup(opciones);
+        ans3.setToggleGroup(opciones);
+        ans4.setToggleGroup(opciones);
+        botonEnviar.setDisable(true);
+        opciones.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+            botonEnviar.setDisable(newVal == null);
+            borrarSeleccion.setDisable(newVal == null);
+        });
+        borrarSeleccion.setOnAction(e -> {
+            opciones.selectToggle(null);
+        });
     }
 
     @FXML
@@ -410,6 +480,11 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     @FXML
     private void addTrans(ActionEvent event) {
       
+    }
+
+    @FXML
+    private void enviarRespuesta(ActionEvent event) {
+        
     }
 
 }
