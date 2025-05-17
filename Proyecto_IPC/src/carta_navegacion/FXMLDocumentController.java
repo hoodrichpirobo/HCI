@@ -82,6 +82,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ImageView transportador;
 
+  
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Configuración del zoom
@@ -344,6 +345,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         zoom_slider.setValue(zoom_slider.getMin());
     }
 
+  
     @FXML
     private void seleccionarAccion(ActionEvent event) throws NavDAOException {
         try {
@@ -401,6 +403,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
 
     @FXML
     private void addTrans(ActionEvent event) {
+      
     }
 
 }

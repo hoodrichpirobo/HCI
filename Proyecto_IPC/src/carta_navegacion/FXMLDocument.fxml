@@ -46,6 +46,11 @@
                 </Button>
                   </children>
                </HBox>
+          <Button alignment="CENTER_RIGHT" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" onAction="#onLogin" style="-fx-background-color: blue;" styleClass="contrast" text="Log in" textAlignment="CENTER" textFill="WHITE">
+            <HBox.margin>
+              <Insets left="550.0" />
+            </HBox.margin>
+          </Button>
             </children>
          </HBox>
       <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
@@ -114,12 +119,18 @@
             <VBox.margin>
                <Insets bottom="10.0" />
             </VBox.margin>
+          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Button" />
+          <Button mnemonicParsing="false" text="Button" />
+        </children>
       </HBox>
     </children>
   </VBox>
 
   <!-- Panel dividido principal -->
   <SplitPane fx:id="splitPane" dividerPositions="0.5" VBox.vgrow="ALWAYS">
+  <SplitPane fx:id="splitPane" dividerPositions="0.35" VBox.vgrow="ALWAYS">
     <items>
       <!-- 1) Sección de preguntas -->
       <VBox fx:id="seccionPreguntas" alignment="CENTER" prefWidth="250.0">
@@ -158,6 +169,10 @@
       <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
         <content>
           <Pane onMouseClicked="#handleMapClick">
+      <!-- ScrollPane con la carta náutica -->
+      <ScrollPane fx:id="map_scrollpane" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
+        <content>
+          <Pane>
             <children>
               <ImageView fitHeight="5577.0" fitWidth="8674.0" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
                 <image>
