@@ -45,6 +45,7 @@ import model.Answer;
 import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import model.User;
 
@@ -86,6 +87,10 @@ public class FXMLDocumentController implements Initializable {
     private RadioButton ans4;
     @FXML
     private Button botonEnviar;
+    @FXML
+    private Button borrarSeleccion;
+    @FXML
+    private ScrollPane scrollTest;
 
     // === Estado interno ===
     private Group zoomGroup;
@@ -97,10 +102,7 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton puntito;
     @FXML
     private ToggleButton transButton;
-    @FXML
-    private Button borrarSeleccion;
-    @FXML
-    private ScrollPane scrollTest;
+    
     
 
   
@@ -537,7 +539,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
                     esperarRespuesta();
                     botonEnviar.setVisible(true);
                     borrarSeleccion.setVisible(true);
-                    List<Answer> opciones = problemas.get(i).getAnswers();
+                    List<Answer> opciones = new ArrayList<>(problemas.get(i).getAnswers());
                     Collections.shuffle(opciones);
                     ans1.setText(opciones.get(0).getText());
                     ans2.setText(opciones.get(1).getText());
@@ -564,7 +566,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         esperarRespuesta();
         botonEnviar.setVisible(true);
         borrarSeleccion.setVisible(true);
-        List<Answer> opciones = problemas.get(i).getAnswers();
+        List<Answer> opciones = new ArrayList<>(problemas.get(i).getAnswers());
         Collections.shuffle(opciones);
         ans1.setText(opciones.get(0).getText());
         ans2.setText(opciones.get(1).getText());
