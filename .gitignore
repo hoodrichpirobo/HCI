@@ -15,3 +15,6 @@ Proyecto_IPC/nbproject/private/
 # ignore NetBeans / Ant build output
 /build/
 /Proyecto_IPC/build/
+/build/
+/nbproject/private/
+/dist/

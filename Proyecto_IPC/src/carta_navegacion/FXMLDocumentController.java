@@ -35,6 +35,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 import model.NavDAOException;
+import javafx.beans.binding.BooleanBinding;
 import model.Navigation;
 import model.Problem;
 import carta_navegacion.FXMLDisplayProblemsController;
@@ -403,75 +404,84 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         dlg.setTitle("Registro de usuario");
         dlg.setHeaderText("Rellena tus datos");
 
+        // Campos
         TextField nickField  = new TextField();
         nickField.setPromptText("Nickname (6–15 caracteres)");
-
         TextField emailField = new TextField();
         emailField.setPromptText("Email válido");
-
         PasswordField passField = new PasswordField();
         passField.setPromptText("Password (8–20 caracteres)");
-
+        passField.setTooltip(new Tooltip(
+            "8-20 car., 1 mayúscula, 1 minúscula, 1 dígito, 1 especial (!@#$%&*()-+=)"
+        ));
         DatePicker dobPicker = new DatePicker();
         dobPicker.setPromptText("Fecha de nacimiento");
 
+        // Label de ayuda para contraseña
+        Label passHelp = new Label(
+            "Debe tener 8-20 caracteres, "
+          + "1 mayúscula, 1 minúscula, 1 dígito y 1 especial (!@#$%&*()-+=)"
+        );
+        passHelp.setWrapText(true);
+
+        // GridPane
         GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
+        grid.setHgap(10); grid.setVgap(10);
         grid.add(new Label("Nickname:"), 0, 0);
-        grid.add(nickField,               1, 0);
+        grid.add(nickField,              1, 0);
         grid.add(new Label("Email:"),    0, 1);
         grid.add(emailField,             1, 1);
         grid.add(new Label("Password:"), 0, 2);
         grid.add(passField,              1, 2);
-        grid.add(new Label("Nacimiento:"),0, 3);
-        grid.add(dobPicker,              1, 3);
+        grid.add(passHelp,               0, 3, 2, 1);
+        grid.add(new Label("Nacimiento:"),0, 4);
+        grid.add(dobPicker,              1, 4);
 
         dlg.getDialogPane().setContent(grid);
         dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        // Disable OK until all fields are non-empty
+        // Binding para habilitar OK sólo cuando todo esté relleno y la password válida
         Node okButton = dlg.getDialogPane().lookupButton(ButtonType.OK);
+        BooleanBinding passwordValid = Bindings.createBooleanBinding(
+            () -> User.checkPassword(passField.getText()),
+            passField.textProperty()
+        );
         okButton.disableProperty().bind(
-          nickField.textProperty().isEmpty()
+            nickField.textProperty().isEmpty()
           .or(emailField.textProperty().isEmpty())
           .or(passField.textProperty().isEmpty())
           .or(dobPicker.valueProperty().isNull())
+          .or(passwordValid.not())
         );
 
-        // Convert result and do all validation/registration here
+        // Result converter
         dlg.setResultConverter(btn -> {
           if (btn == ButtonType.OK) {
-            // 1) Field-format checks
+            // Validaciones extra
             if (!User.checkNickName(nickField.getText().trim()))
               throw new IllegalArgumentException("Nickname inválido");
             if (!User.checkEmail(emailField.getText().trim()))
               throw new IllegalArgumentException("Email inválido");
-            if (!User.checkPassword(passField.getText()))
-              throw new IllegalArgumentException("Password inválida");
             if (Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16)
               throw new IllegalArgumentException("Debes tener al menos 16 años");
 
-            // 2) Attempt to register
             try {
               Navigation nav = Navigation.getInstance();
-              // (we’re skipping the existsNickName check here,
-              // in case your Navigation API doesn’t expose it)
               return nav.registerUser(
                 nickField.getText().trim(),
                 emailField.getText().trim(),
                 passField.getText(),
-                null,                     // no avatar for now
+                null,
                 dobPicker.getValue()
               );
             } catch (NavDAOException e) {
-              throw new RuntimeException("Error de base de datos: " + e.getMessage(), e);
+              throw new RuntimeException("Error BD: " + e.getMessage(), e);
             }
           }
           return null;
         });
 
-        // Show dialog & handle success or validation/runtime errors
+        // Mostrar diálogo
         try {
           Optional<User> result = dlg.showAndWait();
           result.ifPresent(u ->
@@ -481,8 +491,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
             .showAndWait()
           );
         } catch (RuntimeException ex) {
-          new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK)
-            .showAndWait();
+          new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         }
     }
 
