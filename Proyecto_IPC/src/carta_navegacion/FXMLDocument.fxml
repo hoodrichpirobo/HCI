@@ -173,6 +173,11 @@
                   <String fx:value="map-pin" />
                 </styleClass>
               </MenuButton>
+                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" layoutX="64.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true" visible="false">
+                        <image>
+                           <Image url="@../resources/transportador.png" />
+                        </image>
+                     </ImageView>
             </children>
           </Pane>
         </content>

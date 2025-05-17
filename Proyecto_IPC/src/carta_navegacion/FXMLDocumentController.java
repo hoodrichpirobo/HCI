@@ -40,6 +40,8 @@ import model.NavDAOException;
 import model.Navigation;
 import model.Problem;
 import carta_navegacion.FXMLDisplayProblemsController;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 
 /**
  * Controlador para:
@@ -77,6 +79,8 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton puntito;
     @FXML
     private ToggleButton transButton;
+    @FXML
+    private ImageView transportador;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -95,6 +99,15 @@ public class FXMLDocumentController implements Initializable {
         configurarContenidoMapa();
         // Ocultar sección de preguntas al inicio
         configurarSeccionPreguntas();
+        configurarTransportador();
+        
+        
+        
+    }
+    private void configurarTransportador() {
+        transportador.setLayoutX(0.5);
+        transportador.setLayoutY(0.5);
+        transportador.setVisible(false);
     }
     private void configurarContenidoMapa() {
     // Obtener el contenido original (asumo que es un ImageView)
