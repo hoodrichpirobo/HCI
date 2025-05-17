@@ -339,6 +339,8 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     @FXML
     private void onLogin(ActionEvent event) {
         if (sesionIniciada.get()) {
+            //Actualizar registro de aciertos y fallos del usuario en la base de datos
+            
             // Ya estaba logueado → hacemos logout
             sesionIniciada.set(false);
             // (Opcional) limpia la sección de preguntas:
@@ -507,7 +509,8 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     private void showPosition(MouseEvent event) {
         mousePosition.setText(
             "sceneX: " + (int) event.getSceneX() + ", sceneY: " + (int) event.getSceneY() +
-            "\nX: " + (int) event.getX() + ", Y: " + (int) event.getY()
+            "          " + 
+            "X: " + (int) event.getX() + ", Y: " + (int) event.getY()
         );
     }
 
@@ -590,6 +593,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         ans3.setToggleGroup(opciones);
         ans4.setToggleGroup(opciones);
         botonEnviar.setDisable(true);
+        borrarSeleccion.setDisable(true);
         opciones.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
             botonEnviar.setDisable(newVal == null);
             borrarSeleccion.setDisable(newVal == null);
