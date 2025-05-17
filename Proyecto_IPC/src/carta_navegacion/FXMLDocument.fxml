@@ -128,7 +128,7 @@
   <!-- Panel dividido principal -->
   <SplitPane fx:id="splitPane" dividerPositions="0.35" VBox.vgrow="ALWAYS">
     <items>
-         <ScrollPane fx:id="scrollTest" fitToWidth="true" vbarPolicy="AS_NEEDED" prefHeight="200.0" prefWidth="200.0">
+         <ScrollPane fx:id="scrollTest" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" vbarPolicy="AS_NEEDED">
             <content>
             <!-- 1) Sección de preguntas -->
             <VBox fx:id="seccionPreguntas" alignment="TOP_CENTER" minWidth="0.0" prefHeight="409.0" prefWidth="285.0">
@@ -252,10 +252,13 @@
   <!-- Barra inferior con posición del ratón -->
   <HBox alignment="CENTER_RIGHT">
     <children>
-      <Label fx:id="mousePosition" text="SceneX:    SceneY:" wrapText="true" HBox.hgrow="ALWAYS" />
+      <Label fx:id="mousePosition" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="842.0" text="SceneX:    SceneY:" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin></Label>
     </children>
     <VBox.margin>
-      <Insets bottom="12" right="12" top="6" />
+      <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
     </VBox.margin>
   </HBox>
 
