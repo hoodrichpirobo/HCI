@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuButton?>
@@ -24,31 +25,57 @@
 
 <VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carta_navegacion.FXMLDocumentController">
 
+  <!-- Aquí añadimos la ListView para inyectarla en el controlador -->
+  <ListView fx:id="map_listview"
+            prefWidth="0.0" prefHeight="0.0"
+            visible="false" />
+
   <!-- Barra superior -->
   <VBox prefHeight="83.0" prefWidth="853.0">
     <children>
       <HBox prefHeight="23.0" prefWidth="853.0">
         <children>
-          <MenuBar>
-            <menus>
-              <Menu mnemonicParsing="false" text="Ayuda">
-                <items>
-                  <MenuItem mnemonicParsing="false" onAction="#about" text="Acerca de" />
-                </items>
-              </Menu>
-            </menus>
-          </MenuBar>
-          <!-- ← REPLACED THIS HBOX WITH BOTH LOGIN + REGISTER -->
-          <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="853.0" spacing="10">
-            <children>
-              <Region HBox.hgrow="ALWAYS" />
-              <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" styleClass="contrast" text="Log in" textFill="#ebebeb" />
-              <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegister" styleClass="contrast" text="Register" textFill="WHITE" />
-            </children>
-            <padding>
-              <Insets bottom="5" left="10" right="10" top="5" />
-            </padding>
-          </HBox>
+        <MenuBar>
+          <menus>
+            <Menu text="Ayuda">
+              <items>
+                <MenuItem text="Acerca de" onAction="#about"/>
+              </items>
+            </Menu>
+            <Menu text="Perfil">
+              <items>
+                <MenuItem text="Ver / Modificar perfil" onAction="#onModifyProfile"/>
+              </items>
+            </Menu>
+          </menus>
+        </MenuBar>
+
+        <!-- HBox de usuario, login, register y nick -->
+        <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="853.0" spacing="10">
+          <children>
+            <!-- rellena espacio -->
+            <Region HBox.hgrow="ALWAYS" />
+            <!-- muestra el nick del usuario cuando esté logueado -->
+            <Label fx:id="lblUser" text="" />
+            <!-- botón de Login/Logout -->
+            <Button fx:id="loginButton"
+                    mnemonicParsing="false"
+                    onAction="#onLogin"
+                    styleClass="contrast"
+                    text="Log in"
+                    textFill="#ebebeb" />
+            <!-- botón de Register -->
+            <Button fx:id="registerButton"
+                    mnemonicParsing="false"
+                    onAction="#onRegister"
+                    styleClass="contrast"
+                    text="Register"
+                    textFill="WHITE" />
+          </children>
+          <padding>
+            <Insets top="5" right="10" bottom="5" left="10"/>
+          </padding>
+        </HBox>
         </children>
       </HBox>
 

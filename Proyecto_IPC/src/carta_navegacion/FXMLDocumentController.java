@@ -60,8 +60,12 @@ import model.User;
 public class FXMLDocumentController implements Initializable {
 
     Navigation obj;
+    private User currentUser = null;
+    private int hits = 0, faults = 0;
+    // Lista de respuestas de la pregunta cargada (en el mismo orden en que pintas los RadioButton)
+    private List<Answer> currentAnswers = Collections.emptyList();
     // === Campos FXML ===
-    private ListView<Poi> map_listview;
+    @FXML private ListView<Poi> map_listview;
     @FXML private ScrollPane map_scrollpane;
     @FXML private Slider zoom_slider;
     @FXML private MenuButton map_pin;
@@ -103,39 +107,50 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton puntito;
     @FXML
     private ToggleButton transButton;
-    
-    
-
+    @FXML private Label lblUser;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Configuración del zoom
+        // === 1) Configuración del zoom ===
         zoom_slider.setMin(0.015);
         zoom_slider.setMax(1.5);
         zoom_slider.setValue(0.5);
-        zoom_slider.valueProperty().addListener((obs, oldVal, newVal) -> applyZoom(newVal.doubleValue()));
+        zoom_slider.valueProperty().addListener((obs, oldVal, newVal) ->
+            applyZoom(newVal.doubleValue())
+        );
 
-        // Inicialización del zoom
+        // Inicialización del zoom (mover contenido dentro de Group para escalar)
         Group contentGroup = new Group();
         zoomGroup = new Group();
         contentGroup.getChildren().add(zoomGroup);
         zoomGroup.getChildren().add(map_scrollpane.getContent());
         map_scrollpane.setContent(contentGroup);
         configurarContenidoMapa();
-        // Ocultar sección de preguntas al inicio
-        configurarSeccionPreguntas();
-        
-        
-        // Sólo deshabilitamos Register cuando la sesión esté iniciada
-        registerButton.disableProperty().bind(sesionIniciada);
 
-        // El texto de loginButton cambia entre "Log in" y "Log out"
+        // === 2) Sección de preguntas oculta al inicio ===
+        configurarSeccionPreguntas();
+
+        // === 3) Bindings para login/register ===
+        // Deshabilita “Register” si ya hay sesión
+        registerButton.disableProperty().bind(sesionIniciada);
+        // Cambia el texto de loginButton según estado
         loginButton.textProperty().bind(
             Bindings.when(sesionIniciada)
                     .then("Log out")
                     .otherwise("Log in")
         );
 
+        // === 4) Label de usuario ===
+        // Asegúrate de tener en tu FXML: <Label fx:id="lblUser" …/>
+        lblUser.setText("");
+        // Cuando cambia la propiedad sesionIniciada, actualizamos lblUser
+        sesionIniciada.addListener((obs, wasIn, isIn) -> {
+            if (isIn && currentUser != null) {
+                lblUser.setText("👤 " + currentUser.getNickName());
+            } else {
+                lblUser.setText("");
+            }
+        });
     }
     
     private void configurarContenidoMapa() {
@@ -166,107 +181,107 @@ public class FXMLDocumentController implements Initializable {
         zoomGroup.setScaleY(0.1);
         centrarContenido();
     });
-}
-    private void centrarContenido() {
-    // Centrar el contenido en el ScrollPane
-    map_scrollpane.setHvalue(0.5);
-    map_scrollpane.setVvalue(0.5);
-}
-    private void configurarSeccionPreguntas() {
-        Platform.runLater(() -> {
-            seccionPreguntas.setVisible(false);
-            enunciadoPregunta.setVisible(false);
-            ans1.setVisible(false);
-            ans2.setVisible(false);
-            ans3.setVisible(false);
-            ans4.setVisible(false);
-            botonEnviar.setVisible(false);
-            borrarSeleccion.setVisible(false);
-            scrollTest.setVisible(false);
-            splitPane.setDividerPositions(0.0);
+    }
+        private void centrarContenido() {
+        // Centrar el contenido en el ScrollPane
+        map_scrollpane.setHvalue(0.5);
+        map_scrollpane.setVvalue(0.5);
+    }
+        private void configurarSeccionPreguntas() {
+            Platform.runLater(() -> {
+                seccionPreguntas.setVisible(false);
+                enunciadoPregunta.setVisible(false);
+                ans1.setVisible(false);
+                ans2.setVisible(false);
+                ans3.setVisible(false);
+                ans4.setVisible(false);
+                botonEnviar.setVisible(false);
+                borrarSeleccion.setVisible(false);
+                scrollTest.setVisible(false);
+                splitPane.setDividerPositions(0.0);
 
-            bloqueoDivisor = (obs, oldVal, newVal) -> {
-                if (Math.abs(newVal.doubleValue()) > 1e-4) {
-                    splitPane.setDividerPositions(0.0);
-                }
-            };
-            splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+                bloqueoDivisor = (obs, oldVal, newVal) -> {
+                    if (Math.abs(newVal.doubleValue()) > 1e-4) {
+                        splitPane.setDividerPositions(0.0);
+                    }
+                };
+                splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
 
-            sesionIniciada.addListener((obs, oldVal, newVal) -> {
-                if (newVal) {
-                    splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
-                    splitPane.setDividerPositions(0.35);
-                    seccionPreguntas.setVisible(true);
-                    scrollTest.setVisible(true);
-                } else {
-                    splitPane.setDividerPositions(0.0);
-                    splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
-                    seccionPreguntas.setVisible(false);
-                    scrollTest.setVisible(false);
-                }
+                sesionIniciada.addListener((obs, oldVal, newVal) -> {
+                    if (newVal) {
+                        splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
+                        splitPane.setDividerPositions(0.35);
+                        seccionPreguntas.setVisible(true);
+                        scrollTest.setVisible(true);
+                    } else {
+                        splitPane.setDividerPositions(0.0);
+                        splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+                        seccionPreguntas.setVisible(false);
+                        scrollTest.setVisible(false);
+                    }
+                });
+
+                seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
+                    enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
+                    ans1.setWrapText(true);
+                    ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                    ans2.setWrapText(true);
+                    ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                    ans3.setWrapText(true);
+                    ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                    ans4.setWrapText(true);
+                    ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                });
             });
-            
-            seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
-                enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
-                ans1.setWrapText(true);
-                ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                ans2.setWrapText(true);
-                ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                ans3.setWrapText(true);
-                ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                ans4.setWrapText(true);
-                ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-            });
-        });
+        }
+
+        // === Zoom y control del mapa ===
+
+        private void applyZoom(double scale) {
+        scale = Math.max(0.1, Math.min(scale, 10.0));
+
+        Node content = map_scrollpane.getContent();
+
+        // Obtener las coordenadas del puntero relativas al contenido antes del zoom
+        double mouseX = map_scrollpane.getWidth() / 2;
+        double mouseY = map_scrollpane.getHeight() / 2;
+
+        Point2D scrollOffset = figureScrollOffset(map_scrollpane, zoomGroup);
+
+        // Aplicar el nuevo zoom
+        zoomGroup.setScaleX(scale);
+        zoomGroup.setScaleY(scale);
+
+        // Ajustar los valores de scroll para mantener la posición
+        repositionScroller(map_scrollpane, zoomGroup, scrollOffset, scale);
+    }
+    private Point2D figureScrollOffset(ScrollPane scrollPane, Node content) {
+        double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
+        double hScrollProportion = scrollPane.getHvalue();
+        double scrollXOffset = hScrollProportion * Math.max(0, extraWidth);
+
+        double extraHeight = content.getBoundsInLocal().getHeight() - scrollPane.getViewportBounds().getHeight();
+        double vScrollProportion = scrollPane.getVvalue();
+        double scrollYOffset = vScrollProportion * Math.max(0, extraHeight);
+
+        return new Point2D(scrollXOffset, scrollYOffset);
     }
 
-    // === Zoom y control del mapa ===
+    private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scrollOffset, double scale) {
+        double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
+        if (extraWidth > 0) {
+            scrollPane.setHvalue(scrollOffset.getX() / extraWidth);
+        } else {
+            scrollPane.setHvalue(0);
+        }
 
-    private void applyZoom(double scale) {
-    scale = Math.max(0.1, Math.min(scale, 10.0));
-
-    Node content = map_scrollpane.getContent();
-    
-    // Obtener las coordenadas del puntero relativas al contenido antes del zoom
-    double mouseX = map_scrollpane.getWidth() / 2;
-    double mouseY = map_scrollpane.getHeight() / 2;
-
-    Point2D scrollOffset = figureScrollOffset(map_scrollpane, zoomGroup);
-
-    // Aplicar el nuevo zoom
-    zoomGroup.setScaleX(scale);
-    zoomGroup.setScaleY(scale);
-
-    // Ajustar los valores de scroll para mantener la posición
-    repositionScroller(map_scrollpane, zoomGroup, scrollOffset, scale);
-}
-private Point2D figureScrollOffset(ScrollPane scrollPane, Node content) {
-    double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
-    double hScrollProportion = scrollPane.getHvalue();
-    double scrollXOffset = hScrollProportion * Math.max(0, extraWidth);
-
-    double extraHeight = content.getBoundsInLocal().getHeight() - scrollPane.getViewportBounds().getHeight();
-    double vScrollProportion = scrollPane.getVvalue();
-    double scrollYOffset = vScrollProportion * Math.max(0, extraHeight);
-
-    return new Point2D(scrollXOffset, scrollYOffset);
-}
-
-private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scrollOffset, double scale) {
-    double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
-    if (extraWidth > 0) {
-        scrollPane.setHvalue(scrollOffset.getX() / extraWidth);
-    } else {
-        scrollPane.setHvalue(0);
+        double extraHeight = content.getBoundsInLocal().getHeight() - scrollPane.getViewportBounds().getHeight();
+        if (extraHeight > 0) {
+            scrollPane.setVvalue(scrollOffset.getY() / extraHeight);
+        } else {
+            scrollPane.setVvalue(0);
+        }
     }
-
-    double extraHeight = content.getBoundsInLocal().getHeight() - scrollPane.getViewportBounds().getHeight();
-    if (extraHeight > 0) {
-        scrollPane.setVvalue(scrollOffset.getY() / extraHeight);
-    } else {
-        scrollPane.setVvalue(0);
-    }
-}
 
 
     @FXML
@@ -338,18 +353,24 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
     // === Login ===
     @FXML
     private void onLogin(ActionEvent event) {
+        // 1) Si ya hay sesión iniciada, hacemos logout y guardamos la sesión
         if (sesionIniciada.get()) {
-            //Actualizar registro de aciertos y fallos del usuario en la base de datos
-            
-            // Ya estaba logueado → hacemos logout
+            if (currentUser != null) {
+                // Guardar sesión en BD
+                currentUser.addSession(hits, faults);
+                // Reiniciar contadores
+                hits = faults = 0;
+            }
+            // Logout interno
+            currentUser = null;
             sesionIniciada.set(false);
-            // (Opcional) limpia la sección de preguntas:
+            // Limpiar sección de preguntas
             seccionPreguntas.setVisible(false);
             splitPane.setDividerPositions(0.0);
             return;
         }
 
-        // === LOGIN SIN SESIÓN ===
+        // 2) Si NO hay sesión, mostrar diálogo de login
         Dialog<Pair<String,String>> dlg = new Dialog<>();
         dlg.setTitle("Iniciar sesión");
         dlg.setHeaderText("Introduce tus credenciales");
@@ -361,10 +382,10 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
 
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
-        grid.add(new Label("Usuario:"),      0, 0);
-        grid.add(userField,                  1, 0);
-        grid.add(new Label("Contraseña:"),   0, 1);
-        grid.add(passField,                  1, 1);
+        grid.add(new Label("Usuario:"),    0, 0);
+        grid.add(userField,                1, 0);
+        grid.add(new Label("Contraseña:"), 0, 1);
+        grid.add(passField,                1, 1);
 
         dlg.getDialogPane()
            .setContent(grid);
@@ -378,25 +399,28 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         );
 
         dlg.showAndWait().ifPresent(creds -> {
-          try {
-            Navigation nav = Navigation.getInstance();
-            User u = nav.authenticate(creds.getKey(), creds.getValue());
-            if (u == null) {
-              new Alert(Alert.AlertType.ERROR,
-                        "Usuario o contraseña incorrectos",
-                        ButtonType.OK)
-                .showAndWait();
-            } else {
-              sesionIniciada.set(true);
+            try {
+                Navigation nav = Navigation.getInstance();
+                User u = nav.authenticate(creds.getKey(), creds.getValue());
+                if (u == null) {
+                    new Alert(Alert.AlertType.ERROR,
+                              "Usuario o contraseña incorrectos",
+                              ButtonType.OK)
+                      .showAndWait();
+                } else {
+                    // Autenticación correcta
+                    currentUser = u;
+                    sesionIniciada.set(true);
+                }
+            } catch (NavDAOException e) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Error de base de datos:\n" + e.getMessage(),
+                          ButtonType.OK)
+                  .showAndWait();
             }
-          } catch (NavDAOException e) {
-            new Alert(Alert.AlertType.ERROR,
-                      "Error de base de datos:\n" + e.getMessage(),
-                      ButtonType.OK)
-              .showAndWait();
-          }
         });
     }
+
     
     @FXML
     private void onRegister(ActionEvent event) {
@@ -484,12 +508,14 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         // Mostrar diálogo
         try {
           Optional<User> result = dlg.showAndWait();
-          result.ifPresent(u ->
-            new Alert(Alert.AlertType.INFORMATION,
-                      "Registro completado. Ya puedes hacer Log in.",
-                      ButtonType.OK)
-            .showAndWait()
-          );
+        result.ifPresent(u -> {
+          currentUser = u;
+          sesionIniciada.set(true);
+          new Alert(Alert.AlertType.INFORMATION,
+                    "¡Bienvenido, " + u.getNickName() + "!",
+                    ButtonType.OK)
+            .showAndWait();
+        });
         } catch (RuntimeException ex) {
           new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
         }
@@ -553,6 +579,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
                     borrarSeleccion.setVisible(true);
                     List<Answer> opciones = new ArrayList<>(problemas.get(i).getAnswers());
                     Collections.shuffle(opciones);
+                    currentAnswers = opciones;
                     ans1.setText(opciones.get(0).getText());
                     ans2.setText(opciones.get(1).getText());
                     ans3.setText(opciones.get(2).getText());
@@ -580,6 +607,7 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         borrarSeleccion.setVisible(true);
         List<Answer> opciones = new ArrayList<>(problemas.get(i).getAnswers());
         Collections.shuffle(opciones);
+        currentAnswers = opciones;
         ans1.setText(opciones.get(0).getText());
         ans2.setText(opciones.get(1).getText());
         ans3.setText(opciones.get(2).getText());
@@ -611,6 +639,67 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
         texto.setLayoutY(event.getY());
         //texto.requestFocus();
     }
+    
+    @FXML
+    private void onModifyProfile(ActionEvent event) {
+        if (!sesionIniciada.get() || currentUser == null) {
+            new Alert(Alert.AlertType.WARNING, "Tienes que iniciar sesión primero", ButtonType.OK)
+                .showAndWait();
+            return;
+        }
+
+        // 1) Construye el diálogo igual que en registro, pero con campos pre-llenados:
+        Dialog<User> dlg = new Dialog<>();
+        dlg.setTitle("Modificar perfil");
+        dlg.setHeaderText("Actualiza tu información");
+
+        TextField emailField = new TextField(currentUser.getEmail());
+        PasswordField passField = new PasswordField();
+        passField.setPromptText("Nueva contraseña");
+        DatePicker dobPicker = new DatePicker(currentUser.getBirthdate());
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.add(new Label("Email:"),      0, 0);
+        grid.add(emailField,               1, 0);
+        grid.add(new Label("Password:"),   0, 1);
+        grid.add(passField,                1, 1);
+        grid.add(new Label("Nacimiento:"), 0, 2);
+        grid.add(dobPicker,                1, 2);
+        dlg.getDialogPane().setContent(grid);
+        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        // 2) habilita OK sólo si email/pw/dob válidos:
+        Node okBtn = dlg.getDialogPane().lookupButton(ButtonType.OK);
+        BooleanBinding valid = Bindings.createBooleanBinding(
+            () -> User.checkEmail(emailField.getText().trim())
+                && (passField.getText().isEmpty() || User.checkPassword(passField.getText()))
+                && dobPicker.getValue() != null
+                && Period.between(dobPicker.getValue(), LocalDate.now()).getYears() >= 16,
+            emailField.textProperty(), passField.textProperty(), dobPicker.valueProperty()
+        );
+        okBtn.disableProperty().bind(valid.not());
+
+        // 3) al convertir:
+        dlg.setResultConverter(btn -> {
+            if (btn == ButtonType.OK) {
+                // actualiza sólo lo que cambió
+                currentUser.setEmail(emailField.getText().trim());
+                if (!passField.getText().isEmpty())
+                    currentUser.setPassword(passField.getText());
+                currentUser.setBirthdate(dobPicker.getValue());
+                return currentUser;
+            }
+            return null;
+        });
+
+        // 4) mostrar diálogo
+        Optional<User> res = dlg.showAndWait();
+        res.ifPresent(u -> 
+            new Alert(Alert.AlertType.INFORMATION, "Perfil actualizado", ButtonType.OK)
+                .showAndWait()
+        );
+    }
 
     @FXML
     private void puntoPulsado(ActionEvent event) {
@@ -631,7 +720,25 @@ private void repositionScroller(ScrollPane scrollPane, Node content, Point2D scr
 
     @FXML
     private void enviarRespuesta(ActionEvent event) {
-        
+        // 1) Averigua qué radioButton está seleccionado
+        Toggle selected = ans1.getToggleGroup().getSelectedToggle();
+        if (selected == null) return;
+
+        RadioButton elegido = (RadioButton) selected;
+        int idx = ans1.getToggleGroup().getToggles().indexOf(selected);
+
+        // 2) Comprueba si acertó
+        Answer respuesta = currentAnswers.get(idx);
+        if (respuesta.getValidity()) {
+            hits++;
+            new Alert(Alert.AlertType.INFORMATION, "¡Correcto!", ButtonType.OK).showAndWait();
+        } else {
+            faults++;
+            new Alert(Alert.AlertType.ERROR, "Incorrecto…", ButtonType.OK).showAndWait();
+        }
+
+        // 3) Deshabilita el botón de enviar hasta nueva selección
+        ans1.getToggleGroup().selectToggle(null);
     }
 
 }
