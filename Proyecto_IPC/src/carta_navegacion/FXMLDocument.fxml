@@ -26,54 +26,41 @@
 <VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carta_navegacion.FXMLDocumentController">
 
   <!-- Aquí añadimos la ListView para inyectarla en el controlador -->
-  <ListView fx:id="map_listview"
-            prefWidth="0.0" prefHeight="0.0"
-            visible="false" />
+  <ListView fx:id="map_listview" prefHeight="0.0" prefWidth="0.0" visible="false" />
 
   <!-- Barra superior -->
   <VBox prefHeight="83.0" prefWidth="853.0">
     <children>
-      <HBox prefHeight="23.0" prefWidth="853.0">
+      <HBox>
         <children>
-        <MenuBar>
+        <MenuBar prefHeight="25.0" prefWidth="130.0">
           <menus>
             <Menu text="Ayuda">
               <items>
-                <MenuItem text="Acerca de" onAction="#about"/>
+                <MenuItem onAction="#about" text="Acerca de" />
               </items>
             </Menu>
             <Menu text="Perfil">
               <items>
-                <MenuItem text="Ver / Modificar perfil" onAction="#onModifyProfile"/>
+                <MenuItem onAction="#onModifyProfile" text="Ver / Modificar perfil" />
               </items>
             </Menu>
           </menus>
         </MenuBar>
+               <Region prefHeight="40.0" prefWidth="1100.0" />
 
         <!-- HBox de usuario, login, register y nick -->
-        <HBox alignment="TOP_RIGHT" prefHeight="25.0" prefWidth="853.0" spacing="10">
+        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="650.0" spacing="10">
           <children>
-            <!-- rellena espacio -->
-            <Region HBox.hgrow="ALWAYS" />
             <!-- muestra el nick del usuario cuando esté logueado -->
             <Label fx:id="lblUser" text="" />
             <!-- botón de Login/Logout -->
-            <Button fx:id="loginButton"
-                    mnemonicParsing="false"
-                    onAction="#onLogin"
-                    styleClass="contrast"
-                    text="Log in"
-                    textFill="#ebebeb" />
+            <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLogin" styleClass="contrast" text="Log in" textFill="#ebebeb" />
             <!-- botón de Register -->
-            <Button fx:id="registerButton"
-                    mnemonicParsing="false"
-                    onAction="#onRegister"
-                    styleClass="contrast"
-                    text="Register"
-                    textFill="WHITE" />
+            <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegister" styleClass="contrast" text="Register" textFill="WHITE" />
           </children>
           <padding>
-            <Insets top="5" right="10" bottom="5" left="10"/>
+            <Insets bottom="5" left="10" right="10" top="5" />
           </padding>
         </HBox>
         </children>
@@ -83,10 +70,13 @@
         <children>
           <Region HBox.hgrow="ALWAYS" />
           <Button fx:id="centerButton" mnemonicParsing="false" onAction="#center" text="Centrar" />
-          <Label text="Zoom" />
-          <Button mnemonicParsing="false" onAction="#zoomOut" text="-" />
+          <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="67.0" text="Zoom">
+                  <font>
+                     <Font name="System Bold" size="12.0" />
+                  </font></Label>
+          <Button fx:id="menos" mnemonicParsing="false" onAction="#zoomOut" text="-" />
           <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
-          <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+          <Button fx:id="mas" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
         </children>
         <VBox.margin>
           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
