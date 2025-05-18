@@ -108,6 +108,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ToggleButton transButton;
     @FXML private Label lblUser;
+    @FXML
+    private Button menos;
+    @FXML
+    private Button mas;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
