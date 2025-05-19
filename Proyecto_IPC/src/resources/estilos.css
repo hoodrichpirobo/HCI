@@ -66,3 +66,51 @@ S17.642,20.762,13.558,20.762z";
 .map-pin .arrow-button .arrow {
     -fx-padding: 0;
 }
+
+.button {
+    -fx-background-color: #2A3439;
+    -fx-text-fill: whitesmoke;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #2A3439;
+    -fx-border-width: 2;
+}
+
+.button:hover {
+    -fx-background-color: black;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+#borrarSeleccion {
+    -fx-background-color: #E60026;
+    -fx-border-color: #E60026;
+    -fx-text-fill: white;
+}
+
+#borrarSeleccion:hover {
+    -fx-background-color: #CE2029;
+    -fx-border-color: #CE2029;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.radio-button:selected {
+    -fx-mark-color: #2A3439;
+    -fx-font-weight: bold;
+}
+
+.list-cell {
+    -fx-background-color: whitesmoke;
+    -fx-border-color: #00356B;
+    -fx-text-fill: #00356B;
+}
+
+.list-cell.hover {
+    -fx-background-color: #AFDBF5;
+    -fx-cursor: hand;
+}
+
+.list-cell:selected {
+    -fx-background-color: #76ABDF;
+}
