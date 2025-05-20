@@ -742,7 +742,7 @@ public class FXMLDocumentController implements Initializable {
         /*Button transportador = new Button();
         transportador.getStyleClass().add("transportador");
         zoomGroup.getChildren().add(transportador);
-        */
+      */
     }
     
     private void configurarTransportador() {
@@ -751,14 +751,6 @@ public class FXMLDocumentController implements Initializable {
         //transportador.setPreserveRatio(true);
         transportador.setFitWidth(3000);
         transportador.setFitHeight(3000);
-        transportador.setVisible(false);
-
-        transportador.visibleProperty().bind(transButton.selectedProperty());
-    }
-    
-    private void configurarTransportador() {
-        transportador.setPreserveRatio(true);
-        transportador.setFitWidth(200);
         transportador.setVisible(false);
 
         transportador.visibleProperty().bind(transButton.selectedProperty());
@@ -805,24 +797,30 @@ public class FXMLDocumentController implements Initializable {
         estadisticas.showAndWait();
     }
 
-    double x1, y1;
+    double x1, y1, baseX, baseY;
     @FXML
     private void soltarTransportador(MouseEvent event) {
-        transportador.setTranslateX(0);
-        transportador.setTranslateY(0);
-        event.consume();
+        map_scrollpane.setPannable(true); 
+        
     }
 
     @FXML
     private void moverTransportador(MouseEvent event) {
-        transportador.setTranslateX(event.getSceneX()-x1);
-        transportador.setTranslateY(event.getSceneY()-y1);
+        double despX = event.getSceneX() - x1;
+        double despY = event.getSceneY() - y1;
+        transportador.setTranslateX((baseX + despX)*10);
+        transportador.setTranslateY((baseY + despY)*10);
+        event.consume();
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
+        map_scrollpane.setPannable(false); 
         x1 = event.getSceneX();
         y1 = event.getSceneY();
+        baseX = transportador.getTranslateX();
+        baseY = transportador.getTranslateY();
+        event.consume();
     }
 
 }
