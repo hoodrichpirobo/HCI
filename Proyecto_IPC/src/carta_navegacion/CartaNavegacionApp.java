@@ -20,12 +20,29 @@ public class CartaNavegacionApp extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        //Parent root = FXMLLoader.load(getClass().getResource("FXMLDisplayProblems.fxml"));
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = loader.load();
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/logo.png")));
         Scene scene = new Scene(root);
         stage.setTitle("Proyecto IPC");
         stage.setScene(scene);
+        
+        FXMLDocumentController controller = loader.getController();
+        stage.setOnCloseRequest(event -> {
+            if (controller.sesionIniciada.get()) {
+                if (controller.currentUser != null) {
+                    // Guardar sesión en BD
+                    controller.currentUser.addSession(controller.hits.get(), controller.faults.get());
+                    // Reiniciar contadores
+                    controller.hits.set(0);
+                    controller.faults.set(0);
+                }
+                // Logout interno
+                controller.currentUser = null;
+                controller.sesionIniciada.set(false);
+            }
+        });
+
         stage.show();
     }
 
