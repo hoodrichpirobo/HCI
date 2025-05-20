@@ -305,7 +305,7 @@
         <content>
           <Pane onMouseClicked="#handleMapClick">
             <children>
-              <ImageView fitHeight="5577.0" fitWidth="8674.0" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/carta_nautica.jpg" />
                 </image>
@@ -319,9 +319,10 @@
                   <String fx:value="map-pin" />
                 </styleClass>
               </MenuButton>
-                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+
+                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="131.0" layoutY="60.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
                         <image>
-                           <Image url="@../resources/transportador.png" />
+                           <Image url="@../resources/transportador2.png" />
                         </image>
                      </ImageView>
             </children>
