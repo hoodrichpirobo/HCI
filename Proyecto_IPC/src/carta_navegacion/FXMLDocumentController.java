@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import model.Session;
@@ -125,6 +126,8 @@ public class FXMLDocumentController implements Initializable {
     private Text displayFaults;
     @FXML
     private ImageView transportador;
+    @FXML
+    private Pane mapPane;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -800,21 +803,17 @@ public class FXMLDocumentController implements Initializable {
     double x1, y1;
     @FXML
     private void soltarTransportador(MouseEvent event) {
-        transportador.setTranslateX(0);
-        transportador.setTranslateY(0);
-        event.consume();
+        
     }
 
     @FXML
     private void moverTransportador(MouseEvent event) {
-        transportador.setTranslateX(event.getSceneX()-x1);
-        transportador.setTranslateY(event.getSceneY()-y1);
+        
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
-        x1 = event.getSceneX();
-        y1 = event.getSceneY();
+        
     }
 
 }
