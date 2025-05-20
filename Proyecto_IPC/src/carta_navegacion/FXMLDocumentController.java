@@ -739,12 +739,18 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void addTrans(ActionEvent event) {
-      
+        /*Button transportador = new Button();
+        transportador.getStyleClass().add("transportador");
+        zoomGroup.getChildren().add(transportador);
+      */
     }
     
     private void configurarTransportador() {
-        transportador.setPreserveRatio(true);
-        transportador.setFitWidth(200);
+        transportador.setX(3000);
+        transportador.setY(3000);
+        //transportador.setPreserveRatio(true);
+        transportador.setFitWidth(3000);
+        transportador.setFitHeight(3000);
         transportador.setVisible(false);
 
         transportador.visibleProperty().bind(transButton.selectedProperty());
@@ -789,6 +795,26 @@ public class FXMLDocumentController implements Initializable {
         }
         estadisticas.setContentText("Total Hits: " + h + "\n" + "Total Faults: " + f + "\n" + "Tasa de aciertos: " + ta + "%");
         estadisticas.showAndWait();
+    }
+
+    double x1, y1;
+    @FXML
+    private void soltarTransportador(MouseEvent event) {
+        transportador.setTranslateX(0);
+        transportador.setTranslateY(0);
+        event.consume();
+    }
+
+    @FXML
+    private void moverTransportador(MouseEvent event) {
+        transportador.setTranslateX(event.getSceneX()-x1);
+        transportador.setTranslateY(event.getSceneY()-y1);
+    }
+
+    @FXML
+    private void cogerTransportador(MouseEvent event) {
+        x1 = event.getSceneX();
+        y1 = event.getSceneY();
     }
 
 }
