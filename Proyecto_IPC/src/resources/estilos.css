@@ -67,6 +67,10 @@ S17.642,20.762,13.558,20.762z";
     -fx-padding: 0;
 }
 
+.text {
+    -fx-font-size: 13px;
+}
+
 .button {
     -fx-background-color: #2A3439;
     -fx-text-fill: whitesmoke;
@@ -80,6 +84,32 @@ S17.642,20.762,13.558,20.762z";
     -fx-background-color: black;
     -fx-cursor: hand;
     -fx-font-weight: bold;
+}
+
+#stats {
+    -fx-background-color: whitesmoke;
+    -fx-border-width: 1;
+}
+
+#showStats:hover {
+    -fx-background-color: white;
+    -fx-cursor: hand;
+}
+
+#splitPane {
+    -fx-background-color: #DBD7D2;
+}
+
+#scrollTest, #seccionPreguntas {
+    -fx-background-color: #DBD7D2;
+}
+
+#seleccionarPregunta, #preguntaRandom {
+    -fx-background-color: whitesmoke;
+}
+
+#seleccionarPregunta:hover, #preguntaRandom:hover {
+    -fx-background-color: #F0F8FF;
 }
 
 #borrarSeleccion {
@@ -113,4 +143,16 @@ S17.642,20.762,13.558,20.762z";
 
 .list-cell:selected {
     -fx-background-color: #76ABDF;
+}
+
+.imageview {
+    -fx-background-color: red;
+}
+
+.transportador {
+    -fx-shape:"M 1900.0049,17090.005 V 9509.9951 1930 H 9480 17059.995 V 950";
+    -fx-pref-width: 350;
+    -fx-pref-height: 350;
+    -fx-scale-y: -1;
+    -fx-background-color: blue;
 }

@@ -48,6 +48,11 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.ImageView;
+import model.Session;
 import model.User;
 
 
@@ -60,8 +65,8 @@ import model.User;
 public class FXMLDocumentController implements Initializable {
 
     Navigation obj;
-    private User currentUser = null;
-    private int hits = 0, faults = 0;
+    public User currentUser = null;
+    public IntegerProperty hits = new SimpleIntegerProperty(0), faults = new SimpleIntegerProperty(0);
     // Lista de respuestas de la pregunta cargada (en el mismo orden en que pintas los RadioButton)
     private List<Answer> currentAnswers = Collections.emptyList();
     // === Campos FXML ===
@@ -99,7 +104,7 @@ public class FXMLDocumentController implements Initializable {
 
     // === Estado interno ===
     private Group zoomGroup;
-    private final BooleanProperty sesionIniciada = new SimpleBooleanProperty(false);
+    public final BooleanProperty sesionIniciada = new SimpleBooleanProperty(false);
     private ChangeListener<Number> bloqueoDivisor;
     @FXML
     private Button centerButton;
@@ -112,6 +117,14 @@ public class FXMLDocumentController implements Initializable {
     private Button menos;
     @FXML
     private Button mas;
+    @FXML
+    private Button stats;
+    @FXML
+    private Text displayHits;
+    @FXML
+    private Text displayFaults;
+    @FXML
+    private ImageView transportador;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -135,6 +148,7 @@ public class FXMLDocumentController implements Initializable {
         configurarSeccionPreguntas();
 
         // === 3) Bindings para login/register ===
+        stats.visibleProperty().bind(sesionIniciada);
         // Deshabilita “Register” si ya hay sesión
         registerButton.disableProperty().bind(sesionIniciada);
         // Cambia el texto de loginButton según estado
@@ -155,6 +169,9 @@ public class FXMLDocumentController implements Initializable {
                 lblUser.setText("");
             }
         });
+        
+        // Configuración herramientas
+        configurarTransportador();
     }
     
     private void configurarContenidoMapa() {
@@ -217,6 +234,8 @@ public class FXMLDocumentController implements Initializable {
                         splitPane.setDividerPositions(0.35);
                         seccionPreguntas.setVisible(true);
                         scrollTest.setVisible(true);
+                        displayHits.textProperty().bind(hits.asString("Hits %d"));
+                        displayFaults.textProperty().bind(faults.asString("Faults: %d"));
                     } else {
                         splitPane.setDividerPositions(0.0);
                         splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
@@ -361,9 +380,10 @@ public class FXMLDocumentController implements Initializable {
         if (sesionIniciada.get()) {
             if (currentUser != null) {
                 // Guardar sesión en BD
-                currentUser.addSession(hits, faults);
+                currentUser.addSession(hits.get(), faults.get());
                 // Reiniciar contadores
-                hits = faults = 0;
+                hits.set(0);
+                faults.set(0);
             }
             // Logout interno
             currentUser = null;
@@ -719,7 +739,21 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void addTrans(ActionEvent event) {
-      
+        /*Button transportador = new Button();
+        transportador.getStyleClass().add("transportador");
+        zoomGroup.getChildren().add(transportador);
+      */
+    }
+    
+    private void configurarTransportador() {
+        transportador.setX(3000);
+        transportador.setY(3000);
+        //transportador.setPreserveRatio(true);
+        transportador.setFitWidth(3000);
+        transportador.setFitHeight(3000);
+        transportador.setVisible(false);
+
+        transportador.visibleProperty().bind(transButton.selectedProperty());
     }
 
     @FXML
@@ -734,15 +768,53 @@ public class FXMLDocumentController implements Initializable {
         // 2) Comprueba si acertó
         Answer respuesta = currentAnswers.get(idx);
         if (respuesta.getValidity()) {
-            hits++;
+            hits.set(hits.get() + 1);
             new Alert(Alert.AlertType.INFORMATION, "¡Correcto!", ButtonType.OK).showAndWait();
         } else {
-            faults++;
+            faults.set(faults.get() + 1);
             new Alert(Alert.AlertType.ERROR, "Incorrecto…", ButtonType.OK).showAndWait();
         }
 
         // 3) Deshabilita el botón de enviar hasta nueva selección
         ans1.getToggleGroup().selectToggle(null);
+    }
+
+    @FXML
+    private void showStats(ActionEvent event) {
+        Alert estadisticas = new Alert(AlertType.INFORMATION);
+        estadisticas.setHeaderText("Estadísticas globales de " + currentUser.getNickName());
+        List<Session> a = currentUser.getSessions();
+        int h = hits.get(), f = faults.get();
+        for(Session s : a){
+            h += s.getHits();
+            f += s.getFaults();
+        }
+        double ta = 0;
+        if(h + f > 0){
+            ta = (h * 100.0 / (h + f));
+        }
+        estadisticas.setContentText("Total Hits: " + h + "\n" + "Total Faults: " + f + "\n" + "Tasa de aciertos: " + ta + "%");
+        estadisticas.showAndWait();
+    }
+
+    double x1, y1;
+    @FXML
+    private void soltarTransportador(MouseEvent event) {
+        transportador.setTranslateX(0);
+        transportador.setTranslateY(0);
+        event.consume();
+    }
+
+    @FXML
+    private void moverTransportador(MouseEvent event) {
+        transportador.setTranslateX(event.getSceneX()-x1);
+        transportador.setTranslateY(event.getSceneY()-y1);
+    }
+
+    @FXML
+    private void cogerTransportador(MouseEvent event) {
+        x1 = event.getSceneX();
+        y1 = event.getSceneY();
     }
 
 }
