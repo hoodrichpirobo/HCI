@@ -39,6 +39,7 @@ import javafx.beans.binding.BooleanBinding;
 import model.Navigation;
 import model.Problem;
 import carta_navegacion.FXMLDisplayProblemsController;
+import javafx.scene.paint.Color;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +53,9 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 import model.Session;
 import model.User;
 
@@ -110,8 +113,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button centerButton;
     @FXML
-    private ToggleButton puntito;
-    @FXML
     private ToggleButton transButton;
     @FXML private Label lblUser;
     @FXML
@@ -128,6 +129,14 @@ public class FXMLDocumentController implements Initializable {
     private ImageView transportador;
     @FXML
     private Pane mapPane;
+    @FXML
+    private ToggleButton botonPunto;
+    @FXML
+    private VBox modificadoresObjetos;
+    @FXML
+    private Button papelera;
+    @FXML
+    private ColorPicker colorPicker;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -657,15 +666,6 @@ public class FXMLDocumentController implements Initializable {
             opciones.selectToggle(null);
         });
     }
-
-    @FXML
-    private void addPuntito(MouseEvent event) {
-        TextField texto = new TextField("X");
-        zoomGroup.getChildren().add(texto);
-        texto.setLayoutX(event.getX());
-        texto.setLayoutY(event.getY());
-        //texto.requestFocus();
-    }
     
     @FXML
     private void onModifyProfile(ActionEvent event) {
@@ -728,16 +728,44 @@ public class FXMLDocumentController implements Initializable {
         );
     }
 
-    @FXML
-    private void puntoPulsado(ActionEvent event) {
-        
-    }
-
+    List<Circle> puntos = new ArrayList<>();
+    Circle puntoSeleccionado = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
-        
-        
-    
+        if(botonPunto.isPressed()){
+            double x = event.getSceneX(), y = event.getSceneY();
+            Point2D p = new Point2D(x, y);
+            Circle c = new Circle(p.getX(), p.getY(), 5, Color.MAGENTA);
+            mapPane.getChildren().add(c);
+            puntos.add(c);
+            c.setOnMouseClicked(e -> {
+                e.consume();
+                if(puntoSeleccionado != null){
+                    puntoSeleccionado.setEffect(null);
+                }
+                puntoSeleccionado = c;
+                DropShadow glow = new DropShadow(10, Color.BLUE);
+                puntoSeleccionado.setEffect(glow);
+                papelera.setDisable(false);
+                papelera.setOnAction(f -> {
+                    if(puntoSeleccionado != null){
+                        mapPane.getChildren().remove(puntoSeleccionado);
+                        puntos.remove(puntoSeleccionado);
+                        puntoSeleccionado = null;
+                        papelera.setDisable(true);
+                    }
+                });
+                colorPicker.setOnAction(h -> {
+                   Color color = colorPicker.getValue();
+                   puntoSeleccionado.setFill(color);
+                });
+            });
+            c.setOnMouseDragged(g -> {
+               double dx = g.getSceneX() - x, dy = g.getSceneY() - y;
+               c.setCenterX(c.getCenterX() + dx);
+               c.setCenterY(c.getCenterY() + dy);
+            });
+        }
     }
 
     @FXML
@@ -823,6 +851,15 @@ public class FXMLDocumentController implements Initializable {
         baseX = transportador.getTranslateX();
         baseY = transportador.getTranslateY();
         event.consume();
+    }
+
+    @FXML
+    private void addPunto(ActionEvent event) {
+        
+    }
+
+    @FXML
+    private void borrarObjeto(ActionEvent event) {
     }
 
 }
