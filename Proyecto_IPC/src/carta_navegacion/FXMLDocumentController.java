@@ -800,20 +800,29 @@ public class FXMLDocumentController implements Initializable {
         estadisticas.showAndWait();
     }
 
-    double x1, y1;
+    double x1, y1, baseX, baseY;
     @FXML
     private void soltarTransportador(MouseEvent event) {
-        
+        map_scrollpane.setPannable(true); 
     }
 
     @FXML
     private void moverTransportador(MouseEvent event) {
-        
+        double despX = event.getSceneX() - x1;
+        double despY = event.getSceneY() - y1;
+        transportador.setTranslateX((baseX + despX)*10);
+        transportador.setTranslateY((baseY + despY)*10);
+        event.consume();
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
-        
+        map_scrollpane.setPannable(false); 
+        x1 = event.getSceneX();
+        y1 = event.getSceneY();
+        baseX = transportador.getTranslateX();
+        baseY = transportador.getTranslateY();
+        event.consume();
     }
 
 }
