@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -38,7 +37,6 @@ import model.NavDAOException;
 import javafx.beans.binding.BooleanBinding;
 import model.Navigation;
 import model.Problem;
-import carta_navegacion.FXMLDisplayProblemsController;
 import javafx.scene.paint.Color;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -55,11 +53,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
-<<<<<<< Updated upstream
-import javafx.scene.shape.Circle;
-=======
 import javafx.scene.input.RotateEvent;
->>>>>>> Stashed changes
+import javafx.scene.shape.Circle;
+import model.Session;
+import javafx.scene.shape.Circle;
+import javafx.scene.input.RotateEvent;
 import model.Session;
 import model.User;
 
