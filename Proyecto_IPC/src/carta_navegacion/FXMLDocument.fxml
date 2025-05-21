@@ -303,7 +303,7 @@
       <!-- ScrollPane con la carta náutica -->
       <ScrollPane fx:id="map_scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
         <content>
-          <Pane maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleMapClick">
+          <Pane fx:id="mapPane" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleMapClick">
             <children>
               <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
                 <image>
