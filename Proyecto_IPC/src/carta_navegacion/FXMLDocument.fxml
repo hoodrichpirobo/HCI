@@ -111,7 +111,7 @@
 
       <HBox prefHeight="44.0" prefWidth="853.0">
         <children>
-          <ToggleButton fx:id="transButton" mnemonicParsing="false" onAction="#addTrans" prefHeight="38.0" prefWidth="46.0">
+          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -321,7 +321,9 @@
                 </styleClass>
               </MenuButton>
 
-                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="72.0" layoutY="74.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
+
+                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="147.0" layoutY="147.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
+
                         <image>
                            <Image url="@../resources/transportador2.png" />
                         </image>
@@ -336,8 +338,13 @@
   <!-- Barra inferior con posición del ratón -->
   <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="829.0">
     <children>
-         <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="651.0">
+         <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="745.0">
             <children>
+               <VBox prefHeight="33.0" prefWidth="87.0">
+                  <children>
+                     <Slider fx:id="rotate" prefHeight="36.0" prefWidth="76.0" />
+                  </children>
+               </VBox>
                <VBox fx:id="modificadoresObjetos" prefHeight="19.0" prefWidth="651.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
