@@ -863,8 +863,8 @@ public class FXMLDocumentController implements Initializable {
 
         double despX = event.getSceneX() - x1;
         double despY = event.getSceneY() - y1;
-        transportador.setTranslateX((baseX + despX)*10);
-        transportador.setTranslateY((baseY + despY)*10);
+        transportador.setTranslateX((baseX + despX));
+        transportador.setTranslateY((baseY + despY));
 
         event.consume();
   
