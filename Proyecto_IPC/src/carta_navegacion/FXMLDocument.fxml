@@ -321,7 +321,9 @@
                 </styleClass>
               </MenuButton>
 
+
                      <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="147.0" layoutY="147.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
+
                         <image>
                            <Image url="@../resources/transportador2.png" />
                         </image>

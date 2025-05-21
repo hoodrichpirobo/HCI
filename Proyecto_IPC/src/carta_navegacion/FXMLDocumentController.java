@@ -55,7 +55,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+<<<<<<< Updated upstream
 import javafx.scene.shape.Circle;
+=======
+import javafx.scene.input.RotateEvent;
+>>>>>>> Stashed changes
 import model.Session;
 import model.User;
 
@@ -183,7 +187,7 @@ public class FXMLDocumentController implements Initializable {
                 lblUser.setText("");
             }
         });
-        
+      
         // Configuración herramientas
         configurarTransportador();
     }
@@ -774,9 +778,11 @@ public class FXMLDocumentController implements Initializable {
     private void configurarTransportador() {
         transportador.setX(3000);
         transportador.setY(3000);
-        transportador.setFitWidth(3000);
-        transportador.setFitHeight(3000);
+
         //transportador.setPreserveRatio(true);
+        transportador.setFitWidth(2500);
+        transportador.setFitHeight(2500);
+
         transportador.setVisible(false);
 
         
@@ -786,7 +792,7 @@ public class FXMLDocumentController implements Initializable {
         });
         transportador.rotateProperty().bind(rotate.valueProperty());
         transportador.visibleProperty().bind(transButton.selectedProperty());
-        
+
         transportador.setOnMousePressed(this::cogerTransportador);
         transportador.setOnMouseDragged(this::moverTransportador);
         transportador.setOnMouseReleased(this::soltarTransportador);
@@ -839,12 +845,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void soltarTransportador(MouseEvent event) {
         //map_scrollpane.setPannable(true); 
-        System.out.println("soltar");
+
         event.consume();
     }
 
     @FXML
     private void moverTransportador(MouseEvent event) {
+
         map_scrollpane.setPannable(false); 
         Point2D current = new Point2D(event.getSceneX(), event.getSceneY());
         // Calculate displacement from initial anchor
@@ -855,14 +862,22 @@ public class FXMLDocumentController implements Initializable {
             transportador.setTranslateY((baseY + increment.getY()));
         }
         System.out.println("mover");
+
+        double despX = event.getSceneX() - x1;
+        double despY = event.getSceneY() - y1;
+        transportador.setTranslateX((baseX + despX)*10);
+        transportador.setTranslateY((baseY + despY)*10);
+
         event.consume();
   
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
+
         map_scrollpane.setPannable(false); 
         dragAnchor = new Point2D(event.getSceneX(), event.getSceneY());
+
         x1 = event.getSceneX();
         y1 = event.getSceneY();
 
@@ -871,8 +886,17 @@ public class FXMLDocumentController implements Initializable {
         transportador.toFront();
         event.consume();
     }
+    private double initialAngle = 0;
+    private double startAngle;
+    @FXML
+    private void rotarTransportador(RotateEvent event) {
+        double newAngle = startAngle + event.getAngle() - initialAngle;
+        transportador.setRotate(newAngle % 360);
+        event.consume();
+    }
 
     @FXML
+
     private void addPunto(ActionEvent event) {
         
     }
@@ -881,4 +905,18 @@ public class FXMLDocumentController implements Initializable {
     private void borrarObjeto(ActionEvent event) {
     }
 
+
+    private void acabarRotacionTrans(RotateEvent event) {
+            event.consume();
+
+    }
+
+    @FXML
+    private void iniciarRotacionTrans(RotateEvent event) {
+        startAngle = transportador.getRotate();
+        initialAngle = event.getAngle();
+        event.consume();
+    }
+
+    
 }
