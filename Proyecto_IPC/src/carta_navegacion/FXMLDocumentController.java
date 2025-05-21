@@ -137,6 +137,8 @@ public class FXMLDocumentController implements Initializable {
     private Button papelera;
     @FXML
     private ColorPicker colorPicker;
+    @FXML
+    private Slider rotate;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -768,23 +770,26 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML
-    private void addTrans(ActionEvent event) {
-        /*Button transportador = new Button();
-        transportador.getStyleClass().add("transportador");
-        zoomGroup.getChildren().add(transportador);
-      */
-    }
     
     private void configurarTransportador() {
         transportador.setX(3000);
         transportador.setY(3000);
-        //transportador.setPreserveRatio(true);
         transportador.setFitWidth(3000);
         transportador.setFitHeight(3000);
+        //transportador.setPreserveRatio(true);
         transportador.setVisible(false);
 
+        
+        Platform.runLater(() -> {
+        Bounds viewportBounds = map_scrollpane.getViewportBounds();
+       
+        });
+        transportador.rotateProperty().bind(rotate.valueProperty());
         transportador.visibleProperty().bind(transButton.selectedProperty());
+        
+        transportador.setOnMousePressed(this::cogerTransportador);
+        transportador.setOnMouseDragged(this::moverTransportador);
+        transportador.setOnMouseReleased(this::soltarTransportador);
     }
 
     @FXML
@@ -829,27 +834,41 @@ public class FXMLDocumentController implements Initializable {
     }
 
     double x1, y1, baseX, baseY;
+    Point2D dragAnchor;    
+    private double initialX, initialY;
     @FXML
     private void soltarTransportador(MouseEvent event) {
-        map_scrollpane.setPannable(true); 
+        //map_scrollpane.setPannable(true); 
+        System.out.println("soltar");
+        event.consume();
     }
 
     @FXML
     private void moverTransportador(MouseEvent event) {
-        double despX = event.getSceneX() - x1;
-        double despY = event.getSceneY() - y1;
-        transportador.setTranslateX((baseX + despX)*10);
-        transportador.setTranslateY((baseY + despY)*10);
+        map_scrollpane.setPannable(false); 
+        Point2D current = new Point2D(event.getSceneX(), event.getSceneY());
+        // Calculate displacement from initial anchor
+        Point2D increment = current.subtract(dragAnchor);
+        double threshold = 1.0; // píxeles
+        if (Math.abs(increment.getX()) > threshold || Math.abs(increment.getY()) > threshold) {
+            transportador.setTranslateX((baseX + increment.getX()));
+            transportador.setTranslateY((baseY + increment.getY()));
+        }
+        System.out.println("mover");
         event.consume();
+  
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
         map_scrollpane.setPannable(false); 
+        dragAnchor = new Point2D(event.getSceneX(), event.getSceneY());
         x1 = event.getSceneX();
         y1 = event.getSceneY();
+
         baseX = transportador.getTranslateX();
         baseY = transportador.getTranslateY();
+        transportador.toFront();
         event.consume();
     }
 
