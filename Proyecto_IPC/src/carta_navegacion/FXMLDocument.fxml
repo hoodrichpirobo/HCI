@@ -3,6 +3,7 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
@@ -120,7 +121,7 @@
             </graphic>
           </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-          <ToggleButton fx:id="puntito" mnemonicParsing="false" onAction="#puntoPulsado" onMousePressed="#addPuntito">
+          <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -333,9 +334,31 @@
   </SplitPane>
 
   <!-- Barra inferior con posición del ratón -->
-  <HBox alignment="CENTER_RIGHT">
+  <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="829.0">
     <children>
-      <Label fx:id="mousePosition" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="842.0" text="SceneX:    SceneY:" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
+         <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="651.0">
+            <children>
+               <VBox fx:id="modificadoresObjetos" prefHeight="19.0" prefWidth="651.0" />
+               <ColorPicker fx:id="colorPicker">
+                  <HBox.margin>
+                     <Insets left="5.0" right="5.0" />
+                  </HBox.margin>
+               </ColorPicker>
+               <Button fx:id="papelera" mnemonicParsing="false" onAction="#borrarObjeto">
+                  <graphic>
+                     <ImageView fitHeight="104.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/bin.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+                  <HBox.margin>
+                     <Insets left="5.0" />
+                  </HBox.margin>
+               </Button>
+            </children>
+         </HBox>
+      <Label fx:id="mousePosition" alignment="CENTER_RIGHT" prefHeight="19.0" prefWidth="190.0" text="SceneX:    SceneY:" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
             <HBox.margin>
                <Insets />
             </HBox.margin></Label>
