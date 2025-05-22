@@ -785,8 +785,8 @@ public class FXMLDocumentController implements Initializable {
         regla.setVisible(false);
         regla.setX(1500);
         regla.setY(3000);
-        regla.setFitWidth(8000);
-        regla.setFitHeight(8000);
+        regla.setFitWidth(5000);
+        regla.setFitHeight(5000);
         Platform.runLater(() -> {
         Bounds viewportBounds = map_scrollpane.getViewportBounds();
        
@@ -796,7 +796,7 @@ public class FXMLDocumentController implements Initializable {
 
         regla.setOnMousePressed(this::cogerRegla);
         regla.setOnMouseDragged(this::moverRegla);
-        regla.setOnMouseReleased(this::soltarRegla);
+    
     }
     private void configurarTransportador() {
         transportador.setX(3000);
@@ -818,7 +818,7 @@ public class FXMLDocumentController implements Initializable {
 
         transportador.setOnMousePressed(this::cogerTransportador);
         transportador.setOnMouseDragged(this::moverTransportador);
-        transportador.setOnMouseReleased(this::soltarTransportador);
+        
     }
 
     @FXML
@@ -862,68 +862,53 @@ public class FXMLDocumentController implements Initializable {
         estadisticas.showAndWait();
     }
 
-    double baseX, baseY;
-    Point2D dragAnchor;    
-    private double initialX, initialY;
-    @FXML
-    private void soltarTransportador(MouseEvent event) {
-        //map_scrollpane.setPannable(true); 
-        event.consume();
-    }
-
+    double baseX, baseY, bx, by;  
+    Point2D localBase;
+    Point2D localBaseRegla;
     @FXML
     private void moverTransportador(MouseEvent event) {
-
         map_scrollpane.setPannable(false); 
-        Point2D current = new Point2D(event.getSceneX(), event.getSceneY());
-        Point2D increment = current.subtract(dragAnchor);     
-        transportador.setTranslateX((baseX + increment.getX()));
-        transportador.setTranslateY((baseY + increment.getY()));       
+        
+        Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
+        transportador.setTranslateX(baseX + localPos.getX() - localBase.getX());
+        transportador.setTranslateY(baseY + localPos.getY() - localBase.getY());
         event.consume();
-  
+
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
-
         map_scrollpane.setPannable(false); 
-        dragAnchor = new Point2D(event.getSceneX(), event.getSceneY());
-
-        baseX = transportador.getTranslateX();
-        baseY = transportador.getTranslateY();
-        //transportador.toFront();
-        event.consume();
+        
+       localBase = zoomGroup.sceneToLocal(event.getSceneX() , event.getSceneY());
+       baseX = transportador.getTranslateX();
+       baseY = transportador.getTranslateY();
+       event.consume();
     }
     
-    Point2D anclaRegla;
-    double x1, y1;
     @FXML
     private void cogerRegla(MouseEvent event){
         map_scrollpane.setPannable(false); 
-        anclaRegla = new Point2D(event.getSceneX(), event.getSceneY());
+    
+        localBaseRegla = zoomGroup.sceneToLocal(event.getSceneX() , event.getSceneY());
 
-        x1 = regla.getTranslateX();
-        y1 = regla.getTranslateY();
+        bx = regla.getTranslateX();
+        by = regla.getTranslateY();
 
         event.consume();
+        
     }
     
     @FXML
      private void moverRegla(MouseEvent event) {
 
-        map_scrollpane.setPannable(false); 
-        Point2D current = new Point2D(event.getSceneX(), event.getSceneY());
-        Point2D increment = current.subtract(anclaRegla);     
-        regla.setTranslateX((x1 + increment.getX()));
-        regla.setTranslateY((y1 + increment.getY()));       
+        Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
+        regla.setTranslateX(bx + localPos.getX() - localBaseRegla.getX());
+        regla.setTranslateY(by + localPos.getY() - localBaseRegla.getY());
         event.consume();
   
     }
-    @FXML
-    private void soltarRegla(MouseEvent event) {
-        //map_scrollpane.setPannable(true); 
-        event.consume();
-    }
+   
      
     @FXML
 
