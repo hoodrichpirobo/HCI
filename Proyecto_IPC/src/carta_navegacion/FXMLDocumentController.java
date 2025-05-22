@@ -1,9 +1,11 @@
 package carta_navegacion;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -23,7 +25,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -38,7 +39,9 @@ import model.NavDAOException;
 import javafx.beans.binding.BooleanBinding;
 import model.Navigation;
 import model.Problem;
-import com.sun.tools.javac.Main;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import javafx.scene.paint.Color;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -48,14 +51,15 @@ import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
 import model.Session;
 import model.User;
 
@@ -137,6 +141,9 @@ public class FXMLDocumentController implements Initializable {
     private Button papelera;
     @FXML
     private ColorPicker colorPicker;
+    @FXML private ImageView avatarView;                                // ─── AVATAR (NEW)
+    private static final String DEFAULT_AVATAR_RES = "/resources/default_avatar.png";   // ─── AVATAR
+    private static final Path   AVATAR_DIR        = Paths.get("avatars");              // ─── AVATAR
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -170,20 +177,27 @@ public class FXMLDocumentController implements Initializable {
                     .otherwise("Log in")
         );
 
-        // === 4) Label de usuario ===
-        // Asegúrate de tener en tu FXML: <Label fx:id="lblUser" …/>
         lblUser.setText("");
-        // Cuando cambia la propiedad sesionIniciada, actualizamos lblUser
-        sesionIniciada.addListener((obs, wasIn, isIn) -> {
-            if (isIn && currentUser != null) {
-                lblUser.setText("👤 " + currentUser.getNickName());
+        sesionIniciada.addListener((obs,wasIn,isIn)->{
+            if (isIn && currentUser!=null) {
+                lblUser.setText(currentUser.getNickName());
+                refreshAvatar(currentUser.getAvatar());               // ─── AVATAR
             } else {
                 lblUser.setText("");
+                refreshAvatar(null);                                   // ─── AVATAR
             }
         });
         
         // Configuración herramientas
         configurarTransportador();
+    }
+    
+    /* ───────────────  AVATAR helper  ─────────────── */
+    private void refreshAvatar(Image img) {                            // ─── AVATAR
+        if (img != null) { avatarView.setImage(img); return; }
+
+        InputStream is = getClass().getResourceAsStream(DEFAULT_AVATAR_RES);
+        if (is != null) avatarView.setImage(new Image(is));
     }
     
     private void configurarContenidoMapa() {
@@ -701,6 +715,7 @@ public class FXMLDocumentController implements Initializable {
                 } else {
                     currentUser = u;
                     sesionIniciada.set(true);
+                    refreshAvatar(u.getAvatar());                      // ─── AVATAR
                 }
             } catch (NavDAOException e) {
                 new Alert(Alert.AlertType.ERROR,
@@ -799,6 +814,7 @@ public class FXMLDocumentController implements Initializable {
             dlg.showAndWait().ifPresent(u -> {
                 currentUser = u;
                 sesionIniciada.set(true);
+                refreshAvatar(u.getAvatar());                              // ─── AVATAR
                 new Alert(Alert.AlertType.INFORMATION,
                           "¡Bienvenido, " + u.getNickName() + "!",
                           ButtonType.OK).showAndWait();
@@ -829,12 +845,35 @@ public class FXMLDocumentController implements Initializable {
         TextField     emailField = new TextField(currentUser.getEmail());
         PasswordInput pwd        = new PasswordInput("Nueva contraseña");
         DatePicker    dobPicker  = new DatePicker(currentUser.getBirthdate());
+        Button changeAvBtn = new Button("Cambiar avatar");             // ─── AVATAR
+        
+        /* pick & copy avatar on click ------------------------------------- */
+        changeAvBtn.setOnAction(ev->{
+            FileChooser fc = new FileChooser();
+            fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Imágenes","*.png","*.jpg","*.jpeg","*.gif"));
+            File f = fc.showOpenDialog(dlg.getOwner());
+            if (f!=null) {
+                try {
+                    Files.createDirectories(AVATAR_DIR);
+                    Path target = AVATAR_DIR.resolve(
+                        currentUser.getNickName()+"_"+f.getName());
+                    Files.copy(f.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
+                    Image img = new Image(target.toUri().toString());
+                    currentUser.setAvatar(img);                        // guarda en BD
+                    refreshAvatar(img);                                // refresca inmediatamente
+                } catch (Exception ex) {
+                    new Alert(AlertType.ERROR,"No se pudo copiar imagen").showAndWait();
+                }
+            }
+        });
 
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
         grid.addRow(0, new Label("Email:"),      emailField);
         grid.addRow(1, new Label("Password:"),   pwd.box);
         grid.addRow(2, new Label("Nacimiento:"), dobPicker);
+        grid.addRow(3,new Label("Avatar:"), changeAvBtn);                 // ─── AVATAR
 
         dlg.getDialogPane().setContent(grid);
         dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
