@@ -141,25 +141,35 @@
             </graphic>
           </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-          <Button mnemonicParsing="false">
-            <graphic>
+               <ToggleButton fx:id="arcoBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
+                  <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/32341.png" />
                 </image>
               </ImageView>
-            </graphic>
-          </Button>
+                  </graphic>
+               </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-          <Button mnemonicParsing="false">
-            <graphic>
+               <ToggleButton fx:id="compasBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+                  <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/68001.png" />
                 </image>
               </ImageView>
-            </graphic>
-          </Button>
+                  </graphic>
+               </ToggleButton>
+               <Region layoutX="56.0" layoutY="10.0" prefHeight="36.0" prefWidth="7.0" />
+               <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+                  <graphic>
+                     <ImageView fitHeight="39.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/intenta-cuadrado.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+               </ToggleButton>
         </children>
         <VBox.margin>
           <Insets bottom="10.0" left="5.0" top="10.0" />
@@ -306,7 +316,7 @@
         <content>
           <Pane fx:id="mapPane" maxHeight="-Infinity" maxWidth="-Infinity" onMouseClicked="#handleMapClick">
             <children>
-              <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="62.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/carta_nautica.jpg" />
                 </image>
@@ -320,9 +330,14 @@
                   <String fx:value="map-pin" />
                 </styleClass>
               </MenuButton>
+                     <ImageView fx:id="regla" fitHeight="115.0" fitWidth="650.0" layoutX="-45.0" layoutY="161.0" onMouseDragged="#moverRegla" onMousePressed="#cogerRegla" onMouseReleased="#soltarRegla" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/regla.png" />
+                        </image>
+                     </ImageView>
 
 
-                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="147.0" layoutY="147.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
+                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="175.0" layoutY="133.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
 
                         <image>
                            <Image url="@../resources/transportador2.png" />

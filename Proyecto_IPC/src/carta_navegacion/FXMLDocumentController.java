@@ -141,6 +141,14 @@ public class FXMLDocumentController implements Initializable {
     private ColorPicker colorPicker;
     @FXML
     private Slider rotate;
+    @FXML
+    private ImageView regla;
+    @FXML
+    private ToggleButton reglaBoton;
+    @FXML
+    private ToggleButton arcoBoton;
+    @FXML
+    private ToggleButton compasBoton;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -188,6 +196,7 @@ public class FXMLDocumentController implements Initializable {
       
         // Configuración herramientas
         configurarTransportador();
+        configurarRegla();
     }
     
     private void configurarContenidoMapa() {
@@ -772,7 +781,23 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    
+    private void configurarRegla(){
+        regla.setVisible(false);
+        regla.setX(1500);
+        regla.setY(3000);
+        regla.setFitWidth(8000);
+        regla.setFitHeight(8000);
+        Platform.runLater(() -> {
+        Bounds viewportBounds = map_scrollpane.getViewportBounds();
+       
+        });
+        regla.rotateProperty().bind(rotate.valueProperty());
+        regla.visibleProperty().bind(reglaBoton.selectedProperty());
+
+        regla.setOnMousePressed(this::cogerRegla);
+        regla.setOnMouseDragged(this::moverRegla);
+        regla.setOnMouseReleased(this::soltarRegla);
+    }
     private void configurarTransportador() {
         transportador.setX(3000);
         transportador.setY(3000);
@@ -837,13 +862,12 @@ public class FXMLDocumentController implements Initializable {
         estadisticas.showAndWait();
     }
 
-    double x1, y1, baseX, baseY;
+    double baseX, baseY;
     Point2D dragAnchor;    
     private double initialX, initialY;
     @FXML
     private void soltarTransportador(MouseEvent event) {
         //map_scrollpane.setPannable(true); 
-
         event.consume();
     }
 
@@ -852,20 +876,9 @@ public class FXMLDocumentController implements Initializable {
 
         map_scrollpane.setPannable(false); 
         Point2D current = new Point2D(event.getSceneX(), event.getSceneY());
-        // Calculate displacement from initial anchor
-        Point2D increment = current.subtract(dragAnchor);
-        double threshold = 1.0; // píxeles
-        if (Math.abs(increment.getX()) > threshold || Math.abs(increment.getY()) > threshold) {
-            transportador.setTranslateX((baseX + increment.getX()));
-            transportador.setTranslateY((baseY + increment.getY()));
-        }
-        System.out.println("mover");
-
-        double despX = event.getSceneX() - x1;
-        double despY = event.getSceneY() - y1;
-        transportador.setTranslateX((baseX + despX));
-        transportador.setTranslateY((baseY + despY));
-
+        Point2D increment = current.subtract(dragAnchor);     
+        transportador.setTranslateX((baseX + increment.getX()));
+        transportador.setTranslateY((baseY + increment.getY()));       
         event.consume();
   
     }
@@ -876,23 +889,42 @@ public class FXMLDocumentController implements Initializable {
         map_scrollpane.setPannable(false); 
         dragAnchor = new Point2D(event.getSceneX(), event.getSceneY());
 
-        x1 = event.getSceneX();
-        y1 = event.getSceneY();
-
         baseX = transportador.getTranslateX();
         baseY = transportador.getTranslateY();
-        transportador.toFront();
+        //transportador.toFront();
         event.consume();
     }
-    private double initialAngle = 0;
-    private double startAngle;
+    
+    Point2D anclaRegla;
+    double x1, y1;
     @FXML
-    private void rotarTransportador(RotateEvent event) {
-        double newAngle = startAngle + event.getAngle() - initialAngle;
-        transportador.setRotate(newAngle % 360);
+    private void cogerRegla(MouseEvent event){
+        map_scrollpane.setPannable(false); 
+        anclaRegla = new Point2D(event.getSceneX(), event.getSceneY());
+
+        x1 = regla.getTranslateX();
+        y1 = regla.getTranslateY();
+
         event.consume();
     }
+    
+    @FXML
+     private void moverRegla(MouseEvent event) {
 
+        map_scrollpane.setPannable(false); 
+        Point2D current = new Point2D(event.getSceneX(), event.getSceneY());
+        Point2D increment = current.subtract(anclaRegla);     
+        regla.setTranslateX((x1 + increment.getX()));
+        regla.setTranslateY((y1 + increment.getY()));       
+        event.consume();
+  
+    }
+    @FXML
+    private void soltarRegla(MouseEvent event) {
+        //map_scrollpane.setPannable(true); 
+        event.consume();
+    }
+     
     @FXML
 
     private void addPunto(ActionEvent event) {
@@ -902,19 +934,5 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void borrarObjeto(ActionEvent event) {
     }
-
-
-    private void acabarRotacionTrans(RotateEvent event) {
-            event.consume();
-
-    }
-
-    @FXML
-    private void iniciarRotacionTrans(RotateEvent event) {
-        startAngle = transportador.getRotate();
-        initialAngle = event.getAngle();
-        event.consume();
-    }
-
-    
+  
 }
