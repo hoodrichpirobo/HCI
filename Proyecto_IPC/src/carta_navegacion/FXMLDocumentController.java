@@ -38,7 +38,7 @@ import model.NavDAOException;
 import javafx.beans.binding.BooleanBinding;
 import model.Navigation;
 import model.Problem;
-import carta_navegacion.FXMLDisplayProblemsController;
+import com.sun.tools.javac.Main;
 import javafx.scene.paint.Color;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -48,10 +48,10 @@ import javafx.scene.control.DatePicker;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -385,178 +385,6 @@ public class FXMLDocumentController implements Initializable {
         });
     }
 
-    // === Login ===
-    @FXML
-    private void onLogin(ActionEvent event) {
-        // 1) Si ya hay sesión iniciada, hacemos logout y guardamos la sesión
-        if (sesionIniciada.get()) {
-            if (currentUser != null) {
-                // Guardar sesión en BD
-                currentUser.addSession(hits.get(), faults.get());
-                // Reiniciar contadores
-                hits.set(0);
-                faults.set(0);
-            }
-            // Logout interno
-            currentUser = null;
-            sesionIniciada.set(false);
-            // Limpiar sección de preguntas
-            seccionPreguntas.setVisible(false);
-            splitPane.setDividerPositions(0.0);
-            return;
-        }
-
-        // 2) Si NO hay sesión, mostrar diálogo de login
-        Dialog<Pair<String,String>> dlg = new Dialog<>();
-        dlg.setTitle("Iniciar sesión");
-        dlg.setHeaderText("Introduce tus credenciales");
-
-        TextField userField = new TextField();
-        userField.setPromptText("Usuario");
-        PasswordField passField = new PasswordField();
-        passField.setPromptText("Contraseña");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10);
-        grid.add(new Label("Usuario:"),    0, 0);
-        grid.add(userField,                1, 0);
-        grid.add(new Label("Contraseña:"), 0, 1);
-        grid.add(passField,                1, 1);
-
-        dlg.getDialogPane()
-           .setContent(grid);
-        dlg.getDialogPane()
-           .getButtonTypes()
-           .addAll(ButtonType.OK, ButtonType.CANCEL);
-        dlg.setResultConverter(btn ->
-            btn == ButtonType.OK
-            ? new Pair<>(userField.getText().trim(), passField.getText())
-            : null
-        );
-
-        dlg.showAndWait().ifPresent(creds -> {
-            try {
-                Navigation nav = Navigation.getInstance();
-                User u = nav.authenticate(creds.getKey(), creds.getValue());
-                if (u == null) {
-                    new Alert(Alert.AlertType.ERROR,
-                              "Usuario o contraseña incorrectos",
-                              ButtonType.OK)
-                      .showAndWait();
-                } else {
-                    // Autenticación correcta
-                    currentUser = u;
-                    sesionIniciada.set(true);
-                }
-            } catch (NavDAOException e) {
-                new Alert(Alert.AlertType.ERROR,
-                          "Error de base de datos:\n" + e.getMessage(),
-                          ButtonType.OK)
-                  .showAndWait();
-            }
-        });
-    }
-
-    
-    @FXML
-    private void onRegister(ActionEvent event) {
-        Dialog<User> dlg = new Dialog<>();
-        dlg.setTitle("Registro de usuario");
-        dlg.setHeaderText("Rellena tus datos");
-
-        // Campos
-        TextField nickField  = new TextField();
-        nickField.setPromptText("Nickname (6–15 caracteres)");
-        TextField emailField = new TextField();
-        emailField.setPromptText("Email válido");
-        PasswordField passField = new PasswordField();
-        passField.setPromptText("Password (8–20 caracteres)");
-        passField.setTooltip(new Tooltip(
-            "8-20 car., 1 mayúscula, 1 minúscula, 1 dígito, 1 especial (!@#$%&*()-+=)"
-        ));
-        DatePicker dobPicker = new DatePicker();
-        dobPicker.setPromptText("Fecha de nacimiento");
-
-        // Label de ayuda para contraseña
-        Label passHelp = new Label(
-            "Debe tener 8-20 caracteres, "
-          + "1 mayúscula, 1 minúscula, 1 dígito y 1 especial (!@#$%&*()-+=)"
-        );
-        passHelp.setWrapText(true);
-
-        // GridPane
-        GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10);
-        grid.add(new Label("Nickname:"), 0, 0);
-        grid.add(nickField,              1, 0);
-        grid.add(new Label("Email:"),    0, 1);
-        grid.add(emailField,             1, 1);
-        grid.add(new Label("Password:"), 0, 2);
-        grid.add(passField,              1, 2);
-        grid.add(passHelp,               0, 3, 2, 1);
-        grid.add(new Label("Nacimiento:"),0, 4);
-        grid.add(dobPicker,              1, 4);
-
-        dlg.getDialogPane().setContent(grid);
-        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        // Binding para habilitar OK sólo cuando todo esté relleno y la password válida
-        Node okButton = dlg.getDialogPane().lookupButton(ButtonType.OK);
-        BooleanBinding passwordValid = Bindings.createBooleanBinding(
-            () -> User.checkPassword(passField.getText()),
-            passField.textProperty()
-        );
-        okButton.disableProperty().bind(
-            nickField.textProperty().isEmpty()
-          .or(emailField.textProperty().isEmpty())
-          .or(passField.textProperty().isEmpty())
-          .or(dobPicker.valueProperty().isNull())
-          .or(passwordValid.not())
-        );
-
-        // Result converter
-        dlg.setResultConverter(btn -> {
-          if (btn == ButtonType.OK) {
-            // Validaciones extra
-            if (!User.checkNickName(nickField.getText().trim()))
-              throw new IllegalArgumentException("Nickname inválido");
-            if (!User.checkEmail(emailField.getText().trim()))
-              throw new IllegalArgumentException("Email inválido");
-            if (Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16)
-              throw new IllegalArgumentException("Debes tener al menos 16 años");
-
-            try {
-              Navigation nav = Navigation.getInstance();
-              return nav.registerUser(
-                nickField.getText().trim(),
-                emailField.getText().trim(),
-                passField.getText(),
-                null,
-                dobPicker.getValue()
-              );
-            } catch (NavDAOException e) {
-              throw new RuntimeException("Error BD: " + e.getMessage(), e);
-            }
-          }
-          return null;
-        });
-
-        // Mostrar diálogo
-        try {
-          Optional<User> result = dlg.showAndWait();
-        result.ifPresent(u -> {
-          currentUser = u;
-          sesionIniciada.set(true);
-          new Alert(Alert.AlertType.INFORMATION,
-                    "¡Bienvenido, " + u.getNickName() + "!",
-                    ButtonType.OK)
-            .showAndWait();
-        });
-        } catch (RuntimeException ex) {
-          new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
-        }
-    }
-
     // === Información Acerca de ===
     @FXML
     private void about(ActionEvent event) {
@@ -667,67 +495,6 @@ public class FXMLDocumentController implements Initializable {
         });
     }
     
-    @FXML
-    private void onModifyProfile(ActionEvent event) {
-        if (!sesionIniciada.get() || currentUser == null) {
-            new Alert(Alert.AlertType.WARNING, "Tienes que iniciar sesión primero", ButtonType.OK)
-                .showAndWait();
-            return;
-        }
-
-        // 1) Construye el diálogo igual que en registro, pero con campos pre-llenados:
-        Dialog<User> dlg = new Dialog<>();
-        dlg.setTitle("Modificar perfil");
-        dlg.setHeaderText("Actualiza tu información");
-
-        TextField emailField = new TextField(currentUser.getEmail());
-        PasswordField passField = new PasswordField();
-        passField.setPromptText("Nueva contraseña");
-        DatePicker dobPicker = new DatePicker(currentUser.getBirthdate());
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10); grid.setVgap(10);
-        grid.add(new Label("Email:"),      0, 0);
-        grid.add(emailField,               1, 0);
-        grid.add(new Label("Password:"),   0, 1);
-        grid.add(passField,                1, 1);
-        grid.add(new Label("Nacimiento:"), 0, 2);
-        grid.add(dobPicker,                1, 2);
-        dlg.getDialogPane().setContent(grid);
-        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        // 2) habilita OK sólo si email/pw/dob válidos:
-        Node okBtn = dlg.getDialogPane().lookupButton(ButtonType.OK);
-        BooleanBinding valid = Bindings.createBooleanBinding(
-            () -> User.checkEmail(emailField.getText().trim())
-                && (passField.getText().isEmpty() || User.checkPassword(passField.getText()))
-                && dobPicker.getValue() != null
-                && Period.between(dobPicker.getValue(), LocalDate.now()).getYears() >= 16,
-            emailField.textProperty(), passField.textProperty(), dobPicker.valueProperty()
-        );
-        okBtn.disableProperty().bind(valid.not());
-
-        // 3) al convertir:
-        dlg.setResultConverter(btn -> {
-            if (btn == ButtonType.OK) {
-                // actualiza sólo lo que cambió
-                currentUser.setEmail(emailField.getText().trim());
-                if (!passField.getText().isEmpty())
-                    currentUser.setPassword(passField.getText());
-                currentUser.setBirthdate(dobPicker.getValue());
-                return currentUser;
-            }
-            return null;
-        });
-
-        // 4) mostrar diálogo
-        Optional<User> res = dlg.showAndWait();
-        res.ifPresent(u -> 
-            new Alert(Alert.AlertType.INFORMATION, "Perfil actualizado", ButtonType.OK)
-                .showAndWait()
-        );
-    }
-
     List<Circle> puntos = new ArrayList<>();
     Circle puntoSeleccionado = null;
     @FXML
@@ -852,7 +619,250 @@ public class FXMLDocumentController implements Initializable {
         baseY = transportador.getTranslateY();
         event.consume();
     }
+    
+    /* --------------------------------------------------------------------- */
+    /*  HELPER : self-contained eye-toggle password input (emoji version)    */
+    /* --------------------------------------------------------------------- */
+    @SuppressWarnings("InnerClassMayBeStatic")
+    private class PasswordInput {
+        final PasswordField hidden = new PasswordField();
+        final TextField     visible = new TextField();
+        final ToggleButton  eyeBtn  = new ToggleButton("👁"); // ← no image file
+        final HBox          box     = new HBox(4);
 
+        PasswordInput(String prompt) {
+            hidden.setPromptText(prompt);
+            visible.setPromptText(prompt);
+
+            // keep the two fields in sync
+            visible.textProperty().bindBidirectional(hidden.textProperty());
+
+            // show/hide
+            visible.visibleProperty().bind(eyeBtn.selectedProperty());
+            visible.managedProperty().bind(eyeBtn.selectedProperty());
+            hidden.visibleProperty().bind(eyeBtn.selectedProperty().not());
+            hidden.managedProperty().bind(eyeBtn.selectedProperty().not());
+
+            box.setAlignment(Pos.CENTER_LEFT);
+            box.getChildren().addAll(hidden, visible, eyeBtn);
+        }
+        String getText() { return hidden.getText(); }
+    }
+
+
+
+
+    /* ===================================================================== */
+    /*  LOGIN                                                                */
+    /* ===================================================================== */
+    @FXML
+    private void onLogin(ActionEvent event) {
+        // A.  Si ya hay sesión: cerramos
+        if (sesionIniciada.get()) {
+            if (currentUser != null) {
+                currentUser.addSession(hits.get(), faults.get());
+                hits.set(0);  faults.set(0);
+            }
+            currentUser = null;
+            sesionIniciada.set(false);
+            seccionPreguntas.setVisible(false);
+            splitPane.setDividerPositions(0.0);
+            return;
+        }
+
+        // B.  Diálogo de autenticación
+        Dialog<Pair<String,String>> dlg = new Dialog<>();
+        dlg.setTitle("Iniciar sesión");
+        dlg.setHeaderText("Introduce tus credenciales");
+
+        TextField userField = new TextField();
+        userField.setPromptText("Usuario");
+
+        PasswordInput pwd = new PasswordInput("Contraseña");
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.addRow(0, new Label("Usuario:"),    userField);
+        grid.addRow(1, new Label("Contraseña:"), pwd.box);
+
+        dlg.getDialogPane().setContent(grid);
+        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        dlg.setResultConverter(btn ->
+            btn == ButtonType.OK ? new Pair<>(userField.getText().trim(), pwd.getText()) : null);
+
+        dlg.showAndWait().ifPresent(creds -> {
+            try {
+                Navigation nav = Navigation.getInstance();
+                User u = nav.authenticate(creds.getKey(), creds.getValue());
+                if (u == null) {
+                    new Alert(Alert.AlertType.ERROR,
+                              "Usuario o contraseña incorrectos", ButtonType.OK).showAndWait();
+                } else {
+                    currentUser = u;
+                    sesionIniciada.set(true);
+                }
+            } catch (NavDAOException e) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Error de base de datos:\n" + e.getMessage(), ButtonType.OK).showAndWait();
+            }
+        });
+    }
+
+
+
+    /* ===================================================================== */
+    /*  REGISTER                                                             */
+    /* ===================================================================== */
+    @FXML
+    private void onRegister(ActionEvent event) {
+
+        Dialog<User> dlg = new Dialog<>();
+        dlg.setTitle("Registro de usuario");
+        dlg.setHeaderText("Rellena tus datos");
+
+        TextField     nickField  = new TextField();
+        TextField     emailField = new TextField();
+        PasswordInput pwd        = new PasswordInput("Password (8–20 caracteres)");
+        DatePicker    dobPicker  = new DatePicker();
+
+        nickField.setPromptText("Nickname (6–15 caracteres)");
+        emailField.setPromptText("Email válido");
+        dobPicker.setPromptText("Fecha de nacimiento");
+
+        Label passHelp = new Label(
+            "Debe tener 8-20 caracteres, 1 mayúscula, 1 minúscula, "
+          + "1 dígito y 1 especial (!@#$%&*()-+=)");
+        passHelp.setWrapText(true);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.addRow(0, new Label("Nickname:"),    nickField);
+        grid.addRow(1, new Label("Email:"),       emailField);
+        grid.addRow(2, new Label("Password:"),    pwd.box);
+        grid.add(passHelp, 0, 3, 2, 1);
+        grid.addRow(4, new Label("Nacimiento:"),  dobPicker);
+
+        dlg.getDialogPane().setContent(grid);
+        dlg.getDialogPane().getButtonTypes()
+                           .addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        /* habilitar OK solo cuando los formatos son correctos --------------- */
+        Node okBtn = dlg.getDialogPane().lookupButton(ButtonType.OK);
+        BooleanBinding pwOk = Bindings.createBooleanBinding(
+            () -> User.checkPassword(pwd.getText()),
+            pwd.hidden.textProperty());
+        okBtn.disableProperty().bind(
+            nickField.textProperty().isEmpty()
+              .or(emailField.textProperty().isEmpty())
+              .or(dobPicker.valueProperty().isNull())
+              .or(pwOk.not()));
+
+        /* ------------- RESULT CONVERTER CON CONTROL DE DUPLICADOS ---------- */
+        dlg.setResultConverter(btn -> {
+            if (btn != ButtonType.OK) return null;
+
+            String nick = nickField.getText().trim();
+            String mail = emailField.getText().trim();
+
+            /* Validaciones de formato */
+            if (!User.checkNickName(nick))
+                throw new IllegalArgumentException("Nickname inválido");
+            if (!User.checkEmail(mail))
+                throw new IllegalArgumentException("Email inválido");
+            if (Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16)
+                throw new IllegalArgumentException("Debes tener al menos 16 años");
+
+            try {
+                Navigation nav = Navigation.getInstance();
+                /* Intentamos registrar — si el nickname ya existe lanzará NavDAOException */
+                return nav.registerUser(nick, mail, pwd.getText(), null, dobPicker.getValue());
+
+            } catch (NavDAOException ex) {
+                /* ¿Es un UNIQUE/PRIMARY-KEY?  ⇒  ya existe ese nick */
+                if (ex.getMessage() != null &&
+                    ex.getMessage().toLowerCase().contains("primary key")) {
+
+                    /* Mostramos aviso y devolvemos null para que el diálogo siga abierto */
+                    new Alert(Alert.AlertType.ERROR,
+                              "El nickname \"" + nick + "\" ya está en uso. Elige otro.",
+                              ButtonType.OK).showAndWait();
+                    return null;          // evita cerrar el diálogo
+                }
+                /* Otro error de BD → lo propagamos como RuntimeException */
+                throw new RuntimeException("Error BD: " + ex.getMessage(), ex);
+            }
+        });
+
+        /* --------------------------- mostrar diálogo ----------------------- */
+        try {
+            dlg.showAndWait().ifPresent(u -> {
+                currentUser = u;
+                sesionIniciada.set(true);
+                new Alert(Alert.AlertType.INFORMATION,
+                          "¡Bienvenido, " + u.getNickName() + "!",
+                          ButtonType.OK).showAndWait();
+            });
+        } catch (RuntimeException ex) {   // recoge IllegalArgumentException + otros
+            new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
+        }
+    }
+
+
+
+
+    /* ===================================================================== */
+    /*  MODIFY PROFILE                                                       */
+    /* ===================================================================== */
+    @FXML
+    private void onModifyProfile(ActionEvent event) {
+        if (!sesionIniciada.get() || currentUser == null) {
+            new Alert(Alert.AlertType.WARNING,
+                      "Tienes que iniciar sesión primero", ButtonType.OK).showAndWait();
+            return;
+        }
+
+        Dialog<User> dlg = new Dialog<>();
+        dlg.setTitle("Modificar perfil");
+        dlg.setHeaderText("Actualiza tu información");
+
+        TextField     emailField = new TextField(currentUser.getEmail());
+        PasswordInput pwd        = new PasswordInput("Nueva contraseña");
+        DatePicker    dobPicker  = new DatePicker(currentUser.getBirthdate());
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10); grid.setVgap(10);
+        grid.addRow(0, new Label("Email:"),      emailField);
+        grid.addRow(1, new Label("Password:"),   pwd.box);
+        grid.addRow(2, new Label("Nacimiento:"), dobPicker);
+
+        dlg.getDialogPane().setContent(grid);
+        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        Node okBtn = dlg.getDialogPane().lookupButton(ButtonType.OK);
+        okBtn.disableProperty().bind(
+            Bindings.createBooleanBinding(
+                () -> !User.checkEmail(emailField.getText().trim())
+                   || (!pwd.getText().isEmpty() && !User.checkPassword(pwd.getText()))
+                   || dobPicker.getValue() == null
+                   || Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16,
+                emailField.textProperty(), pwd.hidden.textProperty(), dobPicker.valueProperty())
+            .not().not()   // double-negation → same as the big OR above
+        );
+
+        dlg.setResultConverter(btn -> {
+            if (btn != ButtonType.OK) return null;
+            currentUser.setEmail(emailField.getText().trim());
+            if (!pwd.getText().isEmpty()) currentUser.setPassword(pwd.getText());
+            currentUser.setBirthdate(dobPicker.getValue());
+            return currentUser;
+        });
+
+        dlg.showAndWait().ifPresent(u ->
+            new Alert(Alert.AlertType.INFORMATION,
+                      "Perfil actualizado", ButtonType.OK).showAndWait());
+    }
+    
     @FXML
     private void addPunto(ActionEvent event) {
         
