@@ -54,12 +54,13 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
+import javafx.scene.shape.Circle;
 import model.Session;
 import model.User;
 
@@ -141,6 +142,18 @@ public class FXMLDocumentController implements Initializable {
     private Button papelera;
     @FXML
     private ColorPicker colorPicker;
+    @FXML
+    private Group dibujar;
+    @FXML
+    private Slider rotate;
+    @FXML
+    private ImageView regla;
+    @FXML
+    private ToggleButton reglaBoton;
+    @FXML
+    private ToggleButton arcoBoton;
+    @FXML
+    private ToggleButton compasBoton;
     @FXML private ImageView avatarView;                                // ─── AVATAR (NEW)
     private static final String DEFAULT_AVATAR_RES = "/resources/default_avatar.png";   // ─── AVATAR
     private static final Path   AVATAR_DIR        = Paths.get("avatars");              // ─── AVATAR
@@ -148,48 +161,53 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        /* ─── 1.  ZOOM SLIDER ───────────────────────────────────────────── */
+        /* ─── 0.  MAP SCROLLPANE BASIC SETUP (from ca0667…) ──────────────── */
+        mapPane.setPrefSize(2500, 1700);                       // give the pane room
+        map_scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        map_scrollpane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+
+        /* ─── 1.  ZOOM SLIDER (from HEAD) ────────────────────────────────── */
         zoom_slider.setMin(0.015);
         zoom_slider.setMax(1.5);
         zoom_slider.setValue(0.5);
         zoom_slider.valueProperty().addListener(
             (obs, ov, nv) -> applyZoom(nv.doubleValue()));
 
-        /* put the chart inside a Group so we can scale it */
+        /*  Put the chart inside a Group so we can scale it  */
         Group contentGroup = new Group();
         zoomGroup = new Group();
-        contentGroup.getChildren().add(zoomGroup);
         zoomGroup.getChildren().add(map_scrollpane.getContent());
+        contentGroup.getChildren().add(zoomGroup);
         map_scrollpane.setContent(contentGroup);
-        configurarContenidoMapa();
 
-        /* ─── 2.  HIDE QUESTION PANEL UNTIL LOGIN ───────────────────────── */
+        configurarContenidoMapa();          // centres & applies initial 0.1 scale
+
+        /* ─── 2.  HIDE QUESTION PANEL UNTIL LOGIN ────────────────────────── */
         configurarSeccionPreguntas();
 
-        /* ─── 3.  BUTTON & LABEL BINDINGS ───────────────────────────────── */
+        /* ─── 3.  BUTTON & LABEL BINDINGS ────────────────────────────────── */
         stats.visibleProperty().bind(sesionIniciada);
         registerButton.disableProperty().bind(sesionIniciada);
 
         loginButton.textProperty().bind(
             Bindings.when(sesionIniciada).then("Log out").otherwise("Log in"));
 
-        /* show nothing at startup */
         lblUser.setText("");
-        avatarView.setImage(null);          // start with a blank avatar
+        avatarView.setImage(null);          // start with blank avatar
 
-        /* when session state changes … */
         sesionIniciada.addListener((obs, wasIn, isIn) -> {
-            if (isIn && currentUser != null) {           /* user just logged-in */
+            if (isIn && currentUser != null) {          // user just logged-in
                 lblUser.setText(currentUser.getNickName());
                 refreshAvatar(currentUser.getAvatar());
-            } else {                                     /* user logged-out */
+            } else {                                    // user logged-out
                 lblUser.setText("");
-                avatarView.setImage(null);               // ← clear icon
+                avatarView.setImage(null);              // clear icon
             }
         });
 
-        /* ─── 4.  TOOLS (protractor, etc.) ───────────────────────────────── */
+        /* ─── 4.  TOOLS (protractor, ruler, etc.) ────────────────────────── */
         configurarTransportador();
+        configurarRegla();
     }
     
     /* ───────────────  AVATAR helper  ─────────────── */
@@ -201,92 +219,94 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void configurarContenidoMapa() {
-    // Obtener el contenido original (asumo que es un ImageView)
-    Node contenidoOriginal = map_scrollpane.getContent();
+        // Obtener el contenido original (asumo que es un ImageView)
+        Node contenidoOriginal = map_scrollpane.getContent();
     
-    // Crear un contenedor que centre el contenido
-    StackPane centeringPane = new StackPane();
-    centeringPane.getChildren().add(contenidoOriginal);
-    centeringPane.setAlignment(Pos.CENTER);
+        // Crear un contenedor que centre el contenido
+        StackPane centeringPane = new StackPane();
+        centeringPane.getChildren().add(contenidoOriginal);
+        centeringPane.setAlignment(Pos.CENTER);
     
-    // Configurar el Group para el zoom
-    zoomGroup = new Group(centeringPane);
+        // Configurar el Group para el zoom
+        zoomGroup = new Group(centeringPane);
     
-    // Crear el contenedor principal
-    StackPane contentPane = new StackPane();
-    contentPane.getChildren().add(zoomGroup);
+        // Crear el contenedor principal
+        StackPane contentPane = new StackPane();
+        contentPane.getChildren().add(zoomGroup);
     
-    // Configurar el ScrollPane
-    map_scrollpane.setContent(contentPane);
-    map_scrollpane.setFitToWidth(true);
-    map_scrollpane.setFitToHeight(true);
-    map_scrollpane.setPannable(true);
+        // Configurar el ScrollPane
+        map_scrollpane.setContent(contentPane);
+        map_scrollpane.setFitToWidth(true);
+        map_scrollpane.setFitToHeight(true);
+        map_scrollpane.setPannable(true);
     
-    // Aplicar zoom mínimo inicial
-    Platform.runLater(() -> {
-        zoomGroup.setScaleX(0.1);
-        zoomGroup.setScaleY(0.1);
-        centrarContenido();
-    });
+        // Aplicar zoom mínimo inicial
+        Platform.runLater(() -> {
+            zoomGroup.setScaleX(0.1);
+            zoomGroup.setScaleY(0.1);
+            centrarContenido();
+        });
     }
-        private void centrarContenido() {
+    
+    private void centrarContenido() {
         // Centrar el contenido en el ScrollPane
         map_scrollpane.setHvalue(0.5);
         map_scrollpane.setVvalue(0.5);
     }
-        private void configurarSeccionPreguntas() {
-            Platform.runLater(() -> {
-                seccionPreguntas.setVisible(false);
-                enunciadoPregunta.setVisible(false);
-                ans1.setVisible(false);
-                ans2.setVisible(false);
-                ans3.setVisible(false);
-                ans4.setVisible(false);
-                botonEnviar.setVisible(false);
-                borrarSeleccion.setVisible(false);
-                scrollTest.setVisible(false);
-                splitPane.setDividerPositions(0.0);
+    
+    private void configurarSeccionPreguntas() {
+        Platform.runLater(() -> {
+            seccionPreguntas.setVisible(false);
+            enunciadoPregunta.setVisible(false);
+            ans1.setVisible(false);
+            ans2.setVisible(false);
+            ans3.setVisible(false);
+            ans4.setVisible(false);
+            botonEnviar.setVisible(false);
+            borrarSeleccion.setVisible(false);
+            scrollTest.setVisible(false);
+            splitPane.setDividerPositions(0.0);
 
-                bloqueoDivisor = (obs, oldVal, newVal) -> {
-                    if (Math.abs(newVal.doubleValue()) > 1e-4) {
-                        splitPane.setDividerPositions(0.0);
-                    }
-                };
-                splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+            bloqueoDivisor = (obs, oldVal, newVal) -> {
+                if (Math.abs(newVal.doubleValue()) > 1e-4) {
+                    splitPane.setDividerPositions(0.0);
+                }
+            };
+            splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
 
-                sesionIniciada.addListener((obs, oldVal, newVal) -> {
-                    if (newVal) {
-                        splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
-                        splitPane.setDividerPositions(0.35);
-                        seccionPreguntas.setVisible(true);
-                        scrollTest.setVisible(true);
-                        displayHits.textProperty().bind(hits.asString("Hits %d"));
-                        displayFaults.textProperty().bind(faults.asString("Faults: %d"));
-                    } else {
-                        splitPane.setDividerPositions(0.0);
-                        splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
-                        seccionPreguntas.setVisible(false);
-                        scrollTest.setVisible(false);
-                    }
-                });
-
-                seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
-                    ans1.setWrapText(true);
-                    ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                    ans2.setWrapText(true);
-                    ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                    ans3.setWrapText(true);
-                    ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                    ans4.setWrapText(true);
-                    ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                });
+            sesionIniciada.addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
+                    splitPane.setDividerPositions(0.35);
+                    seccionPreguntas.setVisible(true);
+                    scrollTest.setVisible(true);
+                    displayHits.textProperty().bind(hits.asString("Hits %d"));
+                    displayFaults.textProperty().bind(faults.asString("Faults: %d"));
+                } else {
+                    splitPane.setDividerPositions(0.0);
+                    splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+                    seccionPreguntas.setVisible(false);
+                    scrollTest.setVisible(false);
+                }
             });
-        }
+
+            seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
+                enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
+                ans1.setWrapText(true);
+                ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans2.setWrapText(true);
+                ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans3.setWrapText(true);
+                ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans4.setWrapText(true);
+                ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+            });
+        });
+    }
 
         // === Zoom y control del mapa ===
 
-        private void applyZoom(double scale) {
+    private void applyZoom(double scale) {
         scale = Math.max(0.1, Math.min(scale, 10.0));
 
         Node content = map_scrollpane.getContent();
@@ -304,6 +324,7 @@ public class FXMLDocumentController implements Initializable {
         // Ajustar los valores de scroll para mantener la posición
         repositionScroller(map_scrollpane, zoomGroup, scrollOffset, scale);
     }
+    
     private Point2D figureScrollOffset(ScrollPane scrollPane, Node content) {
         double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
         double hScrollProportion = scrollPane.getHvalue();
@@ -513,11 +534,14 @@ public class FXMLDocumentController implements Initializable {
     Circle puntoSeleccionado = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
-        if(botonPunto.isPressed()){
-            double x = event.getSceneX(), y = event.getSceneY();
+        if(event.isConsumed()) return;
+        if(botonPunto.isSelected()){
+            double x = event.getX(), y = event.getY();
             Point2D p = new Point2D(x, y);
-            Circle c = new Circle(p.getX(), p.getY(), 5, Color.MAGENTA);
-            mapPane.getChildren().add(c);
+            Circle c = new Circle(p.getX(), p.getY(), 5);
+            c.setFill(Color.MAGENTA);
+            c.setStroke(Color.MAGENTA);
+            dibujar.getChildren().add(c);
             puntos.add(c);
             c.setOnMouseClicked(e -> {
                 e.consume();
@@ -530,7 +554,7 @@ public class FXMLDocumentController implements Initializable {
                 papelera.setDisable(false);
                 papelera.setOnAction(f -> {
                     if(puntoSeleccionado != null){
-                        mapPane.getChildren().remove(puntoSeleccionado);
+                        dibujar.getChildren().remove(puntoSeleccionado);
                         puntos.remove(puntoSeleccionado);
                         puntoSeleccionado = null;
                         papelera.setDisable(true);
@@ -542,30 +566,52 @@ public class FXMLDocumentController implements Initializable {
                 });
             });
             c.setOnMouseDragged(g -> {
-               double dx = g.getSceneX() - x, dy = g.getSceneY() - y;
+                g.consume();
+               double dx = g.getSceneX() - p.getX(), dy = g.getSceneY() - p.getY();
                c.setCenterX(c.getCenterX() + dx);
                c.setCenterY(c.getCenterY() + dy);
             });
         }
     }
 
-    @FXML
-    private void addTrans(ActionEvent event) {
-        /*Button transportador = new Button();
-        transportador.getStyleClass().add("transportador");
-        zoomGroup.getChildren().add(transportador);
-      */
-    }
+    private void configurarRegla(){
+        regla.setVisible(false);
+        regla.setX(1500);
+        regla.setY(3000);
+        regla.setFitWidth(5000);
+        regla.setFitHeight(5000);
+        Platform.runLater(() -> {
+        Bounds viewportBounds = map_scrollpane.getViewportBounds();
+       
+        });
+        regla.rotateProperty().bind(rotate.valueProperty());
+        regla.visibleProperty().bind(reglaBoton.selectedProperty());
+
+        regla.setOnMousePressed(this::cogerRegla);
+        regla.setOnMouseDragged(this::moverRegla);
     
+    }
     private void configurarTransportador() {
         transportador.setX(3000);
         transportador.setY(3000);
+
         //transportador.setPreserveRatio(true);
-        transportador.setFitWidth(3000);
-        transportador.setFitHeight(3000);
+        transportador.setFitWidth(2500);
+        transportador.setFitHeight(2500);
+
         transportador.setVisible(false);
 
+        
+        Platform.runLater(() -> {
+        Bounds viewportBounds = map_scrollpane.getViewportBounds();
+       
+        });
+        transportador.rotateProperty().bind(rotate.valueProperty());
         transportador.visibleProperty().bind(transButton.selectedProperty());
+
+        transportador.setOnMousePressed(this::cogerTransportador);
+        transportador.setOnMouseDragged(this::moverTransportador);
+        
     }
 
     @FXML
@@ -609,31 +655,54 @@ public class FXMLDocumentController implements Initializable {
         estadisticas.showAndWait();
     }
 
-    double x1, y1, baseX, baseY;
-    @FXML
-    private void soltarTransportador(MouseEvent event) {
-        map_scrollpane.setPannable(true); 
-    }
-
+    double baseX, baseY, bx, by;  
+    Point2D localBase;
+    Point2D localBaseRegla;
     @FXML
     private void moverTransportador(MouseEvent event) {
-        double despX = event.getSceneX() - x1;
-        double despY = event.getSceneY() - y1;
-        transportador.setTranslateX((baseX + despX)*10);
-        transportador.setTranslateY((baseY + despY)*10);
+        map_scrollpane.setPannable(false); 
+        
+        Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
+        transportador.setTranslateX(baseX + localPos.getX() - localBase.getX());
+        transportador.setTranslateY(baseY + localPos.getY() - localBase.getY());
         event.consume();
+
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
         map_scrollpane.setPannable(false); 
-        x1 = event.getSceneX();
-        y1 = event.getSceneY();
-        baseX = transportador.getTranslateX();
-        baseY = transportador.getTranslateY();
-        event.consume();
+        
+       localBase = zoomGroup.sceneToLocal(event.getSceneX() , event.getSceneY());
+       baseX = transportador.getTranslateX();
+       baseY = transportador.getTranslateY();
+       event.consume();
     }
     
+    @FXML
+    private void cogerRegla(MouseEvent event){
+        map_scrollpane.setPannable(false); 
+    
+        localBaseRegla = zoomGroup.sceneToLocal(event.getSceneX() , event.getSceneY());
+
+        bx = regla.getTranslateX();
+        by = regla.getTranslateY();
+
+        event.consume();
+        
+    }
+    
+    @FXML
+     private void moverRegla(MouseEvent event) {
+
+        Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
+        regla.setTranslateX(bx + localPos.getX() - localBaseRegla.getX());
+        regla.setTranslateY(by + localPos.getY() - localBaseRegla.getY());
+        event.consume();
+  
+    }
+   
+     
     /* --------------------------------------------------------------------- */
     /*  HELPER : self-contained eye-toggle password input (emoji version)    */
     /* --------------------------------------------------------------------- */
@@ -904,6 +973,7 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
+
     private void addPunto(ActionEvent event) {
         
     }
@@ -911,5 +981,5 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void borrarObjeto(ActionEvent event) {
     }
-
+  
 }
