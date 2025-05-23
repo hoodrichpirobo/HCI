@@ -54,16 +54,13 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.RotateEvent;
-import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
-import model.Session;
 import javafx.scene.shape.Circle;
-import javafx.scene.input.RotateEvent;
 import model.Session;
 import model.User;
 
@@ -163,52 +160,52 @@ public class FXMLDocumentController implements Initializable {
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        mapPane.setPrefSize(2500, 1700);
+
+        /* ─── 0.  MAP SCROLLPANE BASIC SETUP (from ca0667…) ──────────────── */
+        mapPane.setPrefSize(2500, 1700);                       // give the pane room
         map_scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         map_scrollpane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        // === 1) Configuración del zoom ===
+
+        /* ─── 1.  ZOOM SLIDER (from HEAD) ────────────────────────────────── */
         zoom_slider.setMin(0.015);
         zoom_slider.setMax(1.5);
         zoom_slider.setValue(0.5);
-        zoom_slider.valueProperty().addListener((obs, oldVal, newVal) ->
-            applyZoom(newVal.doubleValue())
-        );
+        zoom_slider.valueProperty().addListener(
+            (obs, ov, nv) -> applyZoom(nv.doubleValue()));
 
-        // Inicialización del zoom (mover contenido dentro de Group para escalar)
+        /*  Put the chart inside a Group so we can scale it  */
         Group contentGroup = new Group();
         zoomGroup = new Group();
-        contentGroup.getChildren().add(zoomGroup);
         zoomGroup.getChildren().add(map_scrollpane.getContent());
-        map_scrollpane.setContent(contentGroup);
-        //configurarContenidoMapa();
+        contentGroup.getChildren().add(zoomGroup);
         map_scrollpane.setContent(contentGroup);
 
-        // === 2) Sección de preguntas oculta al inicio ===
+        configurarContenidoMapa();          // centres & applies initial 0.1 scale
+
+        /* ─── 2.  HIDE QUESTION PANEL UNTIL LOGIN ────────────────────────── */
         configurarSeccionPreguntas();
 
-        // === 3) Bindings para login/register ===
+        /* ─── 3.  BUTTON & LABEL BINDINGS ────────────────────────────────── */
         stats.visibleProperty().bind(sesionIniciada);
-        // Deshabilita “Register” si ya hay sesión
         registerButton.disableProperty().bind(sesionIniciada);
-        // Cambia el texto de loginButton según estado
+
         loginButton.textProperty().bind(
-            Bindings.when(sesionIniciada)
-                    .then("Log out")
-                    .otherwise("Log in")
-        );
+            Bindings.when(sesionIniciada).then("Log out").otherwise("Log in"));
 
         lblUser.setText("");
-        sesionIniciada.addListener((obs,wasIn,isIn)->{
-            if (isIn && currentUser!=null) {
+        avatarView.setImage(null);          // start with blank avatar
+
+        sesionIniciada.addListener((obs, wasIn, isIn) -> {
+            if (isIn && currentUser != null) {          // user just logged-in
                 lblUser.setText(currentUser.getNickName());
-                refreshAvatar(currentUser.getAvatar());               // ─── AVATAR
-            } else {
+                refreshAvatar(currentUser.getAvatar());
+            } else {                                    // user logged-out
                 lblUser.setText("");
-                refreshAvatar(null);                                   // ─── AVATAR
+                avatarView.setImage(null);              // clear icon
             }
         });
-      
-        // Configuración herramientas
+
+        /* ─── 4.  TOOLS (protractor, ruler, etc.) ────────────────────────── */
         configurarTransportador();
         configurarRegla();
     }
@@ -735,15 +732,13 @@ public class FXMLDocumentController implements Initializable {
         String getText() { return hidden.getText(); }
     }
 
-
-
-
     /* ===================================================================== */
     /*  LOGIN                                                                */
     /* ===================================================================== */
     @FXML
     private void onLogin(ActionEvent event) {
-        // A.  Si ya hay sesión: cerramos
+
+        /* A.  Si ya hay sesión, cerramos sesión ---------------------------- */
         if (sesionIniciada.get()) {
             if (currentUser != null) {
                 currentUser.addSession(hits.get(), faults.get());
@@ -751,12 +746,16 @@ public class FXMLDocumentController implements Initializable {
             }
             currentUser = null;
             sesionIniciada.set(false);
+
+            avatarView.setImage(null);          // ← CLEAR AVATAR
+            lblUser.setText("");                // opcional: borra el nick
+
             seccionPreguntas.setVisible(false);
             splitPane.setDividerPositions(0.0);
             return;
         }
 
-        // B.  Diálogo de autenticación
+        /* B.  Diálogo de autenticación ------------------------------------ */
         Dialog<Pair<String,String>> dlg = new Dialog<>();
         dlg.setTitle("Iniciar sesión");
         dlg.setHeaderText("Introduce tus credenciales");
@@ -781,13 +780,14 @@ public class FXMLDocumentController implements Initializable {
             try {
                 Navigation nav = Navigation.getInstance();
                 User u = nav.authenticate(creds.getKey(), creds.getValue());
+
                 if (u == null) {
                     new Alert(Alert.AlertType.ERROR,
                               "Usuario o contraseña incorrectos", ButtonType.OK).showAndWait();
                 } else {
                     currentUser = u;
                     sesionIniciada.set(true);
-                    refreshAvatar(u.getAvatar());                      // ─── AVATAR
+                    refreshAvatar(u.getAvatar());          // muestra avatar o default
                 }
             } catch (NavDAOException e) {
                 new Alert(Alert.AlertType.ERROR,
@@ -795,8 +795,6 @@ public class FXMLDocumentController implements Initializable {
             }
         });
     }
-
-
 
     /* ===================================================================== */
     /*  REGISTER                                                             */
