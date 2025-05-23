@@ -137,9 +137,14 @@ public class FXMLDocumentController implements Initializable {
     private Button papelera;
     @FXML
     private ColorPicker colorPicker;
+    @FXML
+    private Group dibujar;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        mapPane.setPrefSize(2500, 1700);
+        map_scrollpane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        map_scrollpane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         // === 1) Configuración del zoom ===
         zoom_slider.setMin(0.015);
         zoom_slider.setMax(1.5);
@@ -154,7 +159,8 @@ public class FXMLDocumentController implements Initializable {
         contentGroup.getChildren().add(zoomGroup);
         zoomGroup.getChildren().add(map_scrollpane.getContent());
         map_scrollpane.setContent(contentGroup);
-        configurarContenidoMapa();
+        //configurarContenidoMapa();
+        map_scrollpane.setContent(contentGroup);
 
         // === 2) Sección de preguntas oculta al inicio ===
         configurarSeccionPreguntas();
@@ -187,92 +193,94 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void configurarContenidoMapa() {
-    // Obtener el contenido original (asumo que es un ImageView)
-    Node contenidoOriginal = map_scrollpane.getContent();
+        // Obtener el contenido original (asumo que es un ImageView)
+        Node contenidoOriginal = map_scrollpane.getContent();
     
-    // Crear un contenedor que centre el contenido
-    StackPane centeringPane = new StackPane();
-    centeringPane.getChildren().add(contenidoOriginal);
-    centeringPane.setAlignment(Pos.CENTER);
+        // Crear un contenedor que centre el contenido
+        StackPane centeringPane = new StackPane();
+        centeringPane.getChildren().add(contenidoOriginal);
+        centeringPane.setAlignment(Pos.CENTER);
     
-    // Configurar el Group para el zoom
-    zoomGroup = new Group(centeringPane);
+        // Configurar el Group para el zoom
+        zoomGroup = new Group(centeringPane);
     
-    // Crear el contenedor principal
-    StackPane contentPane = new StackPane();
-    contentPane.getChildren().add(zoomGroup);
+        // Crear el contenedor principal
+        StackPane contentPane = new StackPane();
+        contentPane.getChildren().add(zoomGroup);
     
-    // Configurar el ScrollPane
-    map_scrollpane.setContent(contentPane);
-    map_scrollpane.setFitToWidth(true);
-    map_scrollpane.setFitToHeight(true);
-    map_scrollpane.setPannable(true);
+        // Configurar el ScrollPane
+        map_scrollpane.setContent(contentPane);
+        map_scrollpane.setFitToWidth(true);
+        map_scrollpane.setFitToHeight(true);
+        map_scrollpane.setPannable(true);
     
-    // Aplicar zoom mínimo inicial
-    Platform.runLater(() -> {
-        zoomGroup.setScaleX(0.1);
-        zoomGroup.setScaleY(0.1);
-        centrarContenido();
-    });
+        // Aplicar zoom mínimo inicial
+        Platform.runLater(() -> {
+            zoomGroup.setScaleX(0.1);
+            zoomGroup.setScaleY(0.1);
+            centrarContenido();
+        });
     }
-        private void centrarContenido() {
+    
+    private void centrarContenido() {
         // Centrar el contenido en el ScrollPane
         map_scrollpane.setHvalue(0.5);
         map_scrollpane.setVvalue(0.5);
     }
-        private void configurarSeccionPreguntas() {
-            Platform.runLater(() -> {
-                seccionPreguntas.setVisible(false);
-                enunciadoPregunta.setVisible(false);
-                ans1.setVisible(false);
-                ans2.setVisible(false);
-                ans3.setVisible(false);
-                ans4.setVisible(false);
-                botonEnviar.setVisible(false);
-                borrarSeleccion.setVisible(false);
-                scrollTest.setVisible(false);
-                splitPane.setDividerPositions(0.0);
+    
+    private void configurarSeccionPreguntas() {
+        Platform.runLater(() -> {
+            seccionPreguntas.setVisible(false);
+            enunciadoPregunta.setVisible(false);
+            ans1.setVisible(false);
+            ans2.setVisible(false);
+            ans3.setVisible(false);
+            ans4.setVisible(false);
+            botonEnviar.setVisible(false);
+            borrarSeleccion.setVisible(false);
+            scrollTest.setVisible(false);
+            splitPane.setDividerPositions(0.0);
 
-                bloqueoDivisor = (obs, oldVal, newVal) -> {
-                    if (Math.abs(newVal.doubleValue()) > 1e-4) {
-                        splitPane.setDividerPositions(0.0);
-                    }
-                };
-                splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+            bloqueoDivisor = (obs, oldVal, newVal) -> {
+                if (Math.abs(newVal.doubleValue()) > 1e-4) {
+                    splitPane.setDividerPositions(0.0);
+                }
+            };
+            splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
 
-                sesionIniciada.addListener((obs, oldVal, newVal) -> {
-                    if (newVal) {
-                        splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
-                        splitPane.setDividerPositions(0.35);
-                        seccionPreguntas.setVisible(true);
-                        scrollTest.setVisible(true);
-                        displayHits.textProperty().bind(hits.asString("Hits %d"));
-                        displayFaults.textProperty().bind(faults.asString("Faults: %d"));
-                    } else {
-                        splitPane.setDividerPositions(0.0);
-                        splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
-                        seccionPreguntas.setVisible(false);
-                        scrollTest.setVisible(false);
-                    }
-                });
-
-                seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
-                    ans1.setWrapText(true);
-                    ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                    ans2.setWrapText(true);
-                    ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                    ans3.setWrapText(true);
-                    ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                    ans4.setWrapText(true);
-                    ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
-                });
+            sesionIniciada.addListener((obs, oldVal, newVal) -> {
+                if (newVal) {
+                    splitPane.getDividers().get(0).positionProperty().removeListener(bloqueoDivisor);
+                    splitPane.setDividerPositions(0.35);
+                    seccionPreguntas.setVisible(true);
+                    scrollTest.setVisible(true);
+                    displayHits.textProperty().bind(hits.asString("Hits %d"));
+                    displayFaults.textProperty().bind(faults.asString("Faults: %d"));
+                } else {
+                    splitPane.setDividerPositions(0.0);
+                    splitPane.getDividers().get(0).positionProperty().addListener(bloqueoDivisor);
+                    seccionPreguntas.setVisible(false);
+                    scrollTest.setVisible(false);
+                }
             });
-        }
+
+            seccionPreguntas.widthProperty().addListener((obs, oldVal, newVal) -> {
+                enunciadoPregunta.setWrappingWidth(newVal.doubleValue() - 20); // deja margen
+                ans1.setWrapText(true);
+                ans1.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans2.setWrapText(true);
+                ans2.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans3.setWrapText(true);
+                ans3.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+                ans4.setWrapText(true);
+                ans4.maxWidthProperty().bind(seccionPreguntas.widthProperty().subtract(20));
+            });
+        });
+    }
 
         // === Zoom y control del mapa ===
 
-        private void applyZoom(double scale) {
+    private void applyZoom(double scale) {
         scale = Math.max(0.1, Math.min(scale, 10.0));
 
         Node content = map_scrollpane.getContent();
@@ -290,6 +298,7 @@ public class FXMLDocumentController implements Initializable {
         // Ajustar los valores de scroll para mantener la posición
         repositionScroller(map_scrollpane, zoomGroup, scrollOffset, scale);
     }
+    
     private Point2D figureScrollOffset(ScrollPane scrollPane, Node content) {
         double extraWidth = content.getBoundsInLocal().getWidth() - scrollPane.getViewportBounds().getWidth();
         double hScrollProportion = scrollPane.getHvalue();
@@ -732,11 +741,14 @@ public class FXMLDocumentController implements Initializable {
     Circle puntoSeleccionado = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
-        if(botonPunto.isPressed()){
-            double x = event.getSceneX(), y = event.getSceneY();
+        if(event.isConsumed()) return;
+        if(botonPunto.isSelected()){
+            double x = event.getX(), y = event.getY();
             Point2D p = new Point2D(x, y);
-            Circle c = new Circle(p.getX(), p.getY(), 5, Color.MAGENTA);
-            mapPane.getChildren().add(c);
+            Circle c = new Circle(p.getX(), p.getY(), 5);
+            c.setFill(Color.MAGENTA);
+            c.setStroke(Color.MAGENTA);
+            dibujar.getChildren().add(c);
             puntos.add(c);
             c.setOnMouseClicked(e -> {
                 e.consume();
@@ -749,7 +761,7 @@ public class FXMLDocumentController implements Initializable {
                 papelera.setDisable(false);
                 papelera.setOnAction(f -> {
                     if(puntoSeleccionado != null){
-                        mapPane.getChildren().remove(puntoSeleccionado);
+                        dibujar.getChildren().remove(puntoSeleccionado);
                         puntos.remove(puntoSeleccionado);
                         puntoSeleccionado = null;
                         papelera.setDisable(true);
@@ -761,7 +773,8 @@ public class FXMLDocumentController implements Initializable {
                 });
             });
             c.setOnMouseDragged(g -> {
-               double dx = g.getSceneX() - x, dy = g.getSceneY() - y;
+                g.consume();
+               double dx = g.getSceneX() - p.getX(), dy = g.getSceneY() - p.getY();
                c.setCenterX(c.getCenterX() + dx);
                c.setCenterY(c.getCenterY() + dy);
             });
