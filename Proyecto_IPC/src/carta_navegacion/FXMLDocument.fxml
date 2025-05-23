@@ -53,6 +53,16 @@
         <!-- HBox de usuario, login, register y nick -->
         <HBox alignment="CENTER_RIGHT" prefHeight="29.0" prefWidth="233.0" spacing="10" HBox.hgrow="ALWAYS">
           <children>
+
+            <!-- ▼▼  NEW AVATAR  ▼▼ -->
+            <ImageView fx:id="avatarView" fitHeight="32.0" fitWidth="32.0"
+                       pickOnBounds="true" preserveRatio="true">
+              <!-- you may pre-load a default here, or leave empty -->
+              <!--<image><Image url="@../resources/default_avatar.png" /></image>-->
+              <HBox.margin><Insets left="5.0" right="0.0" /></HBox.margin>
+            </ImageView>
+            <!-- ▲▲  NEW AVATAR  ▲▲ -->
+
             <!-- muestra el nick del usuario cuando esté logueado -->
             <Label fx:id="lblUser" text="">
                         <HBox.margin>
