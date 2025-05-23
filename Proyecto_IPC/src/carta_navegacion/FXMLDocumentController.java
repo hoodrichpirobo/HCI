@@ -61,6 +61,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import model.Session;
 import model.User;
 
@@ -160,6 +161,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML private ImageView avatarView;                                // ─── AVATAR (NEW)
     private static final String DEFAULT_AVATAR_RES = "/resources/default_avatar.png";   // ─── AVATAR
     private static final Path   AVATAR_DIR        = Paths.get("avatars");              // ─── AVATAR
+    @FXML
+    private ToggleButton botonLinea;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -182,8 +185,8 @@ public class FXMLDocumentController implements Initializable {
         zoomGroup.getChildren().add(map_scrollpane.getContent());
         contentGroup.getChildren().add(zoomGroup);
         map_scrollpane.setContent(contentGroup);
-
-        configurarContenidoMapa();          // centres & applies initial 0.1 scale
+        centrarContenido();
+        //configurarContenidoMapa();          // centres & applies initial 0.1 scale
 
         /* ─── 2.  HIDE QUESTION PANEL UNTIL LOGIN ────────────────────────── */
         configurarSeccionPreguntas();
@@ -535,10 +538,12 @@ public class FXMLDocumentController implements Initializable {
     
     List<Circle> puntos = new ArrayList<>();
     Circle puntoSeleccionado = null;
+    Point2D ini = null, fin = null;
+    Line lineaSeleccionada = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
         if(event.isConsumed()) return;
-        if(botonPunto.isSelected()){
+        else if(botonPunto.isSelected()){
             double x = event.getX(), y = event.getY();
             Point2D p = new Point2D(x, y);
             Circle c = new Circle(p.getX(), p.getY(), 5);
@@ -570,10 +575,34 @@ public class FXMLDocumentController implements Initializable {
             });
             c.setOnMouseDragged(g -> {
                 g.consume();
-               double dx = g.getSceneX() - p.getX(), dy = g.getSceneY() - p.getY();
-               c.setCenterX(c.getCenterX() + dx);
-               c.setCenterY(c.getCenterY() + dy);
+                double dx = g.getSceneX(), dy = g.getSceneY();
+                /*c.setCenterX(c.getCenterX() + dx);
+                c.setCenterY(c.getCenterY() + dy);
+                Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
+                Point2D dp = new Point2D(dx, dy);*/
+                puntoSeleccionado.setTranslateX(Math.clamp(puntoSeleccionado.getCenterX(), 150, 1100));
+                puntoSeleccionado.setTranslateY(Math.clamp(puntoSeleccionado.getCenterY(), 300, 600));
             });
+        }
+        else if(botonLinea.isSelected()){
+            double x = event.getX(), y = event.getY();
+            if(ini == null){
+                ini = new Point2D(x,y);
+                Circle c = new Circle(x, y, 3, Color.MAGENTA);
+                dibujar.getChildren().add(c);
+                puntos.add(c);
+            }
+            else{
+                fin = new Point2D(x,y);
+                Line linea = new Line(ini.getX(), ini.getY(), x, y);
+                linea.setStroke(Color.MAGENTA);
+                linea.setStrokeWidth(2);
+                dibujar.getChildren().add(linea);
+                Circle c = new Circle(x, y, 3, Color.MAGENTA);
+                dibujar.getChildren().add(c);
+                puntos.add(c);
+                ini = fin = null;
+            }
         }
     }
 

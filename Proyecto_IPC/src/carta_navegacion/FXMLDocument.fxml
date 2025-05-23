@@ -55,8 +55,7 @@
           <children>
 
             <!-- ▼▼  NEW AVATAR  ▼▼ -->
-            <ImageView fx:id="avatarView" fitHeight="32.0" fitWidth="32.0"
-                       pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="avatarView" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
               <!-- you may pre-load a default here, or leave empty -->
               <!--<image><Image url="@../resources/default_avatar.png" /></image>-->
               <HBox.margin><Insets left="5.0" right="0.0" /></HBox.margin>
@@ -142,7 +141,7 @@
             </graphic>
           </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-          <ToggleButton mnemonicParsing="false">
+          <ToggleButton fx:id="botonLinea" mnemonicParsing="false">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
