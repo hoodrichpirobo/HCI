@@ -180,11 +180,11 @@ public class FXMLDocumentController implements Initializable {
     private ImageView fotoGiro;
     @FXML
     private ImageView fotoAumento;
-    @FXML
     private Label label;
     @FXML
     private Slider tamano;
 
+    @FXML
     private ToggleButton botonLinea;
     @FXML
     private Button clear;
