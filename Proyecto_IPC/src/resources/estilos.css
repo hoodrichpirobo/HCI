@@ -150,10 +150,3 @@ S17.642,20.762,13.558,20.762z";
     -fx-background-color: red;
 }
 
-.transportador {
-    -fx-shape:"M 1900.0049,17090.005 V 9509.9951 1930 H 9480 17059.995 V 950";
-    -fx-pref-width: 350;
-    -fx-pref-height: 350;
-    -fx-scale-y: -1;
-    -fx-background-color: blue;
-}

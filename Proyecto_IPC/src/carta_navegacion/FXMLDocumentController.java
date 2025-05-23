@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -38,7 +37,6 @@ import model.NavDAOException;
 import javafx.beans.binding.BooleanBinding;
 import model.Navigation;
 import model.Problem;
-import carta_navegacion.FXMLDisplayProblemsController;
 import javafx.scene.paint.Color;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -55,7 +53,11 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.RotateEvent;
 import javafx.scene.shape.Circle;
+import model.Session;
+import javafx.scene.shape.Circle;
+import javafx.scene.input.RotateEvent;
 import model.Session;
 import model.User;
 
@@ -139,6 +141,16 @@ public class FXMLDocumentController implements Initializable {
     private ColorPicker colorPicker;
     @FXML
     private Group dibujar;
+    @FXML
+    private Slider rotate;
+    @FXML
+    private ImageView regla;
+    @FXML
+    private ToggleButton reglaBoton;
+    @FXML
+    private ToggleButton arcoBoton;
+    @FXML
+    private ToggleButton compasBoton;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -187,9 +199,10 @@ public class FXMLDocumentController implements Initializable {
                 lblUser.setText("");
             }
         });
-        
+      
         // Configuración herramientas
         configurarTransportador();
+        configurarRegla();
     }
     
     private void configurarContenidoMapa() {
@@ -781,23 +794,44 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    @FXML
-    private void addTrans(ActionEvent event) {
-        /*Button transportador = new Button();
-        transportador.getStyleClass().add("transportador");
-        zoomGroup.getChildren().add(transportador);
-      */
-    }
+    private void configurarRegla(){
+        regla.setVisible(false);
+        regla.setX(1500);
+        regla.setY(3000);
+        regla.setFitWidth(5000);
+        regla.setFitHeight(5000);
+        Platform.runLater(() -> {
+        Bounds viewportBounds = map_scrollpane.getViewportBounds();
+       
+        });
+        regla.rotateProperty().bind(rotate.valueProperty());
+        regla.visibleProperty().bind(reglaBoton.selectedProperty());
+
+        regla.setOnMousePressed(this::cogerRegla);
+        regla.setOnMouseDragged(this::moverRegla);
     
+    }
     private void configurarTransportador() {
         transportador.setX(3000);
         transportador.setY(3000);
+
         //transportador.setPreserveRatio(true);
-        transportador.setFitWidth(3000);
-        transportador.setFitHeight(3000);
+        transportador.setFitWidth(2500);
+        transportador.setFitHeight(2500);
+
         transportador.setVisible(false);
 
+        
+        Platform.runLater(() -> {
+        Bounds viewportBounds = map_scrollpane.getViewportBounds();
+       
+        });
+        transportador.rotateProperty().bind(rotate.valueProperty());
         transportador.visibleProperty().bind(transButton.selectedProperty());
+
+        transportador.setOnMousePressed(this::cogerTransportador);
+        transportador.setOnMouseDragged(this::moverTransportador);
+        
     }
 
     @FXML
@@ -841,32 +875,56 @@ public class FXMLDocumentController implements Initializable {
         estadisticas.showAndWait();
     }
 
-    double x1, y1, baseX, baseY;
-    @FXML
-    private void soltarTransportador(MouseEvent event) {
-        map_scrollpane.setPannable(true); 
-    }
-
+    double baseX, baseY, bx, by;  
+    Point2D localBase;
+    Point2D localBaseRegla;
     @FXML
     private void moverTransportador(MouseEvent event) {
-        double despX = event.getSceneX() - x1;
-        double despY = event.getSceneY() - y1;
-        transportador.setTranslateX((baseX + despX)*10);
-        transportador.setTranslateY((baseY + despY)*10);
+        map_scrollpane.setPannable(false); 
+        
+        Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
+        transportador.setTranslateX(baseX + localPos.getX() - localBase.getX());
+        transportador.setTranslateY(baseY + localPos.getY() - localBase.getY());
         event.consume();
+
     }
 
     @FXML
     private void cogerTransportador(MouseEvent event) {
         map_scrollpane.setPannable(false); 
-        x1 = event.getSceneX();
-        y1 = event.getSceneY();
-        baseX = transportador.getTranslateX();
-        baseY = transportador.getTranslateY();
-        event.consume();
+        
+       localBase = zoomGroup.sceneToLocal(event.getSceneX() , event.getSceneY());
+       baseX = transportador.getTranslateX();
+       baseY = transportador.getTranslateY();
+       event.consume();
     }
-
+    
     @FXML
+    private void cogerRegla(MouseEvent event){
+        map_scrollpane.setPannable(false); 
+    
+        localBaseRegla = zoomGroup.sceneToLocal(event.getSceneX() , event.getSceneY());
+
+        bx = regla.getTranslateX();
+        by = regla.getTranslateY();
+
+        event.consume();
+        
+    }
+    
+    @FXML
+     private void moverRegla(MouseEvent event) {
+
+        Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
+        regla.setTranslateX(bx + localPos.getX() - localBaseRegla.getX());
+        regla.setTranslateY(by + localPos.getY() - localBaseRegla.getY());
+        event.consume();
+  
+    }
+   
+     
+    @FXML
+
     private void addPunto(ActionEvent event) {
         
     }
@@ -874,5 +932,5 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void borrarObjeto(ActionEvent event) {
     }
-
+  
 }

@@ -112,7 +112,7 @@
 
       <HBox prefHeight="44.0" prefWidth="853.0">
         <children>
-          <ToggleButton fx:id="transButton" mnemonicParsing="false" onAction="#addTrans" prefHeight="38.0" prefWidth="46.0">
+          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -142,25 +142,35 @@
             </graphic>
           </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-          <Button mnemonicParsing="false">
-            <graphic>
+               <ToggleButton fx:id="arcoBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
+                  <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/32341.png" />
                 </image>
               </ImageView>
-            </graphic>
-          </Button>
+                  </graphic>
+               </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-          <Button mnemonicParsing="false">
-            <graphic>
+               <ToggleButton fx:id="compasBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+                  <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/68001.png" />
                 </image>
               </ImageView>
-            </graphic>
-          </Button>
+                  </graphic>
+               </ToggleButton>
+               <Region layoutX="56.0" layoutY="10.0" prefHeight="36.0" prefWidth="7.0" />
+               <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+                  <graphic>
+                     <ImageView fitHeight="39.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/intenta-cuadrado.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+               </ToggleButton>
         </children>
         <VBox.margin>
           <Insets bottom="10.0" left="5.0" top="10.0" />
@@ -307,7 +317,7 @@
         <content>
           <Pane fx:id="mapPane" minWidth="0.0" onMouseClicked="#handleMapClick">
             <children>
-              <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="70.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="62.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/carta_nautica.jpg" />
                 </image>
@@ -321,8 +331,15 @@
                   <String fx:value="map-pin" />
                 </styleClass>
               </MenuButton>
+                     <ImageView fx:id="regla" fitHeight="115.0" fitWidth="650.0" layoutX="-45.0" layoutY="161.0" onMouseDragged="#moverRegla" onMousePressed="#cogerRegla" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/regla.png" />
+                        </image>
+                     </ImageView>
 
-                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="72.0" layoutY="74.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" onMouseReleased="#soltarTransportador" pickOnBounds="true" preserveRatio="true">
+
+                     <ImageView fx:id="transportador" fitHeight="150.0" fitWidth="200.0" focusTraversable="true" layoutX="175.0" layoutY="133.0" onMouseDragged="#moverTransportador" onMousePressed="#cogerTransportador" pickOnBounds="true" preserveRatio="true">
+
                         <image>
                            <Image url="@../resources/transportador2.png" />
                         </image>
@@ -338,8 +355,13 @@
   <!-- Barra inferior con posición del ratón -->
   <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="829.0">
     <children>
-         <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="651.0">
+         <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="745.0">
             <children>
+               <VBox prefHeight="33.0" prefWidth="87.0">
+                  <children>
+                     <Slider fx:id="rotate" prefHeight="36.0" prefWidth="76.0" />
+                  </children>
+               </VBox>
                <VBox fx:id="modificadoresObjetos" prefHeight="19.0" prefWidth="651.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
