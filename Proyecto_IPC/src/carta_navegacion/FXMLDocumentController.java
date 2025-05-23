@@ -1,5 +1,7 @@
 package carta_navegacion;
 
+import carta_navegacion.FXMLDisplayProblemsController;
+import carta_navegacion.Poi;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,13 +56,13 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
 import model.Session;
 import model.User;
 
@@ -160,6 +162,23 @@ public class FXMLDocumentController implements Initializable {
     @FXML private ImageView avatarView;                                // ─── AVATAR (NEW)
     private static final String DEFAULT_AVATAR_RES = "/resources/default_avatar.png";   // ─── AVATAR
     private static final Path   AVATAR_DIR        = Paths.get("avatars");              // ─── AVATAR
+    @FXML
+    private MenuButton menuEditar;
+    @FXML
+    private RadioMenuItem transEdit;
+    @FXML
+    private RadioMenuItem rullerEdit;
+    private Slider tamaño;
+    @FXML
+    private ButtonBar barraEditar;
+    @FXML
+    private ImageView fotoGiro;
+    @FXML
+    private ImageView fotoAumento;
+    @FXML
+    private Label label;
+    @FXML
+    private Slider tamano;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -211,7 +230,37 @@ public class FXMLDocumentController implements Initializable {
         /* ─── 4.  TOOLS (protractor, ruler, etc.) ────────────────────────── */
         configurarTransportador();
         configurarRegla();
+        barraEditar.setVisible(false);
+       
+        menuEditar.disableProperty().bind(
+            Bindings.not(
+                    transButton.selectedProperty().or(reglaBoton.selectedProperty())
+            )
+        );
+        
+        label.setVisible(false);
+        transEdit.setOnAction(e -> {
+            if(transButton.isSelected()){
+                rullerEdit.setSelected(false);
+                barraEditar.setVisible(true);
+                editarReglas();
+            }else{
+                label.setVisible(true);
+            }
+        });
+        rullerEdit.setOnAction(e -> {
+            transEdit.setSelected(false);
+            if(reglaBoton.isSelected()){
+                barraEditar.setVisible(true);
+                fotoAumento.setVisible(false);
+                tamaño.setVisible(false);
+                editarReglas();
+            }
+        });
+        
     }
+    
+       
     
     /* ───────────────  AVATAR helper  ─────────────── */
     private void refreshAvatar(Image img) {                            // ─── AVATAR
@@ -306,7 +355,7 @@ public class FXMLDocumentController implements Initializable {
             });
         });
     }
-
+    
         // === Zoom y control del mapa ===
 
     private void applyZoom(double scale) {
@@ -392,7 +441,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void addPoi(MouseEvent event) {
-        if (!event.isControlDown()) return;
+        /*if (!event.isControlDown()) return;
 
         Dialog<Poi> dialog = new Dialog<>();
         dialog.setTitle("Nuevo POI");
@@ -420,7 +469,7 @@ public class FXMLDocumentController implements Initializable {
             Point2D point = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
             poi.setPosition(point);
             map_listview.getItems().add(poi);
-        });
+        });*/
     }
 
     // === Información Acerca de ===
@@ -576,15 +625,37 @@ public class FXMLDocumentController implements Initializable {
             });
         }
     }
-
+    private void editarReglas(){
+        if(transEdit.isSelected()){
+            rotate.valueProperty().unbind();
+            transportador.rotateProperty().bind(rotate.valueProperty());
+            
+            
+            System.out.println(tamano.getMin() + "");
+            System.out.println(tamano.getMax() + "");
+            tamano.setMin(500);
+            tamano.setMax(3000);
+            tamano.valueProperty().unbind();
+            transportador.fitWidthProperty().bind(tamano.valueProperty());
+            transportador.fitHeightProperty().bind(tamano.valueProperty());
+            //transportador.setFitHeight(transportador.getFitHeight() * tamano.getValue());
+            //transportador.setFitWidth(transportador.getFitWidth() * tamano.getValue());
+            
+        }else if(rullerEdit.isSelected()){
+            rotate.valueProperty().unbind();
+            regla.rotateProperty().bind(rotate.valueProperty());
+        }
+        
+    }
     private void configurarRegla(){
+        
         regla.setVisible(false);
         regla.setX(1500);
         regla.setY(3000);
         regla.setFitWidth(5000);
         regla.setFitHeight(5000);
         
-        regla.rotateProperty().bind(rotate.valueProperty());
+        
         regla.visibleProperty().bind(reglaBoton.selectedProperty());
 
         regla.setOnMousePressed(this::cogerRegla);
@@ -592,6 +663,7 @@ public class FXMLDocumentController implements Initializable {
     
     }
     private void configurarTransportador() {
+        
         transportador.setX(3000);
         transportador.setY(3000);
 
@@ -699,8 +771,8 @@ public class FXMLDocumentController implements Initializable {
         regla.setTranslateY(Math.clamp(by + localPos.getY() - localBaseRegla.getY(), -3000, 2250));
         event.consume();
     }
-   
-     
+
+ 
     /* --------------------------------------------------------------------- */
     /*  HELPER : self-contained eye-toggle password input (emoji version)    */
     /* --------------------------------------------------------------------- */
