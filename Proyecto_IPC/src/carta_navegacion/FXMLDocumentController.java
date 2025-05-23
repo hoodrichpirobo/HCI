@@ -151,6 +151,8 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton arcoBoton;
     @FXML
     private ToggleButton compasBoton;
+    @FXML
+    private ImageView mapa;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -800,10 +802,7 @@ public class FXMLDocumentController implements Initializable {
         regla.setY(3000);
         regla.setFitWidth(5000);
         regla.setFitHeight(5000);
-        Platform.runLater(() -> {
-        Bounds viewportBounds = map_scrollpane.getViewportBounds();
-       
-        });
+        
         regla.rotateProperty().bind(rotate.valueProperty());
         regla.visibleProperty().bind(reglaBoton.selectedProperty());
 
@@ -821,16 +820,12 @@ public class FXMLDocumentController implements Initializable {
 
         transportador.setVisible(false);
 
-        
-        Platform.runLater(() -> {
-        Bounds viewportBounds = map_scrollpane.getViewportBounds();
-       
-        });
         transportador.rotateProperty().bind(rotate.valueProperty());
         transportador.visibleProperty().bind(transButton.selectedProperty());
 
         transportador.setOnMousePressed(this::cogerTransportador);
         transportador.setOnMouseDragged(this::moverTransportador);
+        
         
     }
 
@@ -883,8 +878,8 @@ public class FXMLDocumentController implements Initializable {
         map_scrollpane.setPannable(false); 
         
         Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
-        transportador.setTranslateX(baseX + localPos.getX() - localBase.getX());
-        transportador.setTranslateY(baseY + localPos.getY() - localBase.getY());
+        transportador.setTranslateX(Math.clamp((baseX + localPos.getX() - localBase.getX()),-3000,3000));
+        transportador.setTranslateY(Math.clamp((baseY + localPos.getY() - localBase.getY()),-3000,100));
         event.consume();
 
     }
@@ -915,11 +910,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
      private void moverRegla(MouseEvent event) {
 
+         map_scrollpane.setPannable(false); 
+        
+        
         Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
-        regla.setTranslateX(bx + localPos.getX() - localBaseRegla.getX());
-        regla.setTranslateY(by + localPos.getY() - localBaseRegla.getY());
+        regla.setTranslateX(Math.clamp(bx + localPos.getX() - localBaseRegla.getX(), -2200,2250));
+        regla.setTranslateY(Math.clamp(by + localPos.getY() - localBaseRegla.getY(), -3000, 2250));
         event.consume();
-  
     }
    
      

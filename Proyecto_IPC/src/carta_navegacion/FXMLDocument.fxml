@@ -317,7 +317,7 @@
         <content>
           <Pane fx:id="mapPane" minWidth="0.0" onMouseClicked="#handleMapClick">
             <children>
-              <ImageView fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="62.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fx:id="mapa" fitHeight="5577.0" fitWidth="8674.0" focusTraversable="true" layoutX="62.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/carta_nautica.jpg" />
                 </image>
