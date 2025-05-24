@@ -54,14 +54,16 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.geometry.Bounds;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
+
+
 import javafx.scene.shape.Line;
+
 import model.Session;
 import model.User;
 
@@ -155,6 +157,7 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton arcoBoton;
     @FXML
     private ToggleButton compasBoton;
+    
 
     @FXML
     private ImageView mapa;
@@ -162,21 +165,33 @@ public class FXMLDocumentController implements Initializable {
     private static final String DEFAULT_AVATAR_RES = "/resources/default_avatar.png";   // ─── AVATAR
     private static final Path   AVATAR_DIR        = Paths.get("avatars");              // ─── AVATAR
     @FXML
+    private MenuButton menuEditar;
+    @FXML
+    private RadioMenuItem transEdit;
+    @FXML
+    private RadioMenuItem rullerEdit;
+
+    @FXML
+    private ButtonBar barraEditar;
+
+
+    @FXML
+    private Slider tamano;
+
+    @FXML
     private ToggleButton botonLinea;
-    @FXML
-    private Button clear;
-    @FXML
     private Spinner<Double> elegirAngulo;
-    @FXML
-    private Text infoSliderSize;
-    @FXML
     private Slider sliderSize;
-    @FXML
     private Spinner<Integer> elegirSize;
     @FXML
     private ToggleButton botonTexto;
     @FXML
     private ToggleButton botonGoma;
+    @FXML
+    private ImageView fotoGiro;
+    @FXML
+    private ImageView fotoAumento;
+
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -226,7 +241,7 @@ public class FXMLDocumentController implements Initializable {
         });
 
         /* ─── 4.  TOOLS (protractor, ruler, etc.) ────────────────────────── */
-        elegirAngulo.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 360, 0));
+        /*elegirAngulo.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 360, 0));
         elegirSize.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 5));
         rotate.valueProperty().addListener((obs, oldVal, newVal) -> {
             elegirAngulo.getValueFactory().setValue(newVal.doubleValue());
@@ -240,6 +255,7 @@ public class FXMLDocumentController implements Initializable {
         elegirSize.valueProperty().addListener((obs, oldVal, newVal) -> {
             sliderSize.setValue(newVal);
         });
+        */
         ToggleGroup dibujos = new ToggleGroup();
         botonLinea.setToggleGroup(dibujos);
         botonPunto.setToggleGroup(dibujos);
@@ -248,7 +264,40 @@ public class FXMLDocumentController implements Initializable {
         botonGoma.setToggleGroup(dibujos);
         configurarTransportador();
         configurarRegla();
+        
+        
+        barraEditar.setVisible(false);
+       
+        menuEditar.disableProperty().bind(
+            Bindings.not(
+                    transButton.selectedProperty().or(reglaBoton.selectedProperty())
+            )
+        );
+        
+       arcoBoton.setOnAction(e -> {
+          
+           
+       });
+        transEdit.setOnAction(e -> {
+            if(transButton.isSelected()){
+                rullerEdit.setSelected(false);
+                barraEditar.setVisible(true);
+                editarReglas();
+            }
+        });
+        rullerEdit.setOnAction(e -> {
+            transEdit.setSelected(false);
+            if(reglaBoton.isSelected()){
+                barraEditar.setVisible(true);
+                fotoAumento.setVisible(false);
+                tamano.setVisible(false);
+                editarReglas();
+            }
+        });
+        
     }
+    
+       
     
     /* ───────────────  AVATAR helper  ─────────────── */
     private void refreshAvatar(Image img) {                            // ─── AVATAR
@@ -343,7 +392,7 @@ public class FXMLDocumentController implements Initializable {
             });
         });
     }
-
+    
         // === Zoom y control del mapa ===
 
     private void applyZoom(double scale) {
@@ -427,38 +476,7 @@ public class FXMLDocumentController implements Initializable {
         map_pin.setVisible(true);
     }
 
-    @FXML
-    private void addPoi(MouseEvent event) {
-        if (!event.isControlDown()) return;
-
-        Dialog<Poi> dialog = new Dialog<>();
-        dialog.setTitle("Nuevo POI");
-        dialog.setHeaderText("Introduce un nuevo POI");
-
-        TextField nameField = new TextField();
-        nameField.setPromptText("Nombre");
-
-        TextArea descArea = new TextArea();
-        descArea.setPromptText("Descripción...");
-        descArea.setPrefRowCount(4);
-
-        VBox vbox = new VBox(10, new Label("Nombre:"), nameField, new Label("Descripción:"), descArea);
-        dialog.getDialogPane().setContent(vbox);
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK) {
-                return new Poi(nameField.getText().trim(), descArea.getText().trim(), 0, 0);
-            }
-            return null;
-        });
-
-        dialog.showAndWait().ifPresent(poi -> {
-            Point2D point = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
-            poi.setPosition(point);
-            map_listview.getItems().add(poi);
-        });
-    }
+   
 
     // === Información Acerca de ===
     @FXML
@@ -653,15 +671,35 @@ public class FXMLDocumentController implements Initializable {
             }
         }
     }
-
+    private void editarReglas(){
+        if(transEdit.isSelected()){
+            rotate.valueProperty().unbind();
+            transportador.rotateProperty().bind(rotate.valueProperty());
+            
+            
+            System.out.println(tamano.getMin() + "");
+            System.out.println(tamano.getMax() + "");
+            tamano.setMin(500);
+            tamano.setMax(3000);
+            tamano.valueProperty().unbind();
+            transportador.fitWidthProperty().bind(tamano.valueProperty());
+            transportador.fitHeightProperty().bind(tamano.valueProperty());
+            
+        }else if(rullerEdit.isSelected()){
+            rotate.valueProperty().unbind();
+            regla.rotateProperty().bind(rotate.valueProperty());
+        }
+        
+    }
     private void configurarRegla(){
+        
         regla.setVisible(false);
         regla.setX(1500);
         regla.setY(3000);
         regla.setFitWidth(5000);
         regla.setFitHeight(5000);
         
-        regla.rotateProperty().bind(rotate.valueProperty());
+        
         regla.visibleProperty().bind(reglaBoton.selectedProperty());
 
         regla.setOnMousePressed(this::cogerRegla);
@@ -669,6 +707,7 @@ public class FXMLDocumentController implements Initializable {
     
     }
     private void configurarTransportador() {
+        
         transportador.setX(3000);
         transportador.setY(3000);
 
@@ -736,8 +775,8 @@ public class FXMLDocumentController implements Initializable {
         map_scrollpane.setPannable(false); 
         
         Point2D localPos = zoomGroup.sceneToLocal(event.getSceneX(),event.getSceneY());
-        transportador.setTranslateX(Math.clamp((baseX + localPos.getX() - localBase.getX()),-3000,3000));
-        transportador.setTranslateY(Math.clamp((baseY + localPos.getY() - localBase.getY()),-3000,100));
+        transportador.setTranslateX(Math.clamp((baseX + localPos.getX() - localBase.getX()),-3000,5000));
+        transportador.setTranslateY(Math.clamp((baseY + localPos.getY() - localBase.getY()),-3000,2000));
         event.consume();
 
     }
@@ -777,13 +816,20 @@ public class FXMLDocumentController implements Initializable {
         event.consume();
     }
 
-    @FXML
+
     private void clearAll(ActionEvent event) {
         dibujar.getChildren().clear();
         puntos.clear();
     }
+
+    @FXML
+    private void addPoi(MouseEvent event) {
+    }
+
+   
    
      
+
     /* --------------------------------------------------------------------- */
     /*  HELPER : self-contained eye-toggle password input (emoji version)    */
     /* --------------------------------------------------------------------- */
