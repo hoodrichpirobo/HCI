@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Aciertos totales: ">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Fallos totales: ">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Porcentaje de aciertos: ">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" />
+               </VBox.margin>
+            </Text>
+            <HBox fx:id="filtros" alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../resources/filter.png" />
+                     </image>
+                  </ImageView>
+                  <DatePicker>
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                  </DatePicker>
+               </children>
+            </HBox>
+            <TableView fx:id="historialSesiones" prefHeight="200.0" prefWidth="200.0">
+              <columns>
+                <TableColumn prefWidth="150.0" text="Fecha" />
+                <TableColumn prefWidth="75.0" text="Aciertos" />
+                  <TableColumn prefWidth="75.0" text="Fallos" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </center>
+   <left>
+      <Region prefHeight="124.0" prefWidth="75.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Region prefHeight="124.0" prefWidth="75.0" BorderPane.alignment="CENTER" />
+   </right>
+   <bottom>
+      <Region prefHeight="75.0" prefWidth="600.0" BorderPane.alignment="CENTER" />
+   </bottom>
+   <top>
+      <HBox alignment="CENTER" prefHeight="75.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Estadísticas globales" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Text>
+         </children>
+      </HBox>
+   </top>
+</BorderPane>
