@@ -25,6 +25,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -161,7 +162,7 @@
             </graphic>
           </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="arcoBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
+               <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -171,7 +172,7 @@
                   </graphic>
                </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="compasBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+               <ToggleButton fx:id="arcoBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -423,6 +424,9 @@
                   <HBox.margin>
                      <Insets left="5.0" right="5.0" />
                   </HBox.margin>
+                  <value>
+                     <Color red="1.0" />
+                  </value>
                </ColorPicker>
                <Button fx:id="papelera" mnemonicParsing="false" onAction="#borrarObjeto">
                   <graphic>
