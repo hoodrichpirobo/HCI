@@ -16,6 +16,7 @@
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -351,7 +352,7 @@
          </ScrollPane>
 
       <!-- ScrollPane con la carta náutica -->
-      <ScrollPane fx:id="map_scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
+      <ScrollPane fx:id="map_scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" pickOnBounds="true" vbarPolicy="ALWAYS">
         <content>
           <Pane fx:id="mapPane" minWidth="0.0" onMouseClicked="#handleMapClick">
             <children>
@@ -401,7 +402,7 @@
                      
                      <ButtonBar fx:id="barraEditar" prefHeight="40.0" prefWidth="200.0">
                        <buttons>
-                           <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" focusTraversable="true" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@../resources/360.png" />
                               </image>
@@ -417,6 +418,7 @@
                        </buttons>
                      </ButtonBar>
                   </children></VBox>
+               <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
                      <Insets left="5.0" right="5.0" />
