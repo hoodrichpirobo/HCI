@@ -16,6 +16,7 @@
 <?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
@@ -24,6 +25,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -160,7 +162,7 @@
             </graphic>
           </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="arcoBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
+               <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -170,7 +172,7 @@
                   </graphic>
                </ToggleButton>
           <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="compasBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+               <ToggleButton fx:id="arcoBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -351,7 +353,7 @@
          </ScrollPane>
 
       <!-- ScrollPane con la carta náutica -->
-      <ScrollPane fx:id="map_scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" vbarPolicy="ALWAYS">
+      <ScrollPane fx:id="map_scrollpane" fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" onMouseMoved="#showPosition" onMousePressed="#addPoi" pannable="true" pickOnBounds="true" vbarPolicy="ALWAYS">
         <content>
           <Pane fx:id="mapPane" minWidth="0.0" onMouseClicked="#handleMapClick">
             <children>
@@ -401,7 +403,7 @@
                      
                      <ButtonBar fx:id="barraEditar" prefHeight="40.0" prefWidth="200.0">
                        <buttons>
-                           <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                           <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" focusTraversable="true" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
                               <image>
                                  <Image url="@../resources/360.png" />
                               </image>
@@ -417,10 +419,14 @@
                        </buttons>
                      </ButtonBar>
                   </children></VBox>
+               <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
                      <Insets left="5.0" right="5.0" />
                   </HBox.margin>
+                  <value>
+                     <Color red="1.0" />
+                  </value>
                </ColorPicker>
                <Button fx:id="papelera" mnemonicParsing="false" onAction="#borrarObjeto">
                   <graphic>
