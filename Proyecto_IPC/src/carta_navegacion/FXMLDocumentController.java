@@ -750,8 +750,19 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    private void showStats(ActionEvent event) {
-        Alert estadisticas = new Alert(AlertType.INFORMATION);
+    private void showStats(ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLShowStats.fxml"));
+        Parent root = loader.load();
+        FXMLShowStatsController controller = loader.getController();
+        controller.setUser(currentUser);
+        controller.currentSession(hits.get(), faults.get());
+        controller.loadData();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show();
+        
+        
+        /*Alert estadisticas = new Alert(AlertType.INFORMATION);
         estadisticas.setHeaderText("Estadísticas globales de " + currentUser.getNickName());
         List<Session> a = currentUser.getSessions();
         int h = hits.get(), f = faults.get();
@@ -764,12 +775,15 @@ public class FXMLDocumentController implements Initializable {
             ta = (h * 100.0 / (h + f));
         }
         estadisticas.setContentText("Total Hits: " + h + "\n" + "Total Faults: " + f + "\n" + "Tasa de aciertos: " + ta + "%");
-        estadisticas.showAndWait();
+        estadisticas.showAndWait();*/
     }
 
     double baseX, baseY, bx, by;  
     Point2D localBase;
     Point2D localBaseRegla;
+    //@FXML
+    //private void moverTransportador(MouseEvent event) {    Point2D localBase;
+    //Point2D localBaseRegla;
     @FXML
     private void moverTransportador(MouseEvent event) {
         map_scrollpane.setPannable(false); 
