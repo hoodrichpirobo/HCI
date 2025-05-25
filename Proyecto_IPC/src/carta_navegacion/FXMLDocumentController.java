@@ -265,6 +265,7 @@ public class FXMLDocumentController implements Initializable {
         circuloBoton.setToggleGroup(dibujos);
         botonTexto.setToggleGroup(dibujos);
         botonGoma.setToggleGroup(dibujos);
+        arcoBoton.setToggleGroup(dibujos);
         configurarTransportador();
         configurarRegla();
      
