@@ -58,6 +58,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Arc;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
 
@@ -155,8 +156,6 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton reglaBoton;
     @FXML
     private ToggleButton arcoBoton;
-    @FXML
-    private ToggleButton compasBoton;
     
 
     @FXML
@@ -191,6 +190,10 @@ public class FXMLDocumentController implements Initializable {
     private ImageView fotoGiro;
     @FXML
     private ImageView fotoAumento;
+    @FXML
+    private Spinner<Double> spinnerGrosor;
+    @FXML
+    private ToggleButton circuloBoton;
 
   
     @Override
@@ -259,12 +262,19 @@ public class FXMLDocumentController implements Initializable {
         ToggleGroup dibujos = new ToggleGroup();
         botonLinea.setToggleGroup(dibujos);
         botonPunto.setToggleGroup(dibujos);
-        arcoBoton.setToggleGroup(dibujos);
+        circuloBoton.setToggleGroup(dibujos);
         botonTexto.setToggleGroup(dibujos);
         botonGoma.setToggleGroup(dibujos);
+        arcoBoton.setToggleGroup(dibujos);
         configurarTransportador();
         configurarRegla();
+     
         
+        SpinnerValueFactory.DoubleSpinnerValueFactory grosorFactory = 
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); // min, max, initial, step
+
+        spinnerGrosor.setValueFactory(grosorFactory);
+        spinnerGrosor.setEditable(true);
         
         barraEditar.setVisible(false);
        
@@ -273,11 +283,7 @@ public class FXMLDocumentController implements Initializable {
                     transButton.selectedProperty().or(reglaBoton.selectedProperty())
             )
         );
-        
-       arcoBoton.setOnAction(e -> {
-          
-           
-       });
+            
         transEdit.setOnAction(e -> {
             if(transButton.isSelected()){
                 rullerEdit.setSelected(false);
@@ -295,6 +301,24 @@ public class FXMLDocumentController implements Initializable {
             }
         });
         
+        circuloBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+        if (isNowSelected) {
+            mapa.setOnMousePressed(this::ponerCentro);
+            mapa.setOnMouseDragged(this::ponerRadio);
+        } else {
+            mapa.setOnMousePressed(null);
+            mapa.setOnMouseDragged(null);
+        }
+    });
+        arcoBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+        if (isNowSelected) {
+            mapa.setOnMousePressed(this::ponerCentroArco);
+            mapa.setOnMouseDragged(this::ponerRadioArco);
+        } else {
+            mapa.setOnMousePressed(null);
+            mapa.setOnMouseDragged(null);
+        }
+    });
     }
     
        
@@ -836,6 +860,67 @@ public class FXMLDocumentController implements Initializable {
         puntos.clear();
     }
 
+    private void ponerRadio(MouseEvent event) {
+        Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
+        double radio = Math.sqrt(Math.pow(localPoint.getX() - inicioXarc, 2) +
+                             Math.pow(localPoint.getY() - inicioYarc, 2));
+        circlePainting.setRadius(radio);
+        event.consume();
+    }
+    
+    Circle circlePainting;
+    double inicioXarc, inicioYarc;
+    private void ponerCentro(MouseEvent event) {
+            Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
+            
+            circlePainting = new Circle(1); 
+            circlePainting.setStroke(Color.RED);
+            circlePainting.setFill(Color.TRANSPARENT);
+            circlePainting.setStroke(colorPicker.getValue());
+            circlePainting.setStrokeWidth(spinnerGrosor.getValue());
+
+            
+            
+            
+            
+            circlePainting.setCenterX(localPoint.getX());
+            circlePainting.setCenterY(localPoint.getY());
+            
+            inicioXarc = localPoint.getX();
+            inicioYarc = localPoint.getY();
+        
+            zoomGroup.getChildren().add(circlePainting);
+    }
+    Arc arcPainting;
+    double inicioXarco, inicioYarco;
+    private void ponerCentroArco(MouseEvent event) {
+            Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
+            
+            arcPainting = new Arc(); 
+            arcPainting.setFill(Color.TRANSPARENT);
+            arcPainting.setStroke(colorPicker.getValue());
+            arcPainting.setStrokeWidth(spinnerGrosor.getValue());   
+            arcPainting.setCenterX(localPoint.getX());
+            arcPainting.setCenterY(localPoint.getY());
+            arcPainting.setLength(180);   
+
+            
+            inicioXarco = localPoint.getX();
+            inicioYarco = localPoint.getY();
+        
+            zoomGroup.getChildren().add(arcPainting);
+    }
+    private void ponerRadioArco(MouseEvent event) {
+        Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
+      
+        double rx = Math.abs(localPoint.getX() - inicioXarco);
+        double ry = Math.abs(localPoint.getY() - inicioYarco);
+        double radio = Math.sqrt(rx*rx + ry*ry);
+        arcPainting.setRadiusX(radio);
+        arcPainting.setRadiusY(radio);
+        event.consume();
+        
+    }
     @FXML
     private void addPoi(MouseEvent event) {
     }
@@ -1121,5 +1206,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void borrarObjeto(ActionEvent event) {
     }
+    
   
 }
