@@ -1121,32 +1121,42 @@ public class FXMLDocumentController implements Initializable {
 
             String nick = nickField.getText().trim();
             String mail = emailField.getText().trim();
+            LocalDate dob = dobPicker.getValue();
 
-            /* Validaciones de formato */
-            if (!User.checkNickName(nick))
-                throw new IllegalArgumentException("Nickname inválido");
-            if (!User.checkEmail(mail))
-                throw new IllegalArgumentException("Email inválido");
-            if (Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16)
-                throw new IllegalArgumentException("Debes tener al menos 16 años");
+            // 1) Validación de nickname
+            if (!User.checkNickName(nick)) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Nickname inválido – debe tener 6-15 caracteres alfanuméricos, guiones o guiones bajos.",
+                          ButtonType.OK).showAndWait();
+                return null;
+            }
+            // 2) Validación de email
+            if (!User.checkEmail(mail)) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Email inválido – introduce un correo con formato correcto.",
+                          ButtonType.OK).showAndWait();
+                return null;
+            }
+            // 3) Validación de edad mínima (16 años)
+            if (dob == null || Period.between(dob, LocalDate.now()).getYears() < 16) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Debes tener al menos 16 años para registrarte.",
+                          ButtonType.OK).showAndWait();
+                return null;
+            }
 
+            // 4) Intentar registro en BD (coge NavDAOException si ya existe nick)
             try {
-                Navigation nav = Navigation.getInstance();
-                /* Intentamos registrar — si el nickname ya existe lanzará NavDAOException */
-                return nav.registerUser(nick, mail, pwd.getText(), null, dobPicker.getValue());
-
+                return Navigation.getInstance()
+                         .registerUser(nick, mail, pwd.getText(), null, dob);
             } catch (NavDAOException ex) {
-                /* ¿Es un UNIQUE/PRIMARY-KEY?  ⇒  ya existe ese nick */
                 if (ex.getMessage() != null &&
                     ex.getMessage().toLowerCase().contains("primary key")) {
-
-                    /* Mostramos aviso y devolvemos null para que el diálogo siga abierto */
                     new Alert(Alert.AlertType.ERROR,
                               "El nickname \"" + nick + "\" ya está en uso. Elige otro.",
                               ButtonType.OK).showAndWait();
-                    return null;          // evita cerrar el diálogo
+                    return null;
                 }
-                /* Otro error de BD → lo propagamos como RuntimeException */
                 throw new RuntimeException("Error BD: " + ex.getMessage(), ex);
             }
         });
