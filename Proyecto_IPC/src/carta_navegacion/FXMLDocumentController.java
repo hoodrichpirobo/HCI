@@ -314,9 +314,11 @@ public class FXMLDocumentController implements Initializable {
     });
         arcoBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
-            mapa.setOnMousePressed(this::colocarTexto);
+            mapa.setOnMousePressed(this::ponerCentroArco);
+            mapa.setOnMouseDragged(this::ponerRadioArco);
         } else {
             mapa.setOnMousePressed(null);
+            mapa.setOnMouseDragged(null);
         }
     });
          botonTexto.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
