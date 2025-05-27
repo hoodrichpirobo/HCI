@@ -65,7 +65,7 @@ import javafx.scene.shape.Circle;
 
 import javafx.scene.shape.Line;
 
-import model.Session;
+import javafx.scene.text.Font;
 import model.User;
 
 
@@ -194,7 +194,8 @@ public class FXMLDocumentController implements Initializable {
     private Spinner<Double> spinnerGrosor;
     @FXML
     private ToggleButton circuloBoton;
-
+    @FXML
+    TextField texto;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -277,6 +278,7 @@ public class FXMLDocumentController implements Initializable {
         spinnerGrosor.setEditable(true);
         
         barraEditar.setVisible(false);
+        
        
         menuEditar.disableProperty().bind(
             Bindings.not(
@@ -312,14 +314,25 @@ public class FXMLDocumentController implements Initializable {
     });
         arcoBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
-            mapa.setOnMousePressed(this::ponerCentroArco);
-            mapa.setOnMouseDragged(this::ponerRadioArco);
+            mapa.setOnMousePressed(this::colocarTexto);
         } else {
             mapa.setOnMousePressed(null);
-            mapa.setOnMouseDragged(null);
         }
     });
+         botonTexto.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+        if (isNowSelected) {
+            SpinnerValueFactory.DoubleSpinnerValueFactory sizeTexto = 
+            new SpinnerValueFactory.DoubleSpinnerValueFactory(40.0, 500.0, 100.0, 10.0); 
+            spinnerGrosor.setValueFactory(sizeTexto);
+            mapa.setOnMousePressed(this::colocarTexto);
+
+        } else {
+            mapa.setOnMousePressed(null);
+        }
+    });
+         
     }
+    
     
        
     
@@ -921,6 +934,37 @@ public class FXMLDocumentController implements Initializable {
         event.consume();
         
     }
+    
+    private void colocarTexto(MouseEvent event) {
+            Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
+            texto = new TextField();
+            // Añadimos el texto al contenedor, lo posicionamos donde está el ratón y muy importante, pedimos el foco.
+            zoomGroup.getChildren().add(texto);
+            texto.setLayoutX(localPoint.getX());
+            texto.setLayoutY(localPoint.getY());
+            texto.requestFocus();
+            
+            texto.setOnAction(e -> {
+                Text textoT = new Text(texto.getText());
+                textoT.setX(texto.getLayoutX());
+                textoT.setY(texto.getLayoutY());
+                double sizeDouble = spinnerGrosor.getValue();
+                int size = (int) sizeDouble;
+                
+                textoT.setFont(Font.font("Gafata", size));
+                
+                textoT.setFill(colorPicker.getValue());
+                
+               
+                zoomGroup.getChildren().add(textoT);
+                zoomGroup.getChildren().remove(texto);
+                e.consume();
+            });
+            
+    }
+    private void cambiarEstiloTexto(TextField t){
+    
+    }
     @FXML
     private void addPoi(MouseEvent event) {
     }
@@ -1075,32 +1119,42 @@ public class FXMLDocumentController implements Initializable {
 
             String nick = nickField.getText().trim();
             String mail = emailField.getText().trim();
+            LocalDate dob = dobPicker.getValue();
 
-            /* Validaciones de formato */
-            if (!User.checkNickName(nick))
-                throw new IllegalArgumentException("Nickname inválido");
-            if (!User.checkEmail(mail))
-                throw new IllegalArgumentException("Email inválido");
-            if (Period.between(dobPicker.getValue(), LocalDate.now()).getYears() < 16)
-                throw new IllegalArgumentException("Debes tener al menos 16 años");
+            // 1) Validación de nickname
+            if (!User.checkNickName(nick)) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Nickname inválido – debe tener 6-15 caracteres alfanuméricos, guiones o guiones bajos.",
+                          ButtonType.OK).showAndWait();
+                return null;
+            }
+            // 2) Validación de email
+            if (!User.checkEmail(mail)) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Email inválido – introduce un correo con formato correcto.",
+                          ButtonType.OK).showAndWait();
+                return null;
+            }
+            // 3) Validación de edad mínima (16 años)
+            if (dob == null || Period.between(dob, LocalDate.now()).getYears() < 16) {
+                new Alert(Alert.AlertType.ERROR,
+                          "Debes tener al menos 16 años para registrarte.",
+                          ButtonType.OK).showAndWait();
+                return null;
+            }
 
+            // 4) Intentar registro en BD (coge NavDAOException si ya existe nick)
             try {
-                Navigation nav = Navigation.getInstance();
-                /* Intentamos registrar — si el nickname ya existe lanzará NavDAOException */
-                return nav.registerUser(nick, mail, pwd.getText(), null, dobPicker.getValue());
-
+                return Navigation.getInstance()
+                         .registerUser(nick, mail, pwd.getText(), null, dob);
             } catch (NavDAOException ex) {
-                /* ¿Es un UNIQUE/PRIMARY-KEY?  ⇒  ya existe ese nick */
                 if (ex.getMessage() != null &&
                     ex.getMessage().toLowerCase().contains("primary key")) {
-
-                    /* Mostramos aviso y devolvemos null para que el diálogo siga abierto */
                     new Alert(Alert.AlertType.ERROR,
                               "El nickname \"" + nick + "\" ya está en uso. Elige otro.",
                               ButtonType.OK).showAndWait();
-                    return null;          // evita cerrar el diálogo
+                    return null;
                 }
-                /* Otro error de BD → lo propagamos como RuntimeException */
                 throw new RuntimeException("Error BD: " + ex.getMessage(), ex);
             }
         });
