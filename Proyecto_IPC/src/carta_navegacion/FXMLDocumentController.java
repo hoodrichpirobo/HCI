@@ -196,6 +196,8 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton circuloBoton;
     @FXML
     TextField texto;
+    @FXML
+    private Button clear;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -269,7 +271,6 @@ public class FXMLDocumentController implements Initializable {
         arcoBoton.setToggleGroup(dibujos);
         configurarTransportador();
         configurarRegla();
-     
         
         SpinnerValueFactory.DoubleSpinnerValueFactory grosorFactory = 
             new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); // min, max, initial, step
@@ -624,13 +625,21 @@ public class FXMLDocumentController implements Initializable {
             opciones.selectToggle(null);
         });
     }
-    
-    List<Circle> puntos = new ArrayList<>();
-    Circle puntoSeleccionado = null;
+    DropShadow glow = new DropShadow(10, Color.GREEN);
+    List<Node> dibujos = new ArrayList<>();
+    //Circle puntoSeleccionado = null;
     Point2D ini = null, fin = null;
-    Line lineaSeleccionada = null;
+    Line latitud = null, longitud = null;
+    private Node nodoSeleccionado = null;
+    Line linea = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
+        if(nodoSeleccionado != null) {
+            nodoSeleccionado.setEffect(null);
+            nodoSeleccionado = null;
+        }
+        if(latitud != null) dibujar.getChildren().remove(latitud);
+        if(longitud != null) dibujar.getChildren().remove(longitud);
         if(event.isConsumed()) return;
         else if(botonPunto.isSelected()){
             //puntoSeleccionado.fillProperty().unbind();
@@ -641,38 +650,38 @@ public class FXMLDocumentController implements Initializable {
             c.setFill(colorPicker.getValue());
             c.setStroke(colorPicker.getValue());
             dibujar.getChildren().add(c);
-            puntos.add(c);
+            dibujos.add(c);
             c.setOnMouseClicked(e -> {
                 e.consume();
-                if(puntoSeleccionado != null){
-                    puntoSeleccionado.setEffect(null);
+                if(nodoSeleccionado != null){
+                    nodoSeleccionado.setEffect(null);
                 }
-                puntoSeleccionado = c;
-                colorPicker.setValue((Color)puntoSeleccionado.getFill());
-                sliderSize.adjustValue(puntoSeleccionado.getRadius());
+                nodoSeleccionado = c;
+                colorPicker.setValue((Color)((Circle)nodoSeleccionado).getFill());
+                //sliderSize.adjustValue(((Circle)nodoSeleccionado).getRadius());
                 //puntoSeleccionado.fillProperty().bind(colorPicker.valueProperty());
                 //puntoSeleccionado.strokeProperty().bind(colorPicker.valueProperty());
-                DropShadow glow = new DropShadow(10, Color.GREEN);
-                puntoSeleccionado.setEffect(glow);
-                papelera.setDisable(false);
-                papelera.setOnAction(f -> {
-                    if(puntoSeleccionado != null){
-                        dibujar.getChildren().remove(puntoSeleccionado);
-                        puntos.remove(puntoSeleccionado);
-                        puntoSeleccionado = null;
-                        papelera.setDisable(true);
-                    }
-                });
+                nodoSeleccionado.setEffect(glow);
+                
+                latitud = new Line(e.getSceneX(), 0, e.getSceneX(), 2700);
+                longitud = new Line(0, e.getSceneY(), 2000, e.getSceneY());
+                latitud.setStroke(Color.GRAY);
+                longitud.setStroke(Color.GRAY);
+                latitud.setStrokeWidth(1);
+                longitud.setStrokeWidth(1);
+                dibujar.getChildren().add(latitud);
+                dibujar.getChildren().add(longitud);
+                
                 colorPicker.setOnAction(h -> {
                    Color color = colorPicker.getValue();
-                   puntoSeleccionado.setFill(color);
-                   puntoSeleccionado.setStroke(color);
+                   ((Circle)nodoSeleccionado).setFill(color);
+                   ((Circle)nodoSeleccionado).setStroke(color);
                 });
-                sliderSize.valueProperty().addListener((obs, oldVal, newVal) -> {
-                    if(puntoSeleccionado != null){
-                        puntoSeleccionado.setRadius(newVal.doubleValue());
+                /*sliderSize.valueProperty().addListener((obs, oldVal, newVal) -> {
+                    if(nodoSeleccionado != null){
+                        ((Circle)nodoSeleccionado).setRadius(newVal.doubleValue());
                     }
-                });
+                });*/
             });
             c.setOnMouseDragged(g -> {
                 g.consume();
@@ -681,11 +690,9 @@ public class FXMLDocumentController implements Initializable {
                 c.setCenterY(c.getCenterY() + dy);
                 Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
                 Point2D dp = new Point2D(dx, dy);*/
-                puntoSeleccionado.setTranslateX(Math.clamp(puntoSeleccionado.getCenterX(), 150, 1100));
-                puntoSeleccionado.setTranslateY(Math.clamp(puntoSeleccionado.getCenterY(), 300, 600));
+                nodoSeleccionado.setTranslateX(Math.clamp(((Circle)nodoSeleccionado).getCenterX(), 150, 1100));
+                nodoSeleccionado.setTranslateY(Math.clamp(((Circle)nodoSeleccionado).getCenterY(), 300, 600));
             });
-            if(puntoSeleccionado != null) puntoSeleccionado.setEffect(null);
-            puntoSeleccionado = null;
         }
         else if(botonLinea.isSelected()){
             double x = event.getX(), y = event.getY();
@@ -693,23 +700,36 @@ public class FXMLDocumentController implements Initializable {
                 ini = new Point2D(x,y);
                 Circle c = new Circle(x, y, 3, Color.MAGENTA);
                 dibujar.getChildren().add(c);
-                puntos.add(c);
+                dibujos.add(c);
             }
             else{
                 fin = new Point2D(x,y);
-                Line linea = new Line(ini.getX(), ini.getY(), x, y);
+                linea = new Line(ini.getX(), ini.getY(), x, y);
                 linea.setStroke(Color.MAGENTA);
                 linea.setStrokeWidth(2);
                 dibujar.getChildren().add(linea);
+                dibujos.add(linea);
                 Circle c = new Circle(x, y, 3, Color.MAGENTA);
                 dibujar.getChildren().add(c);
-                puntos.add(c);
+                dibujos.add(c);
                 ini = fin = null;
             }
+            if(linea != null){
+                linea.setOnMouseClicked(e -> {
+                    e.consume();
+                    if(nodoSeleccionado != null){
+                        nodoSeleccionado.setEffect(null);
+                    }
+                    nodoSeleccionado = linea;
+                    nodoSeleccionado.setEffect(glow);
+                });
+            }
         }
+        clear.setDisable(nodoSeleccionado == null);
     }
     private void editarReglas(){
         if(transEdit.isSelected()){
+            transportador.setEffect(glow);
             rotate.valueProperty().unbind();
             transportador.rotateProperty().bind(rotate.valueProperty());
             
@@ -720,11 +740,18 @@ public class FXMLDocumentController implements Initializable {
             tamano.setMax(3000);
             tamano.valueProperty().unbind();
             transportador.fitWidthProperty().bind(tamano.valueProperty());
-            transportador.fitHeightProperty().bind(tamano.valueProperty());
-            
-        }else if(rullerEdit.isSelected()){
+            transportador.fitHeightProperty().bind(tamano.valueProperty());   
+        }
+        else{
+            transportador.setEffect(null);
+        }
+        if(rullerEdit.isSelected()){
+            regla.setEffect(glow);
             rotate.valueProperty().unbind();
             regla.rotateProperty().bind(rotate.valueProperty());
+        }
+        else{
+            regla.setEffect(null);
         }
         
     }
@@ -868,9 +895,10 @@ public class FXMLDocumentController implements Initializable {
     }
 
 
+    @FXML
     private void clearAll(ActionEvent event) {
         dibujar.getChildren().clear();
-        puntos.clear();
+        dibujos.clear();
     }
 
     private void ponerRadio(MouseEvent event) {
@@ -902,7 +930,8 @@ public class FXMLDocumentController implements Initializable {
             inicioXarc = localPoint.getX();
             inicioYarc = localPoint.getY();
         
-            zoomGroup.getChildren().add(circlePainting);
+            dibujar.getChildren().add(circlePainting);
+            dibujos.add(circlePainting);
     }
     Arc arcPainting;
     double inicioXarco, inicioYarco;
@@ -921,7 +950,8 @@ public class FXMLDocumentController implements Initializable {
             inicioXarco = localPoint.getX();
             inicioYarco = localPoint.getY();
         
-            zoomGroup.getChildren().add(arcPainting);
+            dibujar.getChildren().add(arcPainting);
+            dibujos.add(arcPainting);
     }
     private void ponerRadioArco(MouseEvent event) {
         Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
@@ -956,7 +986,8 @@ public class FXMLDocumentController implements Initializable {
                 textoT.setFill(colorPicker.getValue());
                 
                
-                zoomGroup.getChildren().add(textoT);
+                dibujar.getChildren().add(textoT);
+                dibujos.add(textoT);
                 zoomGroup.getChildren().remove(texto);
                 e.consume();
             });
@@ -1259,6 +1290,12 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void borrarObjeto(ActionEvent event) {
+        if(nodoSeleccionado != null){
+            dibujar.getChildren().remove(nodoSeleccionado);
+            dibujos.remove(nodoSeleccionado);
+            nodoSeleccionado = null;
+            papelera.setDisable(true);
+        }
     }
     
   
