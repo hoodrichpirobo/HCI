@@ -60,6 +60,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Arc;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
@@ -348,7 +349,7 @@ public class FXMLDocumentController implements Initializable {
             mapa.setOnMousePressed(this::colocarTexto);
 
         } else {
-            mapa.setOnMousePressed(null);
+            zoomGroup.getChildren().remove(texto);
         }
     });
          
@@ -829,6 +830,7 @@ public class FXMLDocumentController implements Initializable {
     private void editarReglas(){
         if(transEdit.isSelected()){
             transportador.setEffect(glow);
+                System.out.println("se hace unbindf");
             rotate.valueProperty().unbind();
             transportador.rotateProperty().bind(rotate.valueProperty());
             
@@ -1065,15 +1067,28 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void colocarTexto(MouseEvent event) {
+            
+            
             Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
-            texto = new TextField();
+            
+            if(texto!=null){
+                zoomGroup.getChildren().remove(texto);
+            }else{
+                
+            }
             // Añadimos el texto al contenedor, lo posicionamos donde está el ratón y muy importante, pedimos el foco.
             zoomGroup.getChildren().add(texto);
+            
+           
+            texto.setFont(Font.font("Gafata", 30));
+            texto.setPrefWidth(500); // Ajusta el ancho si quieres
+            texto.setPrefHeight(100); // Altura del campo
             texto.setLayoutX(localPoint.getX());
             texto.setLayoutY(localPoint.getY());
             texto.requestFocus();
             
             texto.setOnAction(e -> {
+                if(!texto.getText().isEmpty()) {
                 Text textoT = new Text(texto.getText());
                 textoT.setX(texto.getLayoutX());
                 textoT.setY(texto.getLayoutY());
@@ -1087,10 +1102,12 @@ public class FXMLDocumentController implements Initializable {
                
                 dibujar.getChildren().add(textoT);
                 dibujos.add(textoT);
+                
                 zoomGroup.getChildren().remove(texto);
                 e.consume();
+                }
             });
-            
+              
     }
     private void cambiarEstiloTexto(TextField t){
     
