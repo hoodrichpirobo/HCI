@@ -196,6 +196,7 @@ public class FXMLDocumentController implements Initializable {
     private ToggleButton circuloBoton;
     @FXML
     TextField texto;
+
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -270,11 +271,7 @@ public class FXMLDocumentController implements Initializable {
         configurarTransportador();
         configurarRegla();
      
-        
-        SpinnerValueFactory.DoubleSpinnerValueFactory grosorFactory = 
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); // min, max, initial, step
-
-        spinnerGrosor.setValueFactory(grosorFactory);
+        spinnerGrosor.setValueFactory(getGrosor());
         spinnerGrosor.setEditable(true);
         
         barraEditar.setVisible(false);
@@ -323,9 +320,7 @@ public class FXMLDocumentController implements Initializable {
     });
          botonTexto.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
-            SpinnerValueFactory.DoubleSpinnerValueFactory sizeTexto = 
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(40.0, 500.0, 100.0, 10.0); 
-            spinnerGrosor.setValueFactory(sizeTexto);
+            spinnerGrosor.setValueFactory(getGrosor());
             mapa.setOnMousePressed(this::colocarTexto);
 
         } else {
@@ -344,6 +339,13 @@ public class FXMLDocumentController implements Initializable {
 
         InputStream is = getClass().getResourceAsStream(DEFAULT_AVATAR_RES);
         if (is != null) avatarView.setImage(new Image(is));
+    }
+    private SpinnerValueFactory.DoubleSpinnerValueFactory getGrosor(){
+        if(botonTexto.isSelected()){
+            return new SpinnerValueFactory.DoubleSpinnerValueFactory(50.0, 300.0, 100.0, 10.0); // min, max, initial, step
+        }else{
+             return new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); 
+        }
     }
     
     private void configurarContenidoMapa() {
