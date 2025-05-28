@@ -129,9 +129,12 @@
                <RadioMenuItem fx:id="transEdit" mnemonicParsing="false" text="Transportador" />
                <RadioMenuItem fx:id="rullerEdit" mnemonicParsing="false" text="Regla" />
            </items>
+            <VBox.margin>
+               <Insets left="5.0" />
+            </VBox.margin>
          </MenuButton>
 
-      <HBox prefHeight="44.0" prefWidth="853.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="853.0">
         <children>
           <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
             <graphic>
@@ -212,6 +215,8 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
+               <Region prefHeight="200.0" prefWidth="300.0" />
+               <Button fx:id="clear" mnemonicParsing="false" onAction="#clearAll" text="Limpiar todo" />
         </children>
         <VBox.margin>
           <Insets bottom="10.0" left="5.0" top="10.0" />
