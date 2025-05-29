@@ -47,11 +47,6 @@
                 <MenuItem onAction="#about" text="Acerca de" />
               </items>
             </Menu>
-            <Menu text="Perfil">
-              <items>
-                <MenuItem onAction="#onModifyProfile" text="Ver / Modificar perfil" />
-              </items>
-            </Menu>
           </menus>
         </MenuBar>
 
@@ -73,6 +68,14 @@
                         <HBox.margin>
                            <Insets left="5.0" right="5.0" />
                         </HBox.margin></Label>
+                    <MenuButton fx:id="userMenu"
+                                text=""
+                                visible="false">        <!-- ✖ quita cursor="HAND" -->
+                        <items>
+                            <MenuItem text="Ver / Modificar perfil"
+                                      onAction="#onModifyProfile"/>
+                        </items>
+                    </MenuButton>                        
                      <Button fx:id="stats" alignment="CENTER" mnemonicParsing="false" onAction="#showStats" prefHeight="31.0" prefWidth="15.0">
                         <graphic>
                            <ImageView fitHeight="16.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
