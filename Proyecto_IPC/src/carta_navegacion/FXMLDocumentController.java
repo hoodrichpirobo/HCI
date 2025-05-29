@@ -273,6 +273,7 @@ public class FXMLDocumentController implements Initializable {
         arcoBoton.setToggleGroup(dibujos);
         configurarTransportador();
         configurarRegla();
+        papelera.setDisable(true);
         
         SpinnerValueFactory.DoubleSpinnerValueFactory grosorFactory = 
             new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); // min, max, initial, step
@@ -650,7 +651,8 @@ public class FXMLDocumentController implements Initializable {
     DropShadow glow = new DropShadow(10, Color.GREEN);
     List<Node> dibujos = new ArrayList<>();
     //Circle puntoSeleccionado = null;
-    Point2D ini = null, fin = null;
+    Circle ini = null, fin = null;
+    //Circle start = null, end = null;
     Line latitud = null, longitud = null;
     private Node nodoSeleccionado = null;
     Line linea = null;
@@ -716,26 +718,49 @@ public class FXMLDocumentController implements Initializable {
             c.setStroke(colorPicker.getValue());
             dibujar.getChildren().add(c);
             dibujos.add(c);
-            c.setOnMouseClicked(e -> {
-                e.consume();
-                if(nodoSeleccionado != null){
-                    nodoSeleccionado.setEffect(null);
-                }
-                nodoSeleccionado = c;
+            seleccionable(c);
+            nodoSeleccionado = c;
+            nodoSeleccionado.setEffect(glow);
+            marcarExtremos(c);
+        }
+        else if(botonLinea.isSelected()){
+            double x = event.getX(), y = event.getY();
+            if(ini == null){
+                ini = new Circle(x, y, 3, Color.MAGENTA);
+                dibujar.getChildren().add(ini);
+            }
+            else{
+                linea = new Line(ini.getCenterX(), ini.getCenterY(), x, y);
+                linea.setStroke(Color.MAGENTA);
+                linea.setStrokeWidth(2);
+                dibujar.getChildren().add(linea);
+                dibujos.add(linea);
+                seleccionable(linea);
+                dibujar.getChildren().remove(ini);
+                ini = fin = null;
+                nodoSeleccionado = linea;
+                nodoSeleccionado.setEffect(glow);
+            }
+        }
+        clear.setDisable(dibujos.isEmpty());
+    }
+    
+    double[] offsetX = new double[1];
+    double[] offsetY = new double[1];
+    void seleccionable(Node n){
+        n.setOnMouseClicked(e -> {
+            e.consume();
+            if(nodoSeleccionado != null){
+                nodoSeleccionado.setEffect(null);
+            }
+            nodoSeleccionado = n;
+            if(n instanceof Circle){
                 colorPicker.setValue((Color)((Circle)nodoSeleccionado).getFill());
                 //sliderSize.adjustValue(((Circle)nodoSeleccionado).getRadius());
                 //puntoSeleccionado.fillProperty().bind(colorPicker.valueProperty());
                 //puntoSeleccionado.strokeProperty().bind(colorPicker.valueProperty());
                 nodoSeleccionado.setEffect(glow);
-                
-                latitud = new Line(e.getSceneX(), 0, e.getSceneX(), 2700);
-                longitud = new Line(0, e.getSceneY(), 2000, e.getSceneY());
-                latitud.setStroke(Color.GRAY);
-                longitud.setStroke(Color.GRAY);
-                latitud.setStrokeWidth(1);
-                longitud.setStrokeWidth(1);
-                dibujar.getChildren().add(latitud);
-                dibujar.getChildren().add(longitud);
+                marcarExtremos((Circle)n);
                 
                 colorPicker.setOnAction(h -> {
                    Color color = colorPicker.getValue();
@@ -747,50 +772,68 @@ public class FXMLDocumentController implements Initializable {
                         ((Circle)nodoSeleccionado).setRadius(newVal.doubleValue());
                     }
                 });*/
-            });
-            c.setOnMouseDragged(g -> {
-                g.consume();
-                // usa la propia referencia al círculo ‘c’
-                double newX = Math.clamp(c.getCenterX(), 150, 1100);
-                double newY = Math.clamp(c.getCenterY(), 300, 600);
-                c.setTranslateX(newX);
-                c.setTranslateY(newY);
-            });
-        }
-        else if(botonLinea.isSelected()){
-            double x = event.getX(), y = event.getY();
-            if(ini == null){
-                ini = new Point2D(x,y);
-                Circle c = new Circle(x, y, 3, Color.MAGENTA);
-                dibujar.getChildren().add(c);
-                dibujos.add(c);
             }
-            else{
-                fin = new Point2D(x,y);
-                linea = new Line(ini.getX(), ini.getY(), x, y);
-                linea.setStroke(Color.MAGENTA);
-                linea.setStrokeWidth(2);
-                dibujar.getChildren().add(linea);
-                dibujos.add(linea);
-                Circle c = new Circle(x, y, 3, Color.MAGENTA);
-                dibujar.getChildren().add(c);
-                dibujos.add(c);
-                ini = fin = null;
-            }
-            if(linea != null){
-                linea.setOnMouseClicked(e -> {
-                    e.consume();
-                    if(nodoSeleccionado != null){
-                        nodoSeleccionado.setEffect(null);
-                    }
-                    nodoSeleccionado = linea;
-                    nodoSeleccionado.setEffect(glow);
+            else if(n instanceof Line){
+                nodoSeleccionado = linea;
+                nodoSeleccionado.setEffect(glow);
+                
+                colorPicker.setOnAction(h -> {
+                   Color color = colorPicker.getValue();
+                   ((Line)nodoSeleccionado).setStroke(color);
                 });
             }
-        }
-        clear.setDisable(nodoSeleccionado == null);
+        });
+        
+        n.setOnMousePressed(f -> {
+            offsetX[0] = f.getX();
+            offsetY[0] = f.getY();
+        });
+        
+        n.setOnMouseDragged(g -> {
+            if(n instanceof Circle){
+                g.consume();                
+                double dx = g.getX() - offsetX[0], dy = g.getY() - offsetY[0];
+                /*c.setCenterX(c.getCenterX() + dx);
+                c.setCenterY(c.getCenterY() + dy);
+                Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
+                Point2D dp = new Point2D(dx, dy);*/
+                if(dx < 0) dx = 0;
+                if(dx > mapPane.getWidth()) dx = mapPane.getWidth();
+                if(dy < 0) dy = 0;
+                if(dy > mapPane.getHeight()) dy = mapPane.getHeight();
+                ((Circle)n).setCenterX(dx);
+                ((Circle)n).setCenterY(dy);
+                //nodoSeleccionado.setTranslateX(Math.clamp(((Circle)nodoSeleccionado).getCenterX(), 150, 1100));
+                //nodoSeleccionado.setTranslateY(Math.clamp(((Circle)nodoSeleccionado).getCenterY(), 300, 600)); 
+                marcarExtremos((Circle)n);
+            }
+            if(n instanceof Line){
+                g.consume();
+                double dx = g.getX() - offsetX[0], dy = g.getY() - offsetY[0];
+                ((Line)n).setStartX(((Line)n).getStartX() + dx);
+                ((Line)n).setStartY(((Line)n).getStartY() + dy);
+                ((Line)n).setEndX(((Line)n).getEndX() + dx);
+                ((Line)n).setEndY(((Line)n).getEndY() + dy);
+                offsetX[0] = g.getX(); 
+                offsetY[0] = g.getY();
+            }
+        });
     }
     
+    void marcarExtremos(Circle c){
+        if(c.getFill() != null && !Color.TRANSPARENT.equals(c.getFill())){
+            dibujar.getChildren().removeAll(latitud, longitud);
+            latitud = new Line(0, c.getCenterY() + c.getTranslateY(), mapa.getFitWidth(), c.getCenterY() + c.getTranslateY());
+            longitud = new Line(c.getCenterX() + c.getTranslateX(), 0, c.getCenterX() + c.getTranslateX(), mapa.getFitHeight());
+            latitud.setStroke(Color.GRAY);
+            longitud.setStroke(Color.GRAY);
+            latitud.setStrokeWidth(1);
+            longitud.setStrokeWidth(1);
+            dibujar.getChildren().add(latitud);
+            dibujar.getChildren().add(longitud);
+        }
+    }
+
     /* ==========  helpers  ================================================= */
 
     /** Punto de la escena → punto en el mismo sistema que el nodo n */
