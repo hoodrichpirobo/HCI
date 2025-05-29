@@ -54,13 +54,12 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.ImageCursor;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Arc;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
@@ -94,8 +93,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML private SplitPane splitPane;
     @FXML private Label mousePosition;
     @FXML private Button loginButton;
-    @FXML private Button registerButton;
-
     // Sección de preguntas
     @FXML private VBox seccionPreguntas;
     @FXML private Text tituloTest;
@@ -231,7 +228,6 @@ public class FXMLDocumentController implements Initializable {
 
         /* ─── 3.  BUTTON & LABEL BINDINGS ────────────────────────────────── */
         stats.visibleProperty().bind(sesionIniciada);
-        registerButton.disableProperty().bind(sesionIniciada);
 
         loginButton.textProperty().bind(
             Bindings.when(sesionIniciada).then("Log out").otherwise("Log in"));
@@ -1234,14 +1230,29 @@ public class FXMLDocumentController implements Initializable {
 
         GridPane grid = new GridPane();
         grid.setHgap(10); grid.setVgap(10);
-        grid.addRow(0, new Label("Usuario:"),    userField);
-        grid.addRow(1, new Label("Contraseña:"), pwd.box);
+        grid.addRow(0, new Label("Usuario:"),         userField);
+        grid.addRow(1, new Label("Contraseña:"),      pwd.box);
+
+        /* ──  NUEVO: enlace “Regístrate”  ───────────────────────────── */
+        Hyperlink linkReg = new Hyperlink("¿No tienes cuenta? Regístrate");
+        grid.add(linkReg, 0, 2, 2, 1);                   // ocupa 2 columnas
+        GridPane.setMargin(linkReg, new Insets(5,0,0,0));
+
+        linkReg.setOnAction(ev -> {
+            dlg.setResult(null);   // “no hubo login”
+            dlg.close();                        // cierra diálogo
+            onRegister(null);                   // reutiliza vuestro código
+        });
+        /* ───────────────────────────────────────────────────────────── */
 
         dlg.getDialogPane().setContent(grid);
-        dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dlg.getDialogPane().getButtonTypes()
+                           .addAll(ButtonType.OK, ButtonType.CANCEL);
 
         dlg.setResultConverter(btn ->
-            btn == ButtonType.OK ? new Pair<>(userField.getText().trim(), pwd.getText()) : null);
+            btn == ButtonType.OK ? new Pair<>(userField.getText().trim(),
+                                              pwd.getText())
+                                 : null);
 
         dlg.showAndWait().ifPresent(creds -> {
             try {
@@ -1368,7 +1379,7 @@ public class FXMLDocumentController implements Initializable {
             });
         } catch (RuntimeException ex) {   // recoge IllegalArgumentException + otros
             new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK).showAndWait();
-        }
+        }      
     }
 
 
