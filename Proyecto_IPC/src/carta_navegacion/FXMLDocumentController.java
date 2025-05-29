@@ -1057,9 +1057,10 @@ public class FXMLDocumentController implements Initializable {
     private void ponerRadioArco(MouseEvent event) {
         Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
       
-        double rx = Math.abs(localPoint.getX() - inicioXarco);
-        double ry = Math.abs(localPoint.getY() - inicioYarco);
+        double rx = (localPoint.getX() - inicioXarco);
+        double ry = (localPoint.getY() - inicioYarco);
         double radio = Math.sqrt(rx*rx + ry*ry);
+        arcPainting.setStartAngle(Math.toDegrees(Math.atan2(-ry, rx))-90);
         arcPainting.setRadiusX(radio);
         arcPainting.setRadiusY(radio);
         event.consume();
