@@ -323,13 +323,13 @@ public class FXMLDocumentController implements Initializable {
             }
         });
         
-        ImageCursor eraserCursor = new ImageCursor(
-                new Image(getClass().getResource("/resources/eraser.png").toString()),
-                16, 16);                              // hotspot
+//        ImageCursor eraserCursor = new ImageCursor(
+//                new Image(getClass().getResource("/resources/eraser.png").toString()),
+//                16, 16);                              // hotspot
 
-        botonGoma.selectedProperty().addListener((obs,o,n)->{
-            mapPane.setCursor(n ? eraserCursor : Cursor.DEFAULT);
-        });        
+//        botonGoma.selectedProperty().addListener((obs,o,n)->{
+//            mapPane.setCursor(n ? eraserCursor : Cursor.DEFAULT);
+//        });        
         
         circuloBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
