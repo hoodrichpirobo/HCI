@@ -648,16 +648,23 @@ public class FXMLDocumentController implements Initializable {
             opciones.selectToggle(null);
         });
     }
+    
     DropShadow glow = new DropShadow(10, Color.GREEN);
     List<Node> dibujos = new ArrayList<>();
-    //Circle puntoSeleccionado = null;
     Circle ini = null, fin = null;
-    //Circle start = null, end = null;
     Line latitud = null, longitud = null;
     private Node nodoSeleccionado = null;
     Line linea = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
+        if(nodoSeleccionado != null) {
+            nodoSeleccionado.setEffect(null);
+            nodoSeleccionado = null;
+            papelera.setDisable(true);
+        }
+        if(latitud != null) dibujar.getChildren().remove(latitud);
+        if(longitud != null) dibujar.getChildren().remove(longitud);
+        if(event.isConsumed()) return;
         /* ───── Borrador ─────────────────────────────────────────── */
         /* ==========  dentro de handleMapClick(), bloque de la goma  ============ */
 
@@ -701,13 +708,6 @@ public class FXMLDocumentController implements Initializable {
             event.consume();
             return;
         }       
-        if(nodoSeleccionado != null) {
-            nodoSeleccionado.setEffect(null);
-            nodoSeleccionado = null;
-        }
-        if(latitud != null) dibujar.getChildren().remove(latitud);
-        if(longitud != null) dibujar.getChildren().remove(longitud);
-        if(event.isConsumed()) return;
         else if(botonPunto.isSelected()){
             //puntoSeleccionado.fillProperty().unbind();
             //puntoSeleccionado.strokeProperty().unbind();
@@ -754,6 +754,7 @@ public class FXMLDocumentController implements Initializable {
                 nodoSeleccionado.setEffect(null);
             }
             nodoSeleccionado = n;
+            papelera.setDisable(false);
             if(n instanceof Circle){
                 colorPicker.setValue((Color)((Circle)nodoSeleccionado).getFill());
                 //sliderSize.adjustValue(((Circle)nodoSeleccionado).getRadius());
@@ -798,9 +799,9 @@ public class FXMLDocumentController implements Initializable {
                 Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
                 Point2D dp = new Point2D(dx, dy);*/
                 if(dx < 0) dx = 0;
-                if(dx > mapPane.getWidth()) dx = mapPane.getWidth();
+                if(dx > mapa.getFitWidth()) dx = mapa.getFitWidth();
                 if(dy < 0) dy = 0;
-                if(dy > mapPane.getHeight()) dy = mapPane.getHeight();
+                if(dy > mapa.getFitHeight()) dy = mapa.getFitHeight();
                 ((Circle)n).setCenterX(dx);
                 ((Circle)n).setCenterY(dy);
                 //nodoSeleccionado.setTranslateX(Math.clamp(((Circle)nodoSeleccionado).getCenterX(), 150, 1100));
