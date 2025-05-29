@@ -60,6 +60,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Arc;
 import javafx.stage.FileChooser;
 import javafx.scene.shape.Circle;
@@ -273,12 +274,15 @@ public class FXMLDocumentController implements Initializable {
         arcoBoton.setToggleGroup(dibujos);
         configurarTransportador();
         configurarRegla();
+
+
         papelera.setDisable(true);
         
         SpinnerValueFactory.DoubleSpinnerValueFactory grosorFactory = 
             new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); // min, max, initial, step
 
-        spinnerGrosor.setValueFactory(grosorFactory);
+        spinnerGrosor.setValueFactory(getGrosor());
+
         spinnerGrosor.setEditable(true);
         
         barraEditar.setVisible(false);
@@ -338,20 +342,20 @@ public class FXMLDocumentController implements Initializable {
     });
         arcoBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
-            mapa.setOnMousePressed(this::colocarTexto);
+            mapa.setOnMousePressed(this::ponerCentroArco);
+            mapa.setOnMouseDragged(this::ponerRadioArco);
         } else {
             mapa.setOnMousePressed(null);
+            mapa.setOnMouseDragged(null);
         }
     });
          botonTexto.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
-            SpinnerValueFactory.DoubleSpinnerValueFactory sizeTexto = 
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(40.0, 500.0, 100.0, 10.0); 
-            spinnerGrosor.setValueFactory(sizeTexto);
+            spinnerGrosor.setValueFactory(getGrosor());
             mapa.setOnMousePressed(this::colocarTexto);
 
         } else {
-            mapa.setOnMousePressed(null);
+            zoomGroup.getChildren().remove(texto);
         }
     });
          
@@ -366,6 +370,13 @@ public class FXMLDocumentController implements Initializable {
 
         InputStream is = getClass().getResourceAsStream(DEFAULT_AVATAR_RES);
         if (is != null) avatarView.setImage(new Image(is));
+    }
+    private SpinnerValueFactory.DoubleSpinnerValueFactory getGrosor(){
+        if(botonTexto.isSelected()){
+            return new SpinnerValueFactory.DoubleSpinnerValueFactory(50.0, 300.0, 100.0, 10.0); // min, max, initial, step
+        }else{
+             return new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); 
+        }
     }
     
     private void configurarContenidoMapa() {
@@ -867,6 +878,7 @@ public class FXMLDocumentController implements Initializable {
     private void editarReglas(){
         if(transEdit.isSelected()){
             transportador.setEffect(glow);
+                System.out.println("se hace unbindf");
             rotate.valueProperty().unbind();
             transportador.rotateProperty().bind(rotate.valueProperty());
             
@@ -1093,9 +1105,10 @@ public class FXMLDocumentController implements Initializable {
     private void ponerRadioArco(MouseEvent event) {
         Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
       
-        double rx = Math.abs(localPoint.getX() - inicioXarco);
-        double ry = Math.abs(localPoint.getY() - inicioYarco);
+        double rx = (localPoint.getX() - inicioXarco);
+        double ry = (localPoint.getY() - inicioYarco);
         double radio = Math.sqrt(rx*rx + ry*ry);
+        arcPainting.setStartAngle(Math.toDegrees(Math.atan2(-ry, rx))-90);
         arcPainting.setRadiusX(radio);
         arcPainting.setRadiusY(radio);
         event.consume();
@@ -1103,15 +1116,28 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void colocarTexto(MouseEvent event) {
+            
+            
             Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
-            texto = new TextField();
+            
+            if(texto!=null){
+                zoomGroup.getChildren().remove(texto);
+            }else{
+                
+            }
             // Añadimos el texto al contenedor, lo posicionamos donde está el ratón y muy importante, pedimos el foco.
             zoomGroup.getChildren().add(texto);
+            
+           
+            texto.setFont(Font.font("Gafata", 30));
+            texto.setPrefWidth(500); // Ajusta el ancho si quieres
+            texto.setPrefHeight(100); // Altura del campo
             texto.setLayoutX(localPoint.getX());
             texto.setLayoutY(localPoint.getY());
             texto.requestFocus();
             
             texto.setOnAction(e -> {
+                if(!texto.getText().isEmpty()) {
                 Text textoT = new Text(texto.getText());
                 textoT.setX(texto.getLayoutX());
                 textoT.setY(texto.getLayoutY());
@@ -1125,10 +1151,12 @@ public class FXMLDocumentController implements Initializable {
                
                 dibujar.getChildren().add(textoT);
                 dibujos.add(textoT);
+                
                 zoomGroup.getChildren().remove(texto);
                 e.consume();
+                }
             });
-            
+              
     }
     private void cambiarEstiloTexto(TextField t){
     
