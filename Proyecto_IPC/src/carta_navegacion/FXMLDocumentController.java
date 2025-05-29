@@ -54,6 +54,8 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -304,6 +306,26 @@ public class FXMLDocumentController implements Initializable {
                 editarReglas();
             }
         });
+        
+        botonGoma.selectedProperty().addListener((obs, oldSel, nowSel) -> {
+            if (nowSel) {
+                mapPane.setCursor(Cursor.CROSSHAIR);      // aspecto de goma
+                colorPicker.setDisable(true);
+                spinnerGrosor.setDisable(true);
+            } else {
+                mapPane.setCursor(Cursor.DEFAULT);
+                colorPicker.setDisable(false);
+                spinnerGrosor.setDisable(false);
+            }
+        });
+        
+        ImageCursor eraserCursor = new ImageCursor(
+                new Image(getClass().getResource("/resources/eraser.png").toString()),
+                16, 16);                              // hotspot
+
+        botonGoma.selectedProperty().addListener((obs,o,n)->{
+            mapPane.setCursor(n ? eraserCursor : Cursor.DEFAULT);
+        });        
         
         circuloBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
@@ -636,6 +658,49 @@ public class FXMLDocumentController implements Initializable {
     Line linea = null;
     @FXML
     private void handleMapClick(MouseEvent event) {
+        /* ───── Borrador ─────────────────────────────────────────── */
+        /* ==========  dentro de handleMapClick(), bloque de la goma  ============ */
+
+        if (botonGoma.isSelected()) {
+
+            // factor de escala actual (zoom); mismo en X e Y
+            double k          = zoomGroup.getScaleX();
+
+            // tolerancias fijas en **píxeles visibles**
+            final double TOL_LINE   = 8;                       // ancho dedo/raton
+            final double TOL_CIRCLE = 6;
+
+            // punto de la escena donde se hizo clic
+            double sx = event.getSceneX(), sy = event.getSceneY();
+
+            // recorremos de delante hacia atrás
+            for (int i = dibujos.size() - 1; i >= 0; i--) {
+                Node n = dibujos.get(i);
+                boolean hit = false;
+
+                if (n instanceof Line l) {                     // ── líneas
+                    Point2D pLoc = toLocal(dibujar, sx, sy);   // coords de ‘dibujar’
+                    hit = isNearLine(l, pLoc, TOL_LINE / k);   // ⇐ escalar tolerancia
+                }
+                else if (n instanceof Circle c) {              // ── puntos
+                    Point2D pLoc = c.sceneToLocal(sx, sy);     // coords del círculo
+                    hit = isNearCircle(c, pLoc, TOL_CIRCLE / k);
+                }
+                else if (n instanceof javafx.scene.shape.Shape s) {
+                    /*  Texto, Arc, etc. – basta con contains() pero en su sistema  */
+                    hit = s.contains(s.sceneToLocal(sx, sy));
+                }
+
+                if (hit) {
+                    dibujar.getChildren().remove(n);
+                    dibujos.remove(i);
+                    if (n == nodoSeleccionado) nodoSeleccionado = null;
+                    break;                                     // solo uno por clic
+                }
+            }
+            event.consume();
+            return;
+        }       
         if(nodoSeleccionado != null) {
             nodoSeleccionado.setEffect(null);
             nodoSeleccionado = null;
@@ -767,6 +832,36 @@ public class FXMLDocumentController implements Initializable {
             dibujar.getChildren().add(latitud);
             dibujar.getChildren().add(longitud);
         }
+    }
+
+    /* ==========  helpers  ================================================= */
+
+    /** Punto de la escena → punto en el mismo sistema que el nodo n */
+    private static Point2D toLocal(Node n, double sceneX, double sceneY) {
+        return n.sceneToLocal(sceneX, sceneY);            // 1 sola línea
+    }
+
+    /** ¿Está p (en coords del nodo) a ≤tol unidades del segmento l ? */
+    private static boolean isNearLine(Line l, Point2D p, double tol) {
+        double ax = l.getStartX(), ay = l.getStartY();
+        double bx = l.getEndX(),   by = l.getEndY();
+
+        double dx = bx - ax, dy = by - ay;
+        double len2 = dx*dx + dy*dy;
+        if (len2 == 0) return p.distance(ax, ay) <= tol;  // segmento degenerado
+
+        double t = ((p.getX()-ax)*dx + (p.getY()-ay)*dy) / len2;
+        t = Math.max(0, Math.min(1, t));
+        double projX = ax + t*dx, projY = ay + t*dy;
+
+        return p.distance(projX, projY) <= tol;
+    }
+
+    /** ¿El clic está lo bastante cerca del círculo (punto)?  */
+    private static boolean isNearCircle(Circle c, Point2D pLocal, double tol) {
+        // distancia al centro en coords del círculo
+        double d = pLocal.distance(c.getCenterX(), c.getCenterY());
+        return d <= c.getRadius() + tol;
     }
     
     private void editarReglas(){
