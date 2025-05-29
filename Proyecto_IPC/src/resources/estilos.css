@@ -1,149 +1,201 @@
-/*
- * Copyright (c) 2014, Oracle and/or its affiliates.
- * All rights reserved. Use is subject to license terms.
- *
- * This file is available and licensed under the following license:
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *  - Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *  - Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the distribution.
- *  - Neither the name of Oracle Corporation nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/*────────────────  VARIABLES (look-up colors)  ────────────────*/
+.root {
+    /* Colores base */
+    -color-bg:            #FFFFFF;
+    -color-bg-alt:        #F7F9FC;
+    -color-border:        #E0E0E0;
+    -color-text:          #202124;
+    -color-text-muted:    #757575;
 
-/*******************************************************************************
- *                                                                             *
- * Embedded Styling                                                            *
- *                                                                             *
- ******************************************************************************/
+    /* Colores de acento */
+    -color-accent:        #4285F4;
+    -color-accent-dark:   #3367D6;
+    -color-danger:        #EA4335;
 
+    /* Fuente global y reset de foco */
+    -fx-font-family: "Roboto","Helvetica","Arial",sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: -color-bg;
+    -fx-text-fill: -color-text;
 
-
-/*******************************************************************************
- *                                                                             *
- * High Contrast Theme                                                         *
- *                                                                             *
- ******************************************************************************/
-
-.contrast {
-    -app-color-hi: #5bf900;
-    -app-color-lo: black;
-    -app-hover: #666666;
-    -fx-background-color: -app-color-lo;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
-/*-------------------------- map pin ------------------------- */
-
-.map-pin {
-    -fx-shape: "M13.558,0C6.07,0,0,6.07,0,13.558s13.558,22.346,13.558,22.346s13.558-14.858,13.558-22.346S21.045,0,13.558,0z
-M13.558,20.762c-4.084,0-7.395-3.311-7.395-7.395s3.311-7.395,7.395-7.395c4.084,0,7.396,3.311,7.396,7.395
-S17.642,20.762,13.558,20.762z";    
-    -fx-background-color: black, white;
-    -fx-background-insets: 0, 2;
-    -fx-effect: dropshadow( two-pass-box, rgba(0, 0, 0, 0.5), 10, 0.0, 0, 10 );
-    -fx-pref-width: 48;
-    -fx-pref-height: 60;
-}
-.map-pin .arrow-button .arrow {
-    -fx-padding: 0;
-}
-
-.text {
-    -fx-font-size: 13px;
-}
-
-.button {
-    -fx-background-color: #2A3439;
-    -fx-text-fill: whitesmoke;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #2A3439;
-    -fx-border-width: 2;
-}
-
-.button:hover {
-    -fx-background-color: black;
+/*────────────────  BOTONES / TOGGLE  ────────────────*/
+.button, .toggle-button {
+    -fx-background-color: -color-accent;
+    -fx-text-fill: white;
+    -fx-padding: 8 18;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
     -fx-cursor: hand;
-    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 1);
+}
+.button:hover, .toggle-button:hover {
+    -fx-background-color: -color-accent-dark;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 2);
+}
+.button:pressed, .toggle-button:pressed {
+    -fx-background-color: derive(-color-accent-dark,-10%);
+}
+.toggle-button:selected { -fx-background-color: -color-accent-dark; }
+
+/* Botón secundario plano */
+.button.flat, .toggle-button.flat {
+    -fx-background-color: transparent;
+    -fx-border-color: -color-border;
+    -fx-text-fill: -color-text;
+}
+.button.flat:hover, .toggle-button.flat:hover {
+    -fx-background-color: -color-bg-alt;
 }
 
-#stats {
-    -fx-background-color: whitesmoke;
-    -fx-border-width: 1;
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-padding: 0 4 0 4;
+    -fx-cursor: hand;          /*  ← aquí  */
+}
+.menu-button:hover {
+    -fx-underline: true;
 }
 
-#showStats:hover {
-    -fx-background-color: white;
-    -fx-cursor: hand;
-}
-
-#splitPane {
-    -fx-background-color: #DBD7D2;
-}
-
-#scrollTest, #seccionPreguntas {
-    -fx-background-color: #DBD7D2;
-}
-
-#seleccionarPregunta, #preguntaRandom {
-    -fx-background-color: whitesmoke;
-}
-
-#seleccionarPregunta:hover, #preguntaRandom:hover {
-    -fx-background-color: #F0F8FF;
-}
-
-#borrarSeleccion {
-    -fx-background-color: #E60026;
-    -fx-border-color: #E60026;
+/* Botón de peligro  */
+.button.danger, #borrarSeleccion {
+    -fx-background-color: -color-danger;
     -fx-text-fill: white;
 }
-
-#borrarSeleccion:hover {
-    -fx-background-color: #CE2029;
-    -fx-border-color: #CE2029;
-    -fx-cursor: hand;
+.button.danger:hover, #borrarSeleccion:hover {
+    -fx-background-color: derive(-color-danger,-10%);
     -fx-font-weight: bold;
 }
 
-.radio-button:selected {
-    -fx-mark-color: #2A3439;
-    -fx-font-weight: bold;
+/* Botón contraste (login) heredado */
+.contrast { -fx-background-color: -color-accent; -fx-text-fill: white; }
+
+/*────────────────  CAMPOS DE TEXTO  ────────────────*/
+.text-field, .password-field, .text-area {
+    -fx-background-color: -color-bg;
+    -fx-text-fill: -color-text;
+    -fx-prompt-text-fill: -color-text-muted;
+    -fx-border-color: -color-border;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-border-width: 1;
+}
+.text-field:focused, .password-field:focused, .text-area:focused {
+    -fx-border-color: -color-accent;
+    -fx-border-width: 2;
+    -fx-focus-color: -color-accent;
 }
 
-.list-cell.hover {
-    -fx-background-color: #AFDBF5;
-    -fx-cursor: hand;
+/*────────────────  LISTAS Y SELECCIÓN  ────────────────*/
+.root {
+    -fx-selection-bar:            #E8F0FE;
+    -fx-selection-bar-non-focused:#F1F3F4;
+    -fx-selection-bar-text:       -color-text;
+}
+.list-cell:hover {   -fx-background-color: #F1F3F4; }
+.list-cell:selected { -fx-background-color: #E8F0FE; }
+
+/*────────────────  RADIO Y CHECK  ────────────────*/
+.radio-button .radio, .check-box .box {
+    -fx-background-color: -color-bg;
+    -fx-border-color: -color-border;
+    -fx-border-width: 1.5;
+}
+.radio-button .radio { -fx-border-radius: 50%; }
+.check-box .box     { -fx-border-radius: 3;   }
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: -color-accent;
+    -fx-background-insets: 0;
+}
+.check-box:selected .box {
+    -fx-background-color: -color-accent;
+    -fx-border-color: -color-accent;
+}
+.check-box:selected .mark { -fx-background-color: -color-bg; }
+
+/*────────────────  SLIDER  ────────────────*/
+.slider .track {
+    -fx-background-color: -color-border;
+    -fx-background-radius: 3;
+    -fx-pref-height: 4;
+}
+.slider:vertical .track { -fx-pref-width: 4; }
+.slider .thumb {
+    -fx-background-color: -color-accent;
+    -fx-background-radius: 10;
+    -fx-pref-width: 14; -fx-pref-height: 14;
+}
+.slider .thumb:hover { -fx-background-color: -color-accent-dark; }
+
+/*────────────────  MENÚS  ────────────────*/
+.menu-bar {
+    -fx-background-color: -color-bg;
+    -fx-border-color: transparent;
+    -fx-padding: 0 12 0 8;         /* evita el recorte “Ay…” / “Pe…” */
+}
+.menu-item:focused, .menu-item:hover { -fx-background-color: #F1F3F4; }
+.context-menu {
+    -fx-background-color: -color-bg;
+    -fx-border-color: -color-border;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 6, 0, 0, 2);
 }
 
-.list-cell:selected {
-    -fx-background-color: #76ABDF;
+/*────────────────  SPLITPANE  ────────────────*/
+.split-pane > .split-pane-divider {
+    -fx-background-color: -color-border;
+    -fx-border-color: transparent;
+    -fx-padding: 1;
 }
 
-.toggle-button:selected {
-    -fx-background-color: #76ABDF;
+/*────────────────  SCROLLPANE  ────────────────*/
+.scroll-pane, .scroll-pane .viewport { -fx-background-color: -color-bg; }
+
+/*────────────────  TOOLTIP  ────────────────*/
+.tooltip {
+    -fx-background-color: #616161;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
 }
 
-.toggle-button.hover {
-    -fx-background-color: #AFDBF5;
-    -fx-cursor: hand;
+/*────────────────  DIÁLOGOS  ────────────────*/
+.dialog-pane {
+    -fx-background-color: -color-bg;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-padding: 20 25;
 }
+.dialog-pane .label { -fx-text-fill: -color-text; }
+.dialog-pane:header .header-panel {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 15 0;
+}
+
+/*────────────────  ICONO PIN  ────────────────*/
+.map-pin {
+    -fx-shape: "M13.558,0C6.07,0,0,6.07,0,13.558s13.558,22.346,13.558,22.346s13.558-14.858,13.558-22.346S21.045,0,13.558,0z M13.558,20.762c-4.084,0-7.395-3.311-7.395-7.395s3.311-7.395,7.395-7.395c4.084,0,7.396,3.311,7.396,7.395 S17.642,20.762,13.558,20.762z";
+    -fx-background-color: -color-accent, -color-bg;
+    -fx-background-insets: 0, 2;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 4);
+}
+
+/*────────────────  ÁREAS PROPIAS DEL APP  ────────────────*/
+#splitPane, #scrollTest, #seccionPreguntas { -fx-background-color: -color-bg-alt; }
+
+#seleccionarPregunta, #preguntaRandom { -fx-background-color: -color-bg; }
+#seleccionarPregunta:hover, #preguntaRandom:hover { -fx-background-color: #F1F3F4; }
+
+#stats {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+#stats:hover { -fx-background-color: #F1F3F4; }
+
+/* Hover neutro para tool-toggle de la barra */
+.toggle-button:hover { -fx-background-color: #F1F3F4; }
+
+/*────────────────  FIN  ────────────────*/

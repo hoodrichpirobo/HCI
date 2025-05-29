@@ -198,6 +198,7 @@ public class FXMLDocumentController implements Initializable {
     TextField texto;
     @FXML
     private Button clear;
+    @FXML private MenuButton userMenu;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -232,16 +233,17 @@ public class FXMLDocumentController implements Initializable {
         loginButton.textProperty().bind(
             Bindings.when(sesionIniciada).then("Log out").otherwise("Log in"));
 
-        lblUser.setText("");
-        avatarView.setImage(null);          // start with blank avatar
+        userMenu.visibleProperty().bind(sesionIniciada);
 
-        sesionIniciada.addListener((obs, wasIn, isIn) -> {
-            if (isIn && currentUser != null) {          // user just logged-in
-                lblUser.setText(currentUser.getNickName());
-                refreshAvatar(currentUser.getAvatar());
-            } else {                                    // user logged-out
-                lblUser.setText("");
-                avatarView.setImage(null);              // clear icon
+        // cada vez que cambia el estado de sesión…
+        sesionIniciada.addListener((o, oldVal, loggedIn) -> {
+            if (loggedIn && currentUser != null) {
+                userMenu.setText(currentUser.getNickName());
+                avatarView.setOpacity(1.0);                 // (opcional) muestra avatar
+            } else {
+                userMenu.setText("");
+                userMenu.hide();                            // por si estaba abierto
+                avatarView.setImage(null);
             }
         });
 
