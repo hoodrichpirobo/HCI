@@ -130,12 +130,6 @@ S17.642,20.762,13.558,20.762z";
     -fx-font-weight: bold;
 }
 
-.list-cell {
-    -fx-background-color: whitesmoke;
-    -fx-border-color: #00356B;
-    -fx-text-fill: #00356B;
-}
-
 .list-cell.hover {
     -fx-background-color: #AFDBF5;
     -fx-cursor: hand;
@@ -145,8 +139,11 @@ S17.642,20.762,13.558,20.762z";
     -fx-background-color: #76ABDF;
 }
 
-
-.imageview {
-    -fx-background-color: red;
+.toggle-button:selected {
+    -fx-background-color: #76ABDF;
 }
 
+.toggle-button.hover {
+    -fx-background-color: #AFDBF5;
+    -fx-cursor: hand;
+}
