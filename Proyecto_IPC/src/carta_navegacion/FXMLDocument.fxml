@@ -88,12 +88,6 @@
                            <Insets left="10.0" right="5.0" />
                         </HBox.margin>
                      </Button>
-            <!-- botón de Register -->
-            <Button fx:id="registerButton" mnemonicParsing="false" onAction="#onRegister" styleClass="contrast" text="Register" textFill="WHITE">
-                        <HBox.margin>
-                           <Insets right="5.0" />
-                        </HBox.margin>
-                     </Button>
           </children>
           <padding>
             <Insets left="10.0" right="5.0" top="5.0" />
