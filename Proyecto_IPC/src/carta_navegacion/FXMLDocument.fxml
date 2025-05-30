@@ -21,6 +21,7 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
@@ -50,7 +51,7 @@
         </MenuBar>
 
         <!-- HBox de usuario, login, register y nick -->
-        <HBox alignment="CENTER_RIGHT" prefHeight="29.0" prefWidth="233.0" spacing="10" HBox.hgrow="ALWAYS">
+        <HBox alignment="CENTER_RIGHT" prefHeight="37.0" prefWidth="448.0" spacing="10" HBox.hgrow="ALWAYS">
           <children>
 
             <!-- ▼▼  NEW AVATAR  ▼▼ -->
@@ -101,26 +102,9 @@
             </VBox.margin>
       </HBox>
 
-      <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="5.0" VBox.vgrow="NEVER">
+      <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="853.0">
         <children>
-          <Region HBox.hgrow="ALWAYS" />
-          <Button fx:id="centerButton" mnemonicParsing="false" onAction="#center" text="Centrar" />
-          <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="67.0" text="Zoom">
-                  <font>
-                     <Font name="System Bold" size="12.0" />
-                  </font></Label>
-          <Button fx:id="menos" mnemonicParsing="false" onAction="#zoomOut" text="-" />
-          <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
-          <Button fx:id="mas" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
-        </children>
-        <VBox.margin>
-          <Insets left="5.0" right="10.0" top="5.0" />
-        </VBox.margin>
-      </HBox>
-
-      <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="853.0">
-        <children>
-          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="47.0">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -129,7 +113,7 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="7.0" />
+          <Region prefHeight="42.0" prefWidth="0.0" />
           <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -199,8 +183,25 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region prefHeight="200.0" prefWidth="300.0" />
-               <Button fx:id="clear" mnemonicParsing="false" onAction="#clearAll" text="Limpiar todo" />
+               <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="353.0">
+                  <children>
+            
+                        <HBox alignment="CENTER_RIGHT" fillHeight="false" layoutX="129.0" layoutY="1.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="335.0" spacing="5.0">
+                    <children>
+                      <Region prefHeight="12.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                      <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" text="Centrar" />
+                      <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="34.0" text="Zoom">
+                              <font>
+                                 <Font name="System Bold" size="12.0" />
+                              </font>
+                           </Label>
+                      <Button fx:id="menos" mnemonicParsing="false" onAction="#zoomOut" text="-" />
+                      <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
+                      <Button fx:id="mas" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+                    </children>
+                  </HBox>
+                  </children>
+               </AnchorPane>
         </children>
         <VBox.margin>
           <Insets bottom="10.0" left="5.0" top="10.0" />
@@ -389,7 +390,7 @@
          <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="745.0">
             <children>
              
-               <VBox fx:id="modificadoresObjetos" prefHeight="19.0" prefWidth="651.0">
+               <VBox fx:id="modificadoresObjetos" alignment="BOTTOM_LEFT" prefHeight="19.0" prefWidth="651.0">
                   <children>
                      
                      <ButtonBar fx:id="barraEditar" prefHeight="40.0" prefWidth="200.0">
@@ -433,6 +434,7 @@
                </Button>
             </children>
          </HBox>
+         <Button fx:id="clear" mnemonicParsing="false" onAction="#clearAll" text="Limpiar todo" />
       <Label fx:id="mousePosition" alignment="CENTER_RIGHT" prefHeight="19.0" prefWidth="190.0" text="SceneX:    SceneY:" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
             <HBox.margin>
                <Insets />

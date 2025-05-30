@@ -1,94 +1,120 @@
-/* Estilos generales */
+/* Estilos generales - Tema de mapa antiguo */
 .root {
-    -fx-base: #3a5f8d;  /* Azul más claro para el fondo */
-    -fx-background: #4a6d9a;
-    -fx-accent: #3498db; /* Azul normal para acentos */
-    -fx-default-button: #2980b9;
-    -fx-focus-color: #3498db;
-    -fx-faint-focus-color: rgba(52, 152, 219, 0.2);
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-base: #e6d5b8;  /* Beige claro como base */
+    -fx-background: #f0e6d2; /* Beige muy claro para fondo */
+    -fx-accent: #8b5a2b; /* Marrón oscuro para acentos */
+    -fx-default-button: #a67c52; /* Marrón medio */
+    -fx-focus-color: #6b4423;
+    -fx-faint-focus-color: rgba(107, 68, 35, 0.2);
+    -fx-font-family: "Palatino Linotype", "Book Antiqua", serif; /* Fuente clásica */
 }
 
-/* Barra superior */
+/* Barra superior - estilo pergamino */
 .vbox {
-    -fx-background-color: linear-gradient(to bottom, #3a5f8d, #4a6d9a);
+    -fx-background-color: linear-gradient(to bottom, #d2b48c, #c19a6b);
+    -fx-border-color: #6b4423;
+    -fx-border-width: 0 0 2px 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
 
-/* Botón Login azul normal (específico) */
+/* Botón Login estilo antiguo */
 #loginButton {
-    -fx-background-color: BLUE; 
-    -fx-text-fill: white;
+    -fx-background-color: #6b4423; /* Marrón oscuro */
+    -fx-text-fill: #f5f5dc; /* Beige claro */
     -fx-background-radius: 4px;
     -fx-padding: 5px 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0, 0, 1);
+    -fx-font-weight: bold;
 }
 
 #loginButton:hover {
-    -fx-background-color: #2980b9;
+    -fx-background-color: #8b5a2b; /* Marrón medio */
 }
 
 #loginButton:armed {
-    -fx-background-color: #0f0bea;
+    -fx-background-color: #4a2c10; /* Marrón muy oscuro */
 }
 
-/* Botones de Zoom y Centrar en negro */
+/* Botones de Zoom y Centrar - estilo brújula antigua */
 #mas, #menos, #centerButton {
-    -fx-background-color: BLACK; /* Negro azulado */
+    -fx-background-color: #5d4037; /* Marrón oscuro */
     -fx-background-radius: 40px;
-    -fx-text-fill: white;
-    
+    -fx-text-fill: #f5f5dc;
+    -fx-effect: innershadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 1, 1);
 }
 
 #mas:hover, #menos:hover, #centerButton:hover {
-    -fx-background-color: #34495e; /* Negro azulado más claro al pasar ratón */
+    -fx-background-color: #795548; /* Marrón medio */
 }
 
 #mas:armed, #menos:armed, #centerButton:armed {
-    -fx-background-color: #1e2b38; /* Negro azulado más oscuro al presionar */
+    -fx-background-color: #3e2723; /* Marrón muy oscuro */
 }
 
-/* Slider de Zoom */
+/* Slider de Zoom - estilo antiguo */
 #zoom_slider .thumb {
-    -fx-background-color: #2c3e50; /* Negro azulado */
+    -fx-background-color: #5d4037;
 }
 
 #zoom_slider .track {
-    -fx-background-color: #7f8c8d;
+    -fx-background-color: #d2b48c;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0.5em;
+    -fx-border-color: #6b4423;
+    -fx-border-width: 1px;
 }
 
-/* Resto de estilos (manteniendo lo que ya tenías) */
+/* Estilos de menú - estilo pergamino */
 .menu-bar {
     -fx-background-color: transparent;
     -fx-padding: 5px;
 }
 
 .menu-bar .menu {
-    -fx-text-fill: #ecf0f1;
+    -fx-text-fill: #5d4037;
+    -fx-font-weight: bold;
 }
 
 .menu-bar .menu:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-color: rgba(107, 68, 35, 0.1);
 }
 
 .menu-item {
-    -fx-background-color: #4a6d9a;
-    -fx-text-fill: #ecf0f1;
+    -fx-background-color: #e6d5b8;
+    -fx-text-fill: #5d4037;
 }
 
 .menu-item:hover {
-    -fx-background-color: #3498db;
+    -fx-background-color: #d2b48c;
 }
 
-/* ... (mantén el resto de tus estilos existentes) ... */
-
-/* Fondo del área principal */
+/* Fondo del área principal - estilo papel antiguo */
 #mapPane, .scroll-pane .viewport {
-    -fx-background-color: #3a5f8d; /* Azul claro para el fondo */
+    -fx-background-color: #f5f5dc; /* Beige claro */
+    
+    -fx-background-repeat: repeat;
 }
 
-/* Barra inferior */
+/* Barra inferior - estilo marco de madera */
 .hbox {
-    -fx-background-color: linear-gradient(to top, #3a5f8d, #4a6d9a);
-    -fx-border-color: #7f8c8d;
-    -fx-border-width: 1px 0 0 0;
+    -fx-background-color: linear-gradient(to top, #a67c52, #8b5a2b);
+    -fx-border-color: #6b4423;
+    -fx-border-width: 2px 0 0 0;
+   
+}
+
+/* Textos especiales para elementos de navegación */
+.label {
+    -fx-text-fill: #5d4037;
+    -fx-font-style: italic;
+}
+
+/* Efecto de papel envejecido para el contenedor principal */
+.stack-pane {
+    -fx-background-color: #f5f5dc;
+    -fx-effect: dropshadow(three-pass-box, rgba(107, 68, 35, 0.5), 15, 0, 0, 0);
+    -fx-border-color: #d2b48c;
+    -fx-border-width: 10px;
+    -fx-border-style: solid inside;
+    -fx-border-insets: -5px;
 }
