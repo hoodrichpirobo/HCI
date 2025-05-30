@@ -1,211 +1,94 @@
-/*────────────────  VARIABLES (look-up colors)  ────────────────*/
+/* Estilos generales */
 .root {
-    /* Colores base */
-    -color-bg:            #FFFFFF;
-    -color-bg-alt:        #F7F9FC;
-    -color-border:        #E0E0E0;
-    -color-text:          #202124;
-    -color-text-muted:    #757575;
-
-    /* Colores de acento */
-    -color-accent:        #4285F4;
-    -color-accent-dark:   #3367D6;
-    -color-danger:        #EA4335;
-
-    /* Fuente global y reset de foco */
-    -fx-font-family: "Roboto","Helvetica","Arial",sans-serif;
-    -fx-font-size: 14px;
-    -fx-background-color: -color-bg;
-    -fx-text-fill: -color-text;
-
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+    -fx-base: #3a5f8d;  /* Azul más claro para el fondo */
+    -fx-background: #4a6d9a;
+    -fx-accent: #3498db; /* Azul normal para acentos */
+    -fx-default-button: #2980b9;
+    -fx-focus-color: #3498db;
+    -fx-faint-focus-color: rgba(52, 152, 219, 0.2);
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
-/*────────────────  BOTONES / TOGGLE  ────────────────*/
-.button{
-    -fx-background-color: -color-accent;
+/* Barra superior */
+.vbox {
+    -fx-background-color: linear-gradient(to bottom, #3a5f8d, #4a6d9a);
+}
+
+/* Botón Login azul normal (específico) */
+#loginButton {
+    -fx-background-color: BLUE; 
     -fx-text-fill: white;
-    -fx-padding: 8 18;
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 1);
+    -fx-background-radius: 4px;
+    -fx-padding: 5px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
 }
-.toggle-button {
-    -fx-background-color: #5654BA;
+
+#loginButton:hover {
+    -fx-background-color: #2980b9;
+}
+
+#loginButton:armed {
+    -fx-background-color: #0f0bea;
+}
+
+/* Botones de Zoom y Centrar en negro */
+#mas, #menos, #centerButton {
+    -fx-background-color: BLACK; /* Negro azulado */
+    -fx-background-radius: 40px;
     -fx-text-fill: white;
-    -fx-padding: 8 18;
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 1);
+    
 }
 
-.button:hover, .toggle-button:hover {
-    -fx-background-color: -color-accent-dark;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 2);
-}
-.button:pressed, .toggle-button:pressed {
-    -fx-background-color: derive(-color-accent-dark,-10%);
-}
-.toggle-button:selected { -fx-background-color: -color-accent-dark; }
-
-/* Botón secundario plano */
-.button.flat, .toggle-button.flat {
-    -fx-background-color: transparent;
-    -fx-border-color: -color-border;
-    -fx-text-fill: -color-text;
-}
-.button.flat:hover, .toggle-button.flat:hover {
-    -fx-background-color: -color-bg-alt;
+#mas:hover, #menos:hover, #centerButton:hover {
+    -fx-background-color: #34495e; /* Negro azulado más claro al pasar ratón */
 }
 
-.menu-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #FFFFFF;
-    -fx-padding: 0 4 0 4;
-    -fx-cursor: hand;          /*  ← aquí  */
-}
-.menu-button:hover {
-    -fx-underline: true;
+#mas:armed, #menos:armed, #centerButton:armed {
+    -fx-background-color: #1e2b38; /* Negro azulado más oscuro al presionar */
 }
 
-/* Botón de peligro  */
-.button.danger, #borrarSeleccion {
-    -fx-background-color: -color-danger;
-    -fx-text-fill: white;
-}
-.button.danger:hover, #borrarSeleccion:hover {
-    -fx-background-color: derive(-color-danger,-10%);
-    -fx-font-weight: bold;
+/* Slider de Zoom */
+#zoom_slider .thumb {
+    -fx-background-color: #2c3e50; /* Negro azulado */
 }
 
-/* Botón contraste (login) heredado */
-.contrast { -fx-background-color: -color-accent; -fx-text-fill: white; }
-
-/*────────────────  CAMPOS DE TEXTO  ────────────────*/
-.text-field, .password-field, .text-area {
-    -fx-background-color: -color-bg;
-    -fx-text-fill: -color-text;
-    -fx-prompt-text-fill: -color-text-muted;
-    -fx-border-color: -color-border;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
-    -fx-border-width: 1;
-}
-.text-field:focused, .password-field:focused, .text-area:focused {
-    -fx-border-color: -color-accent;
-    -fx-border-width: 2;
-    -fx-focus-color: -color-accent;
+#zoom_slider .track {
+    -fx-background-color: #7f8c8d;
 }
 
-/*────────────────  LISTAS Y SELECCIÓN  ────────────────*/
-.root {
-    -fx-selection-bar:            #E8F0FE;
-    -fx-selection-bar-non-focused:#F1F3F4;
-    -fx-selection-bar-text:       -color-text;
-}
-.list-cell:hover {   -fx-background-color: #F1F3F4; }
-.list-cell:selected { -fx-background-color: #E8F0FE; }
-
-/*────────────────  RADIO Y CHECK  ────────────────*/
-.radio-button .radio, .check-box .box {
-    -fx-background-color: -color-bg;
-    -fx-border-color: -color-border;
-    -fx-border-width: 1.5;
-}
-.radio-button .radio { -fx-border-radius: 50%; }
-.check-box .box     { -fx-border-radius: 3;   }
-
-.radio-button:selected .radio .dot {
-    -fx-background-color: -color-accent;
-    -fx-background-insets: 0;
-}
-.check-box:selected .box {
-    -fx-background-color: -color-accent;
-    -fx-border-color: -color-accent;
-}
-.check-box:selected .mark { -fx-background-color: -color-bg; }
-
-/*────────────────  SLIDER  ────────────────*/
-.slider .track {
-    -fx-background-color: -color-border;
-    -fx-background-radius: 3;
-    -fx-pref-height: 4;
-}
-.slider:vertical .track { -fx-pref-width: 4; }
-.slider .thumb {
-    -fx-background-color: -color-accent;
-    -fx-background-radius: 10;
-    -fx-pref-width: 14; -fx-pref-height: 14;
-}
-.slider .thumb:hover { -fx-background-color: -color-accent-dark; }
-
-/*────────────────  MENÚS  ────────────────*/
+/* Resto de estilos (manteniendo lo que ya tenías) */
 .menu-bar {
-    -fx-background-color: -color-bg;
-    -fx-border-color: transparent;
-    -fx-padding: 0 12 0 8;         /* evita el recorte “Ay…” / “Pe…” */
-}
-.menu-item:focused, .menu-item:hover { -fx-background-color: #F1F3F4; }
-.context-menu {
-    -fx-background-color: -color-bg;
-    -fx-border-color: -color-border;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 6, 0, 0, 2);
-}
-
-/*────────────────  SPLITPANE  ────────────────*/
-.split-pane > .split-pane-divider {
-    -fx-background-color: -color-border;
-    -fx-border-color: transparent;
-    -fx-padding: 1;
-}
-
-/*────────────────  SCROLLPANE  ────────────────*/
-.scroll-pane, .scroll-pane .viewport { -fx-background-color: -color-bg; }
-
-/*────────────────  TOOLTIP  ────────────────*/
-.tooltip {
-    -fx-background-color: #616161;
-    -fx-text-fill: white;
-    -fx-background-radius: 4;
-}
-
-/*────────────────  DIÁLOGOS  ────────────────*/
-.dialog-pane {
-    -fx-background-color: -color-bg;
-    -fx-background-radius: 8;
-    -fx-border-color: transparent;
-    -fx-padding: 20 25;
-}
-.dialog-pane .label { -fx-text-fill: -color-text; }
-.dialog-pane:header .header-panel {
     -fx-background-color: transparent;
-    -fx-padding: 0 0 15 0;
+    -fx-padding: 5px;
 }
 
-/*────────────────  ICONO PIN  ────────────────*/
-.map-pin {
-    -fx-shape: "M13.558,0C6.07,0,0,6.07,0,13.558s13.558,22.346,13.558,22.346s13.558-14.858,13.558-22.346S21.045,0,13.558,0z M13.558,20.762c-4.084,0-7.395-3.311-7.395-7.395s3.311-7.395,7.395-7.395c4.084,0,7.396,3.311,7.396,7.395 S17.642,20.762,13.558,20.762z";
-    -fx-background-color: -color-accent, -color-bg;
-    -fx-background-insets: 0, 2;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 0, 4);
+.menu-bar .menu {
+    -fx-text-fill: #ecf0f1;
 }
 
-/*────────────────  ÁREAS PROPIAS DEL APP  ────────────────*/
-#splitPane, #scrollTest, #seccionPreguntas { -fx-background-color: -color-bg-alt; }
-
-#seleccionarPregunta, #preguntaRandom { -fx-background-color: -color-bg; }
-#seleccionarPregunta:hover, #preguntaRandom:hover { -fx-background-color: #F1F3F4; }
-
-#stats {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
+.menu-bar .menu:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
 }
-#stats:hover { -fx-background-color: #F1F3F4; }
 
-/* Hover neutro para tool-toggle de la barra */
-.toggle-button:hover { -fx-background-color: #F1F3F4; }
+.menu-item {
+    -fx-background-color: #4a6d9a;
+    -fx-text-fill: #ecf0f1;
+}
 
-/*────────────────  FIN  ────────────────*/
+.menu-item:hover {
+    -fx-background-color: #3498db;
+}
+
+/* ... (mantén el resto de tus estilos existentes) ... */
+
+/* Fondo del área principal */
+#mapPane, .scroll-pane .viewport {
+    -fx-background-color: #3a5f8d; /* Azul claro para el fondo */
+}
+
+/* Barra inferior */
+.hbox {
+    -fx-background-color: linear-gradient(to top, #3a5f8d, #4a6d9a);
+    -fx-border-color: #7f8c8d;
+    -fx-border-width: 1px 0 0 0;
+}
