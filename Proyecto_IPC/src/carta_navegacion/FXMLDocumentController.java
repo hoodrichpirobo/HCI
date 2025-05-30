@@ -163,12 +163,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML private ImageView avatarView;                                // ─── AVATAR (NEW)
     private static final String DEFAULT_AVATAR_RES = "/resources/default_avatar.png";   // ─── AVATAR
     private static final Path   AVATAR_DIR        = Paths.get("avatars");              // ─── AVATAR
-    @FXML
-    private MenuButton menuEditar;
-    @FXML
-    private RadioMenuItem transEdit;
-    @FXML
-    private RadioMenuItem rullerEdit;
+    
 
     @FXML
     private ButtonBar barraEditar;
@@ -179,9 +174,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private ToggleButton botonLinea;
-    private Spinner<Double> elegirAngulo;
-    private Slider sliderSize;
-    private Spinner<Integer> elegirSize;
+    
     @FXML
     private ToggleButton botonTexto;
     @FXML
@@ -275,21 +268,21 @@ public class FXMLDocumentController implements Initializable {
         barraEditar.setVisible(false);
         
        
-        menuEditar.disableProperty().bind(
-            Bindings.not(
-                    transButton.selectedProperty().or(reglaBoton.selectedProperty())
-            )
-        );
+      
             
-        transEdit.setOnAction(e -> {
+        transButton.setOnAction(e -> {
             if(transButton.isSelected()){
-                rullerEdit.setSelected(false);
+                
                 barraEditar.setVisible(true);
+                fotoGiro.setVisible(true);
+                rotate.setVisible(true);
+                fotoAumento.setVisible(true);
+                tamano.setVisible(true);
                 editarReglas();
             }
         });
-        rullerEdit.setOnAction(e -> {
-            transEdit.setSelected(false);
+        reglaBoton.setOnAction(e -> {
+            
             if(reglaBoton.isSelected()){
                 barraEditar.setVisible(true);
                 fotoAumento.setVisible(false);
@@ -862,15 +855,12 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void editarReglas(){
-        if(transEdit.isSelected()){
+        if(transButton.isSelected()){
             transportador.setEffect(glow);
-                System.out.println("se hace unbindf");
+                
             rotate.valueProperty().unbind();
             transportador.rotateProperty().bind(rotate.valueProperty());
             
-            
-            System.out.println(tamano.getMin() + "");
-            System.out.println(tamano.getMax() + "");
             tamano.setMin(500);
             tamano.setMax(3000);
             tamano.valueProperty().unbind();
@@ -880,7 +870,7 @@ public class FXMLDocumentController implements Initializable {
         else{
             transportador.setEffect(null);
         }
-        if(rullerEdit.isSelected()){
+        if(reglaBoton.isSelected()){
             regla.setEffect(glow);
             rotate.valueProperty().unbind();
             regla.rotateProperty().bind(rotate.valueProperty());
@@ -1251,7 +1241,6 @@ public class FXMLDocumentController implements Initializable {
     /* ===================================================================== */
     /*  REGISTER                                                             */
     /* ===================================================================== */
-    @FXML
     private void onRegister(ActionEvent event) {
 
         Dialog<User> dlg = new Dialog<>();
