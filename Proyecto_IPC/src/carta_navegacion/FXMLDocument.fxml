@@ -68,12 +68,9 @@
                         <HBox.margin>
                            <Insets left="5.0" right="5.0" />
                         </HBox.margin></Label>
-                    <MenuButton fx:id="userMenu"
-                                text=""
-                                visible="false">        <!-- ✖ quita cursor="HAND" -->
+                    <MenuButton fx:id="userMenu" text="" visible="false">        <!-- ✖ quita cursor="HAND" -->
                         <items>
-                            <MenuItem text="Ver / Modificar perfil"
-                                      onAction="#onModifyProfile"/>
+                            <MenuItem onAction="#onModifyProfile" text="Ver / Modificar perfil" />
                         </items>
                     </MenuButton>                        
                      <Button fx:id="stats" alignment="CENTER" mnemonicParsing="false" onAction="#showStats" prefHeight="31.0" prefWidth="15.0">
@@ -131,19 +128,19 @@
             </VBox.margin>
          </MenuButton>
 
-      <HBox alignment="CENTER_LEFT" prefHeight="44.0" prefWidth="853.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="850.0">
         <children>
-          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
             <graphic>
-              <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+              <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                   <Image url="@../resources/transportador.png" />
                 </image>
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="7.0" />
-          <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto">
+          <Region prefHeight="36.0" prefWidth="10.0" />
+          <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto" prefHeight="40.0" prefWidth="45.0">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -152,8 +149,8 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="7.0" />
-          <ToggleButton fx:id="botonLinea" mnemonicParsing="false">
+          <Region prefHeight="36.0" prefWidth="10.0" />
+          <ToggleButton fx:id="botonLinea" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -162,8 +159,8 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
+          <Region prefHeight="36.0" prefWidth="10.0" />
+               <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -172,8 +169,8 @@
               </ImageView>
                   </graphic>
                </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="arcoBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+          <Region prefHeight="36.0" prefWidth="10.0" />
+               <ToggleButton fx:id="arcoBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -182,8 +179,8 @@
               </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region layoutX="56.0" layoutY="10.0" prefHeight="36.0" prefWidth="7.0" />
-               <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+               <Region layoutX="56.0" layoutY="10.0" prefHeight="36.0" prefWidth="10.0" />
+               <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
                      <ImageView fitHeight="39.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -212,8 +209,6 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region prefHeight="200.0" prefWidth="300.0" />
-               <Button fx:id="clear" mnemonicParsing="false" onAction="#clearAll" text="Limpiar todo" />
         </children>
         <VBox.margin>
           <Insets bottom="10.0" left="5.0" top="10.0" />
@@ -432,7 +427,7 @@
                      <Color red="1.0" />
                   </value>
                </ColorPicker>
-               <Button fx:id="papelera" mnemonicParsing="false" onAction="#borrarObjeto">
+               <Button fx:id="papelera" mnemonicParsing="false" onAction="#clearAll">
                   <graphic>
                      <ImageView fitHeight="104.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
                         <image>
