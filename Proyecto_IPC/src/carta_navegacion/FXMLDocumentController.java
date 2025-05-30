@@ -290,7 +290,19 @@ public class FXMLDocumentController implements Initializable {
                 editarReglas();
             }
         });
+        (transButton.selectedProperty()).addListener((obs, wasSelected, isNowSelected) -> {
+        if (!isNowSelected) {
+            barraEditar.setVisible(false);
+               
+        } 
         
+    });
+        (reglaBoton.selectedProperty()).addListener((obs, wasSelected, isNowSelected) -> {
+        if (!isNowSelected) {
+                barraEditar.setVisible(false);
+                
+        } 
+    });
         botonGoma.selectedProperty().addListener((obs, oldSel, nowSel) -> {
             if (nowSel) {
                 mapPane.setCursor(Cursor.CROSSHAIR);      // aspecto de goma
