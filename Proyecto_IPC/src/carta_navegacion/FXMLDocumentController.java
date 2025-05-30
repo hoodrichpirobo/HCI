@@ -198,6 +198,8 @@ public class FXMLDocumentController implements Initializable {
     TextField texto;
     @FXML
     private Button clear;
+    SpinnerValueFactory.DoubleSpinnerValueFactory grosor;
+
     @FXML private MenuButton userMenu;
   
     @Override
@@ -248,21 +250,6 @@ public class FXMLDocumentController implements Initializable {
         });
 
         /* ─── 4.  TOOLS (protractor, ruler, etc.) ────────────────────────── */
-        /*elegirAngulo.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 360, 0));
-        elegirSize.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 5));
-        rotate.valueProperty().addListener((obs, oldVal, newVal) -> {
-            elegirAngulo.getValueFactory().setValue(newVal.doubleValue());
-        });
-        elegirAngulo.valueProperty().addListener((obs, oldVal, newVal) -> {
-            rotate.setValue(newVal);
-        });
-        sliderSize.valueProperty().addListener((obs, oldVal, newVal) -> {
-            elegirSize.getValueFactory().setValue(newVal.intValue());
-        });
-        elegirSize.valueProperty().addListener((obs, oldVal, newVal) -> {
-            sliderSize.setValue(newVal);
-        });
-        */
         ToggleGroup dibujos = new ToggleGroup();
         botonLinea.setToggleGroup(dibujos);
         botonPunto.setToggleGroup(dibujos);
@@ -270,16 +257,18 @@ public class FXMLDocumentController implements Initializable {
         botonTexto.setToggleGroup(dibujos);
         botonGoma.setToggleGroup(dibujos);
         arcoBoton.setToggleGroup(dibujos);
+        transButton.setToggleGroup(dibujos);
+        reglaBoton.setToggleGroup(dibujos);
+        
         configurarTransportador();
         configurarRegla();
 
 
         papelera.setDisable(true);
+ 
+        grosor = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0);
+        spinnerGrosor.setValueFactory(grosor);
         
-        SpinnerValueFactory.DoubleSpinnerValueFactory grosorFactory = 
-            new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); // min, max, initial, step
-
-        spinnerGrosor.setValueFactory(getGrosor());
 
         spinnerGrosor.setEditable(true);
         
@@ -349,10 +338,14 @@ public class FXMLDocumentController implements Initializable {
     });
          botonTexto.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
-            spinnerGrosor.setValueFactory(getGrosor());
-            mapa.setOnMousePressed(this::colocarTexto);
-
-        } else {
+            mapa.setOnMouseClicked(this::colocarTexto);
+            grosor = new SpinnerValueFactory.DoubleSpinnerValueFactory(50.0, 300.0, 100.0, 10.0); // min, max, initial, step
+            spinnerGrosor.setValueFactory(grosor);
+        }else{
+            mapa.setOnMouseClicked(null); 
+            grosor = new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0);
+            spinnerGrosor.setValueFactory(grosor);
+            
             zoomGroup.getChildren().remove(texto);
         }
     });
@@ -369,13 +362,7 @@ public class FXMLDocumentController implements Initializable {
         InputStream is = getClass().getResourceAsStream(DEFAULT_AVATAR_RES);
         if (is != null) avatarView.setImage(new Image(is));
     }
-    private SpinnerValueFactory.DoubleSpinnerValueFactory getGrosor(){
-        if(botonTexto.isSelected()){
-            return new SpinnerValueFactory.DoubleSpinnerValueFactory(50.0, 300.0, 100.0, 10.0); // min, max, initial, step
-        }else{
-             return new SpinnerValueFactory.DoubleSpinnerValueFactory(5.0, 30.0, 5.0, 1.0); 
-        }
-    }
+    
     
     private void configurarContenidoMapa() {
         // Obtener el contenido original (asumo que es un ImageView)
@@ -1068,10 +1055,6 @@ public class FXMLDocumentController implements Initializable {
             circlePainting.setStroke(colorPicker.getValue());
             circlePainting.setStrokeWidth(spinnerGrosor.getValue());
 
-            
-            
-            
-            
             circlePainting.setCenterX(localPoint.getX());
             circlePainting.setCenterY(localPoint.getY());
             
@@ -1115,19 +1098,13 @@ public class FXMLDocumentController implements Initializable {
     }
     
     private void colocarTexto(MouseEvent event) {
-            
-            
-            Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
-            
+            Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());            
             if(texto!=null){
                 zoomGroup.getChildren().remove(texto);
-            }else{
-                
             }
             // Añadimos el texto al contenedor, lo posicionamos donde está el ratón y muy importante, pedimos el foco.
             zoomGroup.getChildren().add(texto);
-            
-           
+
             texto.setFont(Font.font("Gafata", 30));
             texto.setPrefWidth(500); // Ajusta el ancho si quieres
             texto.setPrefHeight(100); // Altura del campo
@@ -1141,16 +1118,11 @@ public class FXMLDocumentController implements Initializable {
                 textoT.setX(texto.getLayoutX());
                 textoT.setY(texto.getLayoutY());
                 double sizeDouble = spinnerGrosor.getValue();
-                int size = (int) sizeDouble;
-                
-                textoT.setFont(Font.font("Gafata", size));
-                
-                textoT.setFill(colorPicker.getValue());
-                
-               
+                int size = (int) sizeDouble;              
+                textoT.setFont(Font.font("Gafata", size));       
+                textoT.setFill(colorPicker.getValue());    
                 dibujar.getChildren().add(textoT);
-                dibujos.add(textoT);
-                
+                //dibujos.add(textoT);           
                 zoomGroup.getChildren().remove(texto);
                 e.consume();
                 }

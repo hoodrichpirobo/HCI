@@ -23,7 +23,7 @@
 }
 
 /*────────────────  BOTONES / TOGGLE  ────────────────*/
-.button, .toggle-button {
+.button{
     -fx-background-color: -color-accent;
     -fx-text-fill: white;
     -fx-padding: 8 18;
@@ -32,6 +32,16 @@
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 1);
 }
+.toggle-button {
+    -fx-background-color: #5654BA;
+    -fx-text-fill: white;
+    -fx-padding: 8 18;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 1);
+}
+
 .button:hover, .toggle-button:hover {
     -fx-background-color: -color-accent-dark;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 2);
