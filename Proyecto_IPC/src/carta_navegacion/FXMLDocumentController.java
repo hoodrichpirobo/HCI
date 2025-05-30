@@ -201,8 +201,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     TextField texto;
 
-    @FXML
-    private Button clear;
     SpinnerValueFactory.DoubleSpinnerValueFactory grosor;
 
 
