@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert.AlertType;
@@ -192,6 +193,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button clear;
     SpinnerValueFactory.DoubleSpinnerValueFactory grosor;
+    private Text textoSeleccionado = null;
 
     @FXML private MenuButton userMenu;
   
@@ -332,6 +334,7 @@ public class FXMLDocumentController implements Initializable {
             mapa.setOnMouseDragged(null);
         }
     });
+        
         arcoBoton.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
             mapa.setOnMousePressed(this::ponerCentroArco);
@@ -341,6 +344,13 @@ public class FXMLDocumentController implements Initializable {
             mapa.setOnMouseDragged(null);
         }
     });
+        mapa.setOnMouseClicked(event -> {
+    if (botonTexto.isSelected()) {
+        colocarTexto(event);  // Agregar nuevo texto
+    } else {
+        seleccionarTexto(event);  // Solo seleccionar texto para color/tamaño
+    }
+});
          botonTexto.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
         if (isNowSelected) {
             mapa.setOnMouseClicked(this::colocarTexto);
@@ -352,10 +362,29 @@ public class FXMLDocumentController implements Initializable {
             spinnerGrosor.setValueFactory(grosor);
             
             zoomGroup.getChildren().remove(texto);
+            if(textoSeleccionado != null){
+                textoSeleccionado.setEffect(null);
+                textoSeleccionado = null;
+            }
         }
     });
-         
+     
+          // Listener para el color picker
+    colorPicker.valueProperty().addListener((obs, oldColor, newColor) -> {
+        if (textoSeleccionado != null) {
+            textoSeleccionado.setFill(newColor);
+        }
+    });
+    
+    // Listener para el spinner
+    spinnerGrosor.valueProperty().addListener((obs, oldValue, newValue) -> {
+        if (textoSeleccionado != null) {
+            textoSeleccionado.setFont(Font.font(textoSeleccionado.getFont().getFamily(), newValue.doubleValue()));
+        }
+    });
+
     }
+    
     
     
        
@@ -656,6 +685,9 @@ public class FXMLDocumentController implements Initializable {
     Line latitud = null, longitud = null;
     private Node nodoSeleccionado = null;
     Line linea = null;
+    Circle circulo;
+    Arc arc;
+    Text text;
     @FXML
     private void handleMapClick(MouseEvent event) {
         if(nodoSeleccionado != null) {
@@ -784,6 +816,24 @@ public class FXMLDocumentController implements Initializable {
                    ((Line)nodoSeleccionado).setStroke(color);
                 });
             }
+           /* if(n instanceof Circle){
+                nodoSeleccionado = circulo;
+                nodoSeleccionado.setEffect(glow);
+                
+                colorPicker.setOnAction(h -> {
+                   Color color = colorPicker.getValue();
+                   ((Circle)nodoSeleccionado).setStroke(color);
+                });
+            }
+            if(n instanceof Text){
+                nodoSeleccionado = text;
+                nodoSeleccionado.setEffect(glow);
+                
+                colorPicker.setOnAction(h -> {
+                   Color color = colorPicker.getValue();
+                   ((Text)nodoSeleccionado).setFill(color);
+                });
+            }*/
         });
         
         n.setOnMousePressed(f -> {
@@ -1098,9 +1148,59 @@ public class FXMLDocumentController implements Initializable {
         event.consume();
         
     }
-    
+    private void seleccionarTexto(MouseEvent event){
+         Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
+
+    if (textoSeleccionado != null) {
+        textoSeleccionado.setEffect(null);
+        textoSeleccionado = null;
+    }
+
+    for (Node node : dibujar.getChildren()) {
+        if (node instanceof Text text) {
+            Bounds bounds = text.getBoundsInParent();
+            if (bounds.contains(localPoint)) {
+                textoSeleccionado = text;
+                textoSeleccionado.setEffect(glow);
+
+                // Actualiza los controles
+                spinnerGrosor.getValueFactory().setValue(text.getFont().getSize());
+                colorPicker.setValue((Color) text.getFill());
+
+                break;
+            }
+        }
+    }
+    }
     private void colocarTexto(MouseEvent event) {
             Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());            
+            
+            if(textoSeleccionado !=null){
+                textoSeleccionado.setEffect(null);
+                textoSeleccionado=null;
+            }
+            // Primero verifica si hay un texto en la posición del click
+            for (Node node : dibujar.getChildren()) {
+                if (node instanceof Text) {
+                    Text text = (Text) node;
+                    // Comprueba si el click está cerca del texto (puedes ajustar este criterio)
+                    if (Math.abs(text.getX() - localPoint.getX()) < text.getLayoutBounds().getWidth() &&
+                        Math.abs(text.getY() - localPoint.getY()) < text.getLayoutBounds().getHeight()) {
+
+                        // Texto encontrado, lo seleccionamos
+                        textoSeleccionado = text;
+                        textoSeleccionado.setEffect(glow);
+                        // Cargamos sus propiedades en los controles
+                        spinnerGrosor.getValueFactory().setValue(text.getFont().getSize());
+                        colorPicker.setValue((Color) text.getFill());
+
+                        return; // Salimos del método sin crear nuevo texto
+                    }
+                }
+            }
+            
+            
+            
             if(texto!=null){
                 zoomGroup.getChildren().remove(texto);
             }
