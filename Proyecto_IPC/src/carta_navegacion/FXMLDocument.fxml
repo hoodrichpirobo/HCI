@@ -36,7 +36,7 @@
   <ListView fx:id="map_listview" prefHeight="0.0" prefWidth="0.0" visible="false" />
 
   <!-- Barra superior -->
-  <VBox alignment="TOP_RIGHT" prefHeight="83.0" prefWidth="853.0">
+  <VBox alignment="CENTER_LEFT" prefHeight="83.0" prefWidth="853.0">
     <children>
       <HBox prefHeight="23.0" prefWidth="853.0">
         <children>
@@ -183,24 +183,28 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="329.0">
+               <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
                   <children>
-                  
-                                                <HBox alignment="CENTER_RIGHT" layoutX="57.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="300.0" spacing="5.0" AnchorPane.rightAnchor="-27.666666666666686">
-                    <children>
-                      <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" prefHeight="32.0" prefWidth="74.0" text="Centrar" />
-                      <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="34.0" text="Zoom">
-                              <font>
-                                 <Font name="System Bold" size="12.0" />
-                              </font>
-                           </Label>
-                      <Button fx:id="menos" mnemonicParsing="false" onAction="#zoomOut" text="-" />
-                      <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
-                      <Button fx:id="mas" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
-                    </children>
-                  </HBox>
+                     <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="329.0">
+                        <children>
+                        
+                                                      <HBox alignment="CENTER_RIGHT" layoutX="57.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="300.0" spacing="5.0" AnchorPane.rightAnchor="-27.666666666666686">
+                          <children>
+                            <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" prefHeight="32.0" prefWidth="74.0" text="Centrar" />
+                            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="34.0" text="Zoom">
+                                    <font>
+                                       <Font name="System Bold" size="12.0" />
+                                    </font>
+                                 </Label>
+                            <Button fx:id="menos" mnemonicParsing="false" onAction="#zoomOut" text="-" />
+                            <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
+                            <Button fx:id="mas" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+                          </children>
+                        </HBox>
+                        </children>
+                     </AnchorPane>
                   </children>
-               </AnchorPane>
+               </HBox>
         </children>
       </HBox>
     </children>

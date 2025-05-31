@@ -25,6 +25,7 @@ public class CartaNavegacionApp extends Application {
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/resources/logo.png")));
         Scene scene = new Scene(root);
         stage.setTitle("Proyecto IPC");
+        stage.setResizable(false);
         stage.setScene(scene);
         
         FXMLDocumentController controller = loader.getController();
