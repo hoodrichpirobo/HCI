@@ -1366,9 +1366,9 @@ public class FXMLDocumentController implements Initializable {
         GridPane.setMargin(linkReg, new Insets(5,0,0,0));
 
         linkReg.setOnAction(ev -> {
-            dlg.setResult(null);   // “no hubo login”
-            dlg.close();                        // cierra diálogo
-            onRegister(null);                   // reutiliza vuestro código
+            dlg.setResult(null);
+            dlg.close();
+            Platform.runLater(() -> onRegister(null));
         });
         /* ───────────────────────────────────────────────────────────── */
 
@@ -1381,6 +1381,7 @@ public class FXMLDocumentController implements Initializable {
                                               pwd.getText())
                                  : null);
 
+        styleDialog(dlg);
         dlg.showAndWait().ifPresent(creds -> {
             try {
                 Navigation nav = Navigation.getInstance();
@@ -1495,6 +1496,7 @@ public class FXMLDocumentController implements Initializable {
 
         /* --------------------------- mostrar diálogo ----------------------- */
         try {
+            styleDialog(dlg);
             dlg.showAndWait().ifPresent(u -> {
                 currentUser = u;
                 sesionIniciada.set(true);
@@ -1581,6 +1583,7 @@ public class FXMLDocumentController implements Initializable {
             return currentUser;
         });
 
+        styleDialog(dlg);
         dlg.showAndWait().ifPresent(u ->
             new Alert(Alert.AlertType.INFORMATION,
                       "Perfil actualizado", ButtonType.OK).showAndWait());
@@ -1597,5 +1600,15 @@ public class FXMLDocumentController implements Initializable {
         dibujos.clear();
     }
     
-  
+    private void styleDialog(Dialog<?> dlg) {
+        DialogPane pane = dlg.getDialogPane();
+
+        // 1) ruta ABSOLUTA, partiendo de la raíz del class-path
+        String css = getClass().getResource("/resources/dialogos_antiguo.css").toExternalForm();
+        //                 └─────────── ojo a la barra inicial
+
+        if (!pane.getStylesheets().contains(css)) pane.getStylesheets().add(css);
+        if (!pane.getStyleClass().contains("antiqueDialog"))
+            pane.getStyleClass().add("antiqueDialog");
+    }
 }
