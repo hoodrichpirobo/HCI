@@ -29,13 +29,13 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carta_navegacion.FXMLDocumentController">
+<VBox alignment="BOTTOM_LEFT" prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carta_navegacion.FXMLDocumentController">
 
   <!-- Aquí añadimos la ListView para inyectarla en el controlador -->
   <ListView fx:id="map_listview" prefHeight="0.0" prefWidth="0.0" visible="false" />
 
   <!-- Barra superior -->
-  <VBox prefHeight="83.0" prefWidth="853.0">
+  <VBox alignment="TOP_RIGHT" prefHeight="83.0" prefWidth="853.0">
     <children>
       <HBox prefHeight="23.0" prefWidth="853.0">
         <children>
@@ -101,7 +101,7 @@
             </VBox.margin>
       </HBox>
 
-      <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="853.0">
+            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="65.0" prefWidth="848.0">
         <children>
           <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
             <graphic>
@@ -112,8 +112,9 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="42.0" prefWidth="10.0" />
-               <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
+
+          <Region prefHeight="41.0" prefWidth="15.0" />
+               <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
                      <ImageView fitHeight="39.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -122,8 +123,8 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region prefHeight="200.0" prefWidth="10.0" />
-          <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto" prefHeight="40.0" prefWidth="45.0">
+               <Region layoutX="56.0" layoutY="10.0" prefHeight="40.0" prefWidth="15.0" />
+          <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -132,8 +133,8 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="10.0" />
-          <ToggleButton fx:id="botonLinea" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
+          <Region minHeight="-Infinity" minWidth="-Infinity" prefHeight="36.0" prefWidth="15.0" />
+          <ToggleButton fx:id="botonLinea" mnemonicParsing="false">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -142,8 +143,8 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="10.0" />
-               <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
+          <Region prefHeight="40.0" prefWidth="15.0" />
+               <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -152,8 +153,8 @@
               </ImageView>
                   </graphic>
                </ToggleButton>
-          <Region prefHeight="36.0" prefWidth="10.0" />
-               <ToggleButton fx:id="arcoBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
+          <Region prefHeight="40.0" prefWidth="15.0" />
+               <ToggleButton fx:id="arcoBoton" alignment="CENTER_LEFT" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -162,7 +163,7 @@
               </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region layoutX="56.0" layoutY="10.0" prefHeight="36.0" prefWidth="10.0" />
+               <Region prefHeight="40.0" prefWidth="15.0" />
                <ToggleButton fx:id="botonTexto" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
                      <ImageView fitHeight="40.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -172,7 +173,7 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region prefHeight="200.0" prefWidth="10.0" />
+               <Region prefHeight="40.0" prefWidth="15.0" />
                <ToggleButton fx:id="botonGoma" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
                      <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -182,16 +183,12 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="400.0">
+               <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="329.0">
                   <children>
-            
-                        <HBox alignment="CENTER_RIGHT" fillHeight="false" layoutX="129.0" layoutY="1.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="335.0" spacing="5.0">
+                  
+                                                <HBox alignment="CENTER_RIGHT" layoutX="57.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="300.0" spacing="5.0" AnchorPane.rightAnchor="-27.666666666666686">
                     <children>
-                      <Region prefHeight="12.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-                      <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" text="Centrar">
-                              <HBox.margin>
-                                 <Insets left="5.0" right="5.0" />
-                              </HBox.margin></Button>
+                      <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" prefHeight="32.0" prefWidth="74.0" text="Centrar" />
                       <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="34.0" text="Zoom">
                               <font>
                                  <Font name="System Bold" size="12.0" />
@@ -208,15 +205,12 @@
                   </children>
                </AnchorPane>
         </children>
-        <VBox.margin>
-          <Insets bottom="10.0" left="5.0" top="10.0" />
-        </VBox.margin>
       </HBox>
     </children>
   </VBox>
 
   <!-- Panel dividido principal -->
-  <SplitPane fx:id="splitPane" dividerPositions="0.3577586206896552" VBox.vgrow="ALWAYS">
+  <SplitPane fx:id="splitPane" dividerPositions="0.3236677115987461" VBox.vgrow="ALWAYS">
     <items>
          <ScrollPane fx:id="scrollTest" fitToHeight="true" fitToWidth="true" vbarPolicy="AS_NEEDED">
             <content>
@@ -308,11 +302,7 @@
                               <children>
                                  <HBox alignment="CENTER_LEFT" minWidth="0.0" prefHeight="100.0" prefWidth="200.0">
                                     <children>
-                                       <Button fx:id="borrarSeleccion" minWidth="0.0" mnemonicParsing="false" text="Borrar selección">
-                                          <font>
-                                             <Font size="10.0" />
-                                          </font>
-                                       </Button>
+                                       <Button fx:id="borrarSeleccion" minWidth="0.0" mnemonicParsing="false" text="Borrar selección" />
                                     </children>
                                  </HBox>
                                  <HBox alignment="CENTER_RIGHT" minWidth="0.0" prefHeight="100.0" prefWidth="200.0">
@@ -372,7 +362,7 @@
                         </image>
                      </ImageView>
                      <Group fx:id="dibujar" />
-                     <TextField fx:id="texto" layoutX="92.0" layoutY="105.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" />
+                     <TextField fx:id="texto" layoutX="105.0" layoutY="108.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="500.0" />
             </children>
           </Pane>
         </content>
@@ -385,44 +375,25 @@
     <children>
          <HBox alignment="CENTER" prefHeight="33.0" prefWidth="745.0">
             <children>
-             
-               <VBox fx:id="modificadoresObjetos" alignment="CENTER" prefHeight="19.0" prefWidth="651.0">
-                  <children>
-                     
-                     <ButtonBar fx:id="barraEditar" prefHeight="34.0" prefWidth="400.0">
-                       <buttons>
-                           <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" focusTraversable="true" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@../resources/360.png" />
-                              </image>
-                           </ImageView>
-                           <Slider fx:id="rotate" max="360.0" prefHeight="36.0" prefWidth="76.0">
-                              <padding>
-                                 <Insets right="5.0" />
-                              </padding></Slider>
-                           <ImageView fx:id="fotoAumento" fitHeight="21.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@../resources/opcion-de-aumento-de-tamano.png" />
-                              </image>
-                           </ImageView>
-                           <Slider fx:id="tamano">
-                              <padding>
-                                 <Insets right="5.0" />
-                              </padding></Slider>
-                       </buttons>
-                        <padding>
-                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                        </padding>
-                        <VBox.margin>
-                           <Insets left="5.0" right="10.0" />
-                        </VBox.margin>
-                     </ButtonBar>
-                  </children></VBox>
-               <Region prefHeight="200.0" prefWidth="100.0" />
-               <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0">
-                  <HBox.margin>
-                     <Insets left="5.0" right="5.0" />
-                  </HBox.margin></Spinner>
+               
+                                       <ButtonBar fx:id="barraEditar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="33.0" prefWidth="380.0">
+                 <buttons>
+                     <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" focusTraversable="true" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/360.png" />
+                        </image>
+                     </ImageView>
+                     <Slider fx:id="rotate" prefHeight="36.0" prefWidth="76.0" />
+                     <ImageView fx:id="fotoAumento" fitHeight="21.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/opcion-de-aumento-de-tamano.png" />
+                        </image>
+                     </ImageView>
+                     <Slider fx:id="tamano" prefHeight="14.0" />
+                 </buttons>
+               </ButtonBar>
+               <Region prefHeight="33.0" prefWidth="62.0" />
+               <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0" prefWidth="69.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
                      <Insets left="5.0" right="5.0" />
@@ -454,5 +425,6 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
     </VBox.margin>
   </HBox>
+   <AnchorPane />
 
 </VBox>
