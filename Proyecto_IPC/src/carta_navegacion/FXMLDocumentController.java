@@ -88,20 +88,21 @@ public class FXMLDocumentController implements Initializable {
     private List<Answer> currentAnswers = Collections.emptyList();
     // === Campos FXML ===
     @FXML private ListView<Poi> map_listview;
-    @FXML private ScrollPane map_scrollpane;
+    @FXML
+    private ScrollPane map_scrollpane;
     @FXML private Slider zoom_slider;
-    @FXML private MenuButton map_pin;
-    @FXML private MenuItem pin_info;
+    @FXML
+    private MenuButton map_pin;
+    @FXML
+    private MenuItem pin_info;
     @FXML private SplitPane splitPane;
     @FXML private Label mousePosition;
     @FXML private Button loginButton;
     // Sección de preguntas
-    @FXML private VBox seccionPreguntas;
-    @FXML private Text tituloTest;
-    @FXML private HBox botonesSeleccionPregunta;
-    @FXML private Button seleccionarPregunta;
-    @FXML private Button preguntaRandom;
-    @FXML private Text enunciadoPregunta;
+    @FXML
+    private VBox seccionPreguntas;
+    @FXML
+    private Text enunciadoPregunta;
     @FXML
     private RadioButton ans1;
     @FXML
@@ -145,8 +146,6 @@ public class FXMLDocumentController implements Initializable {
     private Pane mapPane;
     @FXML
     private ToggleButton botonPunto;
-    @FXML
-    private VBox modificadoresObjetos;
     @FXML
     private Button papelera;
     @FXML
@@ -198,6 +197,14 @@ public class FXMLDocumentController implements Initializable {
     private Text textoSeleccionado = null;
 
     @FXML private MenuButton userMenu;
+    @FXML
+    private Text tituloTest;
+    @FXML
+    private HBox botonesSeleccionPregunta;
+    @FXML
+    private Button seleccionarPregunta;
+    @FXML
+    private Button preguntaRandom;
   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -1285,6 +1292,7 @@ public class FXMLDocumentController implements Initializable {
     private void cambiarEstiloTexto(TextField t){
     
     }
+
     @FXML
     private void addPoi(MouseEvent event) {
     }
