@@ -1344,6 +1344,13 @@ public class FXMLDocumentController implements Initializable {
                 dibujar.getChildren().add(textoT);
                 dibujos.add(textoT);
                 seleccionable(textoT);
+                if(nodoSeleccionado != null){
+                    nodoSeleccionado.setEffect(null);
+                    nodoSeleccionado = null;
+                    dibujar.getChildren().removeAll(latitud, longitud);
+                }
+                nodoSeleccionado = textoT;
+                nodoSeleccionado.setEffect(glow);
                 texto.setText(null);
                 zoomGroup.getChildren().remove(texto);
                 e.consume();

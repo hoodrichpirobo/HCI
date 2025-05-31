@@ -82,7 +82,7 @@ public class FXMLDisplayProblemsController implements Initializable{
             datos = listaProblemas.getItems();
             listaProblemas.setCellFactory(c -> new ProblemListCell());
             problemas = obj.getProblems();
-            System.out.println(problemas.get(0));
+            //System.out.println(problemas.get(0));
             for(int i = 0; i < problemas.size(); i++){
                 datos.add(problemas.get(i));
             }
