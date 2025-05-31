@@ -692,6 +692,7 @@ public class FXMLDocumentController implements Initializable {
         if(nodoSeleccionado != null) {
             nodoSeleccionado.setEffect(null);
             nodoSeleccionado = null;
+            actualizarControles();
         }
         if(latitud != null) dibujar.getChildren().remove(latitud);
         if(longitud != null) dibujar.getChildren().remove(longitud);
@@ -740,11 +741,9 @@ public class FXMLDocumentController implements Initializable {
             return;
         }       
         else if(botonPunto.isSelected()){
-            //puntoSeleccionado.fillProperty().unbind();
-            //puntoSeleccionado.strokeProperty().unbind();
             double x = event.getX(), y = event.getY();
             Point2D p = new Point2D(x, y);
-            Circle c = new Circle(p.getX(), p.getY(), 5);
+            Circle c = new Circle(p.getX(), p.getY(), spinnerGrosor.getValue());
             c.setFill(colorPicker.getValue());
             c.setStroke(colorPicker.getValue());
             dibujar.getChildren().add(c);
@@ -758,13 +757,13 @@ public class FXMLDocumentController implements Initializable {
         else if(botonLinea.isSelected()){
             double x = event.getX(), y = event.getY();
             if(ini == null){
-                ini = new Circle(x, y, 3, Color.MAGENTA);
+                ini = new Circle(x, y, 3, colorPicker.getValue());
                 dibujar.getChildren().add(ini);
             }
             else{
                 linea = new Line(ini.getCenterX(), ini.getCenterY(), x, y);
-                linea.setStroke(Color.MAGENTA);
-                linea.setStrokeWidth(2);
+                linea.setStroke(colorPicker.getValue());
+                linea.setStrokeWidth(spinnerGrosor.getValue());
                 dibujar.getChildren().add(linea);
                 dibujos.add(linea);
                 seleccionable(linea);
@@ -786,52 +785,14 @@ public class FXMLDocumentController implements Initializable {
                 nodoSeleccionado.setEffect(null);
             }
             nodoSeleccionado = n;
+            actualizarControles();
             if(n instanceof Circle){
-                colorPicker.setValue((Color)((Circle)nodoSeleccionado).getFill());
-                //sliderSize.adjustValue(((Circle)nodoSeleccionado).getRadius());
-                //puntoSeleccionado.fillProperty().bind(colorPicker.valueProperty());
-                //puntoSeleccionado.strokeProperty().bind(colorPicker.valueProperty());
                 nodoSeleccionado.setEffect(glow);
-                marcarExtremos((Circle)n);
-                
-                colorPicker.setOnAction(h -> {
-                   Color color = colorPicker.getValue();
-                   ((Circle)nodoSeleccionado).setFill(color);
-                   ((Circle)nodoSeleccionado).setStroke(color);
-                });
-                /*sliderSize.valueProperty().addListener((obs, oldVal, newVal) -> {
-                    if(nodoSeleccionado != null){
-                        ((Circle)nodoSeleccionado).setRadius(newVal.doubleValue());
-                    }
-                });*/
+                if(((Circle)n).getFill() != null && ((Circle)n).getFill() != Color.TRANSPARENT) marcarExtremos((Circle)n);
             }
-            else if(n instanceof Line){
-                nodoSeleccionado = linea;
+            else{
                 nodoSeleccionado.setEffect(glow);
-                
-                /*colorPicker.setOnAction(h -> {
-                   Color color = colorPicker.getValue();
-                   ((Line)nodoSeleccionado).setStroke(color);
-                });*/
             }
-           /* if(n instanceof Circle){
-                nodoSeleccionado = circulo;
-                nodoSeleccionado.setEffect(glow);
-                
-                colorPicker.setOnAction(h -> {
-                   Color color = colorPicker.getValue();
-                   ((Circle)nodoSeleccionado).setStroke(color);
-                });
-            }
-            if(n instanceof Text){
-                nodoSeleccionado = text;
-                nodoSeleccionado.setEffect(glow);
-                
-                colorPicker.setOnAction(h -> {
-                   Color color = colorPicker.getValue();
-                   ((Text)nodoSeleccionado).setFill(color);
-                });
-            }*/
         });
         
         n.setOnMousePressed(f -> {
@@ -847,15 +808,25 @@ public class FXMLDocumentController implements Initializable {
                 c.setCenterY(c.getCenterY() + dy);
                 Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
                 Point2D dp = new Point2D(dx, dy);*/
-                if(dx < 0) dx = 0;
-                if(dx > mapa.getFitWidth()) dx = mapa.getFitWidth();
-                if(dy < 0) dy = 0;
-                if(dy > mapa.getFitHeight()) dy = mapa.getFitHeight();
+                if(dx < 0 + ((Circle)n).getRadius()) dx = ((Circle)n).getRadius();
+                if(dx > mapa.getFitWidth() - ((Circle)n).getRadius()) dx = mapa.getFitWidth() - ((Circle)n).getRadius();
+                if(dy < 0 + ((Circle)n).getRadius()) dy = ((Circle)n).getRadius();
+                if(dy > mapa.getFitHeight() - ((Circle)n).getRadius()) dy = mapa.getFitHeight() - ((Circle)n).getRadius();
                 ((Circle)n).setCenterX(dx);
                 ((Circle)n).setCenterY(dy);
                 //nodoSeleccionado.setTranslateX(Math.clamp(((Circle)nodoSeleccionado).getCenterX(), 150, 1100));
                 //nodoSeleccionado.setTranslateY(Math.clamp(((Circle)nodoSeleccionado).getCenterY(), 300, 600)); 
-                marcarExtremos((Circle)n);
+                if(((Circle)n).getFill() != null && ((Circle)n).getFill() != Color.TRANSPARENT) marcarExtremos((Circle)n);
+            }
+            if(n instanceof Arc a){
+                g.consume();
+                double dx = g.getX() - offsetX[0], dy = g.getY() - offsetY[0];
+                if(dx < 0 + a.getRadiusX()) dx = a.getRadiusX();
+                if(dx > mapa.getFitWidth() - a.getRadiusX()) dx = mapa.getFitWidth() - a.getRadiusX();
+                if(dy < 0 + a.getRadiusY()) dy = a.getRadiusY();
+                if(dy > mapa.getFitHeight() - a.getRadiusY()) dy = mapa.getFitHeight() - a.getRadiusY();
+                a.setCenterX(dx);
+                a.setCenterY(dy);
             }
             if(n instanceof Line){
                 g.consume();
@@ -946,6 +917,25 @@ public class FXMLDocumentController implements Initializable {
             };
             colorPicker.setOnAction(colorHandler);
         }
+        else if(nodoSeleccionado instanceof Arc arc){
+            spinnerGrosor.getValueFactory().setValue(arc.getStrokeWidth());
+            colorPicker.setValue((Color)arc.getStroke());
+            
+            // Crear nuevos listeners
+            sizeListener = (obs, oldVal, newVal) -> {
+                if (nodoSeleccionado == arc) {
+                    arc.setStrokeWidth(newVal);
+                }
+            };
+            spinnerGrosor.valueProperty().addListener(sizeListener);
+
+            colorHandler = e -> {
+                if (nodoSeleccionado == arc) {
+                    arc.setStroke(colorPicker.getValue());
+                }
+            };
+            colorPicker.setOnAction(colorHandler);
+        }
     }
     
     void marcarExtremos(Circle c){
@@ -953,10 +943,10 @@ public class FXMLDocumentController implements Initializable {
             dibujar.getChildren().removeAll(latitud, longitud);
             latitud = new Line(0, c.getCenterY() + c.getTranslateY(), mapa.getFitWidth(), c.getCenterY() + c.getTranslateY());
             longitud = new Line(c.getCenterX() + c.getTranslateX(), 0, c.getCenterX() + c.getTranslateX(), mapa.getFitHeight());
-            latitud.setStroke(Color.GRAY);
-            longitud.setStroke(Color.GRAY);
-            latitud.setStrokeWidth(1);
-            longitud.setStrokeWidth(1);
+            latitud.setStroke(Color.RED);
+            longitud.setStroke(Color.RED);
+            latitud.setStrokeWidth(2);
+            longitud.setStrokeWidth(2);
             dibujar.getChildren().add(latitud);
             dibujar.getChildren().add(longitud);
         }
@@ -1087,22 +1077,6 @@ public class FXMLDocumentController implements Initializable {
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.show();
-        
-        
-        /*Alert estadisticas = new Alert(AlertType.INFORMATION);
-        estadisticas.setHeaderText("Estadísticas globales de " + currentUser.getNickName());
-        List<Session> a = currentUser.getSessions();
-        int h = hits.get(), f = faults.get();
-        for(Session s : a){
-            h += s.getHits();
-            f += s.getFaults();
-        }
-        double ta = 0;
-        if(h + f > 0){
-            ta = (h * 100.0 / (h + f));
-        }
-        estadisticas.setContentText("Total Hits: " + h + "\n" + "Total Faults: " + f + "\n" + "Tasa de aciertos: " + ta + "%");
-        estadisticas.showAndWait();*/
     }
 
     double baseX, baseY, bx, by;  
@@ -1184,6 +1158,10 @@ public class FXMLDocumentController implements Initializable {
         
             dibujar.getChildren().add(circlePainting);
             dibujos.add(circlePainting);
+            seleccionable(circlePainting);
+            nodoSeleccionado = circlePainting;
+            nodoSeleccionado.setEffect(glow);
+            actualizarControles();
     }
     Arc arcPainting;
     double inicioXarco, inicioYarco;
@@ -1204,6 +1182,10 @@ public class FXMLDocumentController implements Initializable {
         
             dibujar.getChildren().add(arcPainting);
             dibujos.add(arcPainting);
+            seleccionable(arcPainting);
+            nodoSeleccionado = arcPainting;
+            nodoSeleccionado.setEffect(glow);
+            actualizarControles();
     }
     private void ponerRadioArco(MouseEvent event) {
         Point2D localPoint = zoomGroup.sceneToLocal(event.getSceneX(), event.getSceneY());
