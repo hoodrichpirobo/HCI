@@ -434,7 +434,6 @@
                </Button>
             </children>
          </HBox>
-         <Button fx:id="clear" mnemonicParsing="false" onAction="#clearAll" text="Limpiar todo" />
       <Label fx:id="mousePosition" alignment="CENTER_RIGHT" prefHeight="19.0" prefWidth="190.0" text="SceneX:    SceneY:" textAlignment="RIGHT" wrapText="true" HBox.hgrow="ALWAYS">
             <HBox.margin>
                <Insets />
