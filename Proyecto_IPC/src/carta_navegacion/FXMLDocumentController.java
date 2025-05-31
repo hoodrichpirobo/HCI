@@ -87,7 +87,6 @@ public class FXMLDocumentController implements Initializable {
     // Lista de respuestas de la pregunta cargada (en el mismo orden en que pintas los RadioButton)
     private List<Answer> currentAnswers = Collections.emptyList();
     // === Campos FXML ===
-    @FXML private ListView<Poi> map_listview;
     @FXML
     private ScrollPane map_scrollpane;
     @FXML private Slider zoom_slider;
@@ -586,6 +585,7 @@ public class FXMLDocumentController implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Acerca de");
         alert.setHeaderText("IPC - 2025");
+        alert.setContentText("Clara Fangli Caudeli Soriano\nMarta Munera Rodrigues\nJuan Sebastián Nieto Prada");
         alert.showAndWait();
     }
 
@@ -594,7 +594,7 @@ public class FXMLDocumentController implements Initializable {
     private void showPosition(MouseEvent event) {
         mousePosition.setText(
             "sceneX: " + (int) event.getSceneX() + ", sceneY: " + (int) event.getSceneY() +
-            "          " + 
+            "\n" + 
             "X: " + (int) event.getX() + ", Y: " + (int) event.getY()
         );
     }
@@ -1136,9 +1136,6 @@ public class FXMLDocumentController implements Initializable {
     double baseX, baseY, bx, by;  
     Point2D localBase;
     Point2D localBaseRegla;
-    //@FXML
-    //private void moverTransportador(MouseEvent event) {    Point2D localBase;
-    //Point2D localBaseRegla;
     @FXML
     private void moverTransportador(MouseEvent event) {
         map_scrollpane.setPannable(false); 
@@ -1216,6 +1213,11 @@ public class FXMLDocumentController implements Initializable {
             dibujar.getChildren().add(circlePainting);
             dibujos.add(circlePainting);
             seleccionable(circlePainting);
+            if(nodoSeleccionado != null){
+                nodoSeleccionado.setEffect(null);
+                nodoSeleccionado = null;
+                dibujar.getChildren().removeAll(latitud, longitud);
+            }
             nodoSeleccionado = circlePainting;
             nodoSeleccionado.setEffect(glow);
             actualizarControles();
@@ -1240,6 +1242,11 @@ public class FXMLDocumentController implements Initializable {
             dibujar.getChildren().add(arcPainting);
             dibujos.add(arcPainting);
             seleccionable(arcPainting);
+            if(nodoSeleccionado != null){
+                nodoSeleccionado.setEffect(null);
+                nodoSeleccionado = null;
+                dibujar.getChildren().removeAll(latitud, longitud);
+            }
             nodoSeleccionado = arcPainting;
             nodoSeleccionado.setEffect(glow);
             actualizarControles();
