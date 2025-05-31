@@ -1293,7 +1293,7 @@ public class FXMLDocumentController implements Initializable {
                 textoT.setFont(Font.font("Gafata", size));       
                 textoT.setFill(colorPicker.getValue());    
                 dibujar.getChildren().add(textoT);
-                //dibujos.add(textoT);           
+                dibujos.add(textoT);           
                 zoomGroup.getChildren().remove(texto);
                 e.consume();
                 }
