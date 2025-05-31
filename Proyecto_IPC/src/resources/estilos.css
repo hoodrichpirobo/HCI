@@ -26,10 +26,6 @@
     -fx-text-fill: #5d4037;
     -fx-font-style: italic;
 }
-Text{
-    -fx-fill: #5d4037;
-    -fx-font-style: italic;
-}
 
 /* Botón Login estilo antiguo */
 #loginButton {
