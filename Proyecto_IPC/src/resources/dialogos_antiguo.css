@@ -1,0 +1,80 @@
+/* ────────────────────────────────────────────────────────────────
+   Diálogos con estética “mapa antiguo” – 100 % JavaFX-CSS
+   ──────────────────────────────────────────────────────────────── */
+
+/* --------- contenedor raíz del diálogo --------- */
+.antiqueDialog {
+    /* fondo pergamino con suave degradado */
+    -fx-background-color: linear-gradient(to bottom right,
+                                          derive(#f0e6d2, 5%),
+                                          derive(#f0e6d2, -5%));
+    -fx-font-family   : "Palatino Linotype", "Book Antiqua", serif;
+    -fx-border-color  : #d2b48c;     /* marco beige */
+    -fx-border-width  : 6px;
+    -fx-border-radius : 6px;
+    -fx-background-radius: 4px;
+    -fx-effect        : dropshadow(three-pass-box,
+                                   rgba(0,0,0,0.35), 16, 0, 0, 4);
+}
+
+/* --------- cabecera (título) --------- */
+.antiqueDialog:header .header-panel {
+    -fx-background-color: #8b5a2b;   /* marrón acento */
+    -fx-padding: 8 12 8 12;
+}
+.antiqueDialog:header .header-panel .label {
+    -fx-text-fill : #f5f5dc;
+    -fx-font-size : 17px;
+    -fx-font-weight: bold;
+}
+
+/* --------- contenido --------- */
+.antiqueDialog .content,
+.antiqueDialog .label.content {
+    -fx-text-fill : #5d4037;
+    -fx-font-size : 14px;
+    -fx-wrap-text : true;
+}
+
+/* --------- campos de entrada --------- */
+.antiqueDialog .text-field,
+.antiqueDialog .password-field,
+.antiqueDialog .date-picker,
+.antiqueDialog .combo-box-base {
+    -fx-background-color: derive(#f0e6d2, 8%);
+    -fx-background-insets: 0;
+    -fx-border-color: #d2b48c;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+/* --------- hipervínculos --------- */
+.antiqueDialog .hyperlink {
+    -fx-text-fill: #8b5a2b;
+}
+
+/* --------- barra y botones --------- */
+.antiqueDialog .button-bar .container {
+    -fx-background-color: transparent;
+    -fx-alignment: center-right;
+}
+
+.antiqueDialog .button {
+    -fx-background-color: #6b4423;   /* marrón oscuro */
+    -fx-text-fill       : #f5f5dc;
+    -fx-font-size       : 11pt;
+    -fx-font-weight     : bold;
+    -fx-background-radius: 18px;
+    -fx-pref-height     : 30px;
+    -fx-padding         : 0 20 0 20;
+    -fx-effect          : dropshadow(three-pass-box,
+                                      rgba(0,0,0,0.4), 6, 0, 0, 2);
+}
+.antiqueDialog .button:hover { -fx-background-color: #8b5a2b; } /* hover */
+.antiqueDialog .button:armed { -fx-background-color: #4a2c10; } /* pressed */
+
+/* radios / checkboxes (por si los añades) */
+.antiqueDialog .radio-button .radio,
+.antiqueDialog .check-box .box {
+    -fx-border-color: #8b5a2b;
+}
