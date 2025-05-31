@@ -21,6 +21,16 @@
     -fx-cursor: hand;
 }
 
+/* Textos especiales para elementos de navegación */
+.label {
+    -fx-text-fill: #5d4037;
+    -fx-font-style: italic;
+}
+Text{
+    -fx-fill: #5d4037;
+    -fx-font-style: italic;
+}
+
 /* Botón Login estilo antiguo */
 #loginButton {
     -fx-background-color: #6b4423; /* Marrón oscuro */
@@ -105,16 +115,6 @@
     -fx-border-color: #6b4423;
     -fx-border-width: 2px 0 0 0;
    
-}
-
-/* Textos especiales para elementos de navegación */
-.label {
-    -fx-text-fill: #5d4037;
-    -fx-font-style: italic;
-}
-.text{
-    -fx-text-fill: #5d4037;
-    -fx-font-style: italic;
 }
 
 /* Efecto de papel envejecido para el contenedor principal */

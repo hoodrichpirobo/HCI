@@ -6,7 +6,6 @@
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuButton?>
@@ -20,7 +19,6 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
@@ -30,9 +28,6 @@
 <?import javafx.scene.text.Text?>
 
 <VBox alignment="BOTTOM_LEFT" prefHeight="556.0" prefWidth="853.0" stylesheets="@../resources/estilos.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="carta_navegacion.FXMLDocumentController">
-
-  <!-- Aquí añadimos la ListView para inyectarla en el controlador -->
-  <ListView fx:id="map_listview" prefHeight="0.0" prefWidth="0.0" visible="false" />
 
   <!-- Barra superior -->
   <VBox prefHeight="83.0" prefWidth="853.0">
@@ -183,7 +178,6 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER" />
                <Region maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
             
                                                                   <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
@@ -377,7 +371,7 @@
   <!-- Barra inferior con posición del ratón -->
   <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="829.0">
     <children>
-         <HBox alignment="CENTER" prefHeight="33.0" prefWidth="745.0">
+         <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="745.0" HBox.hgrow="ALWAYS">
             <children>
                
                                        <ButtonBar fx:id="barraEditar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="33.0" prefWidth="380.0">
@@ -387,7 +381,7 @@
                            <Image url="@../resources/360.png" />
                         </image>
                      </ImageView>
-                     <Slider fx:id="rotate" prefHeight="36.0" prefWidth="76.0" />
+                     <Slider fx:id="rotate" max="360.0" prefHeight="36.0" prefWidth="76.0" />
                      <ImageView fx:id="fotoAumento" fitHeight="21.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
                         <image>
                            <Image url="@../resources/opcion-de-aumento-de-tamano.png" />
@@ -396,7 +390,7 @@
                      <Slider fx:id="tamano" prefHeight="14.0" />
                  </buttons>
                </ButtonBar>
-               <Region prefHeight="33.0" prefWidth="62.0" />
+               <Region prefHeight="33.0" prefWidth="62.0" HBox.hgrow="ALWAYS" />
                <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0" prefWidth="69.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
@@ -429,6 +423,5 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
     </VBox.margin>
   </HBox>
-   <AnchorPane />
 
 </VBox>
