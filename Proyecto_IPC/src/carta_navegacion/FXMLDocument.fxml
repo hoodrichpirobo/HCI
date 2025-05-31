@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Button?>
@@ -36,7 +35,11 @@
   <ListView fx:id="map_listview" prefHeight="0.0" prefWidth="0.0" visible="false" />
 
   <!-- Barra superior -->
+
   <VBox alignment="CENTER_LEFT" prefHeight="83.0" prefWidth="853.0">
+
+  <VBox prefHeight="83.0" prefWidth="853.0">
+
     <children>
       <HBox prefHeight="23.0" prefWidth="853.0">
         <children>
@@ -98,13 +101,13 @@
         </HBox>
         </children>
             <VBox.margin>
-               <Insets bottom="5.0" />
+               <Insets />
             </VBox.margin>
       </HBox>
 
-            <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="65.0" prefWidth="848.0">
+            <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="65.0" prefWidth="848.0" VBox.vgrow="ALWAYS">
         <children>
-          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="38.0" prefWidth="47.0">
+          <ToggleButton fx:id="transButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
             <graphic>
               <ImageView fitHeight="32.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -113,7 +116,8 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="41.0" prefWidth="15.0" />
+
+          <Region minWidth="-Infinity" prefHeight="41.0" prefWidth="15.0" />
                <ToggleButton fx:id="reglaBoton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
                      <ImageView fitHeight="39.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true">
@@ -123,7 +127,7 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region layoutX="56.0" layoutY="10.0" prefHeight="40.0" prefWidth="15.0" />
+               <Region layoutX="56.0" layoutY="10.0" minWidth="-Infinity" prefHeight="40.0" prefWidth="15.0" />
           <ToggleButton fx:id="botonPunto" mnemonicParsing="false" onAction="#addPunto">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -133,7 +137,7 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region minHeight="-Infinity" minWidth="-Infinity" prefHeight="36.0" prefWidth="15.0" />
+          <Region minWidth="-Infinity" prefHeight="36.0" prefWidth="15.0" />
           <ToggleButton fx:id="botonLinea" mnemonicParsing="false">
             <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -143,7 +147,7 @@
               </ImageView>
             </graphic>
           </ToggleButton>
-          <Region prefHeight="40.0" prefWidth="15.0" />
+          <Region minWidth="-Infinity" prefHeight="40.0" prefWidth="15.0" />
                <ToggleButton fx:id="circuloBoton" layoutX="117.0" layoutY="10.0" mnemonicParsing="false">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -153,7 +157,7 @@
               </ImageView>
                   </graphic>
                </ToggleButton>
-          <Region prefHeight="40.0" prefWidth="15.0" />
+          <Region minWidth="-Infinity" prefHeight="40.0" prefWidth="15.0" />
                <ToggleButton fx:id="arcoBoton" alignment="CENTER_LEFT" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -163,7 +167,7 @@
               </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region prefHeight="40.0" prefWidth="15.0" />
+               <Region minWidth="-Infinity" prefHeight="40.0" prefWidth="15.0" />
                <ToggleButton fx:id="botonTexto" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
                      <ImageView fitHeight="40.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -173,7 +177,7 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
-               <Region prefHeight="40.0" prefWidth="15.0" />
+               <Region minWidth="-Infinity" prefHeight="40.0" prefWidth="15.0" />
                <ToggleButton fx:id="botonGoma" mnemonicParsing="false" prefHeight="40.0" prefWidth="45.0">
                   <graphic>
                      <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
@@ -183,6 +187,7 @@
                      </ImageView>
                   </graphic>
                </ToggleButton>
+
                <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
                   <children>
                      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="41.0" prefWidth="329.0">
@@ -205,7 +210,34 @@
                      </AnchorPane>
                   </children>
                </HBox>
+
+               <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" HBox.hgrow="NEVER" />
+               <Region maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            
+                                                                  <HBox alignment="CENTER_RIGHT" nodeOrientation="LEFT_TO_RIGHT" spacing="5.0">
+              <children>
+                <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" prefHeight="32.0" prefWidth="74.0" text="Centrar" />
+                <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="34.0" text="Zoom">
+                        <font>
+                           <Font name="System Bold" size="12.0" />
+                        </font>
+                     </Label>
+                <Button fx:id="menos" mnemonicParsing="false" onAction="#zoomOut" text="-" />
+                <Slider fx:id="zoom_slider" HBox.hgrow="SOMETIMES" />
+                <Button fx:id="mas" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#zoomIn" text="+" />
+              </children>
+                  <padding>
+                     <Insets right="10.0" />
+                  </padding>
+                  <HBox.margin>
+                     <Insets left="20.0" right="5.0" />
+                  </HBox.margin>
+            </HBox>
+
         </children>
+            <VBox.margin>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </VBox.margin>
       </HBox>
     </children>
   </VBox>
@@ -349,15 +381,6 @@
                   <Image url="@../resources/carta_nautica.jpg" />
                 </image>
               </ImageView>
-              <MenuButton fx:id="map_pin" mnemonicParsing="false" prefHeight="60.0" prefWidth="48.0" visible="false">
-                <items>
-                  <MenuItem fx:id="pin_info" mnemonicParsing="false" text="Action 1" />
-                </items>
-                <styleClass>
-                  <String fx:value="menu-button" />
-                  <String fx:value="map-pin" />
-                </styleClass>
-              </MenuButton>
                      <ImageView fx:id="regla" fitHeight="115.0" fitWidth="650.0" layoutX="-45.0" layoutY="161.0" onMouseDragged="#moverRegla" onMousePressed="#cogerRegla" pickOnBounds="true" preserveRatio="true">
                         <image>
                            <Image url="@../resources/regla.png" />
@@ -383,7 +406,7 @@
   <!-- Barra inferior con posición del ratón -->
   <HBox alignment="CENTER_RIGHT" prefHeight="48.0" prefWidth="829.0">
     <children>
-         <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="745.0">
+         <HBox alignment="CENTER" prefHeight="33.0" prefWidth="745.0">
             <children>
                
                                        <ButtonBar fx:id="barraEditar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="33.0" prefWidth="380.0">
@@ -421,7 +444,7 @@
                      </ImageView>
                   </graphic>
                   <HBox.margin>
-                     <Insets left="5.0" />
+                     <Insets left="5.0" right="10.0" />
                   </HBox.margin>
                </Button>
             </children>
