@@ -90,8 +90,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML private ListView<Poi> map_listview;
     @FXML private ScrollPane map_scrollpane;
     @FXML private Slider zoom_slider;
-    @FXML private MenuButton map_pin;
-    @FXML private MenuItem pin_info;
     @FXML private SplitPane splitPane;
     @FXML private Label mousePosition;
     @FXML private Button loginButton;
@@ -543,7 +541,7 @@ public class FXMLDocumentController implements Initializable {
         zoom_slider.setValue(zoom_slider.getValue() - 0.05);
     }
 
-    private void listClicked(MouseEvent event) {
+    /*private void listClicked(MouseEvent event) {
         Poi selectedPoi = map_listview.getSelectionModel().getSelectedItem();
         if (selectedPoi == null) return;
 
@@ -564,7 +562,7 @@ public class FXMLDocumentController implements Initializable {
         map_pin.setLayoutY(selectedPoi.getPosition().getY());
         pin_info.setText(selectedPoi.getDescription());
         map_pin.setVisible(true);
-    }
+    }*/
 
    
 
@@ -784,6 +782,8 @@ public class FXMLDocumentController implements Initializable {
             if(nodoSeleccionado != null){
                 nodoSeleccionado.setEffect(null);
             }
+            if(latitud != null) dibujar.getChildren().remove(latitud);
+            if(longitud != null) dibujar.getChildren().remove(longitud);
             nodoSeleccionado = n;
             actualizarControles();
             if(n instanceof Circle){
@@ -793,40 +793,59 @@ public class FXMLDocumentController implements Initializable {
             else{
                 nodoSeleccionado.setEffect(glow);
             }
+            if(botonGoma.isSelected()){
+                dibujar.getChildren().remove(nodoSeleccionado);
+                dibujos.remove(nodoSeleccionado);
+                nodoSeleccionado = null;
+                actualizarControles();
+            }
         });
         
         n.setOnMousePressed(f -> {
             offsetX[0] = f.getX();
             offsetY[0] = f.getY();
+            /*if(n instanceof Circle c){
+                cx = c.getCenterX();
+                cy = c.getCenterY();
+            }
+            if(n instanceof Arc a){
+                cx = a.getCenterX();
+                cy = a.getCenterY();
+            }*/
         });
         
         n.setOnMouseDragged(g -> {
-            if(n instanceof Circle){
+            if(n instanceof Circle c){
                 g.consume();                
                 double dx = g.getX() - offsetX[0], dy = g.getY() - offsetY[0];
-                /*c.setCenterX(c.getCenterX() + dx);
+                c.setCenterX(c.getCenterX() + dx);
                 c.setCenterY(c.getCenterY() + dy);
-                Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
-                Point2D dp = new Point2D(dx, dy);*/
-                if(dx < 0 + ((Circle)n).getRadius()) dx = ((Circle)n).getRadius();
-                if(dx > mapa.getFitWidth() - ((Circle)n).getRadius()) dx = mapa.getFitWidth() - ((Circle)n).getRadius();
-                if(dy < 0 + ((Circle)n).getRadius()) dy = ((Circle)n).getRadius();
-                if(dy > mapa.getFitHeight() - ((Circle)n).getRadius()) dy = mapa.getFitHeight() - ((Circle)n).getRadius();
+                /*Point2D cp = new Point2D(puntoSeleccionado.getCenterX(), puntoSeleccionado.getCenterY());
+                Point2D dp = new Point2D(dx, dy);
                 ((Circle)n).setCenterX(dx);
-                ((Circle)n).setCenterY(dy);
+                ((Circle)n).setCenterY(dy);*/
+                if(c.getCenterX() < 0 + ((Circle)n).getRadius()) c.setCenterX(c.getRadius());
+                if(c.getCenterX() > mapa.getFitWidth() - c.getRadius()) c.setCenterX(mapa.getFitWidth() - c.getRadius());
+                if(c.getCenterY() < 0 + c.getRadius()) c.setCenterY(c.getRadius());
+                if(c.getCenterY() > mapa.getFitHeight() - c.getRadius()) c.setCenterY(mapa.getFitHeight() - c.getRadius());
+                
                 //nodoSeleccionado.setTranslateX(Math.clamp(((Circle)nodoSeleccionado).getCenterX(), 150, 1100));
                 //nodoSeleccionado.setTranslateY(Math.clamp(((Circle)nodoSeleccionado).getCenterY(), 300, 600)); 
                 if(((Circle)n).getFill() != null && ((Circle)n).getFill() != Color.TRANSPARENT) marcarExtremos((Circle)n);
+                offsetX[0] = g.getX();
+                offsetY[0] = g.getY();
             }
             if(n instanceof Arc a){
                 g.consume();
                 double dx = g.getX() - offsetX[0], dy = g.getY() - offsetY[0];
-                if(dx < 0 + a.getRadiusX()) dx = a.getRadiusX();
-                if(dx > mapa.getFitWidth() - a.getRadiusX()) dx = mapa.getFitWidth() - a.getRadiusX();
-                if(dy < 0 + a.getRadiusY()) dy = a.getRadiusY();
-                if(dy > mapa.getFitHeight() - a.getRadiusY()) dy = mapa.getFitHeight() - a.getRadiusY();
-                a.setCenterX(dx);
-                a.setCenterY(dy);
+                a.setCenterX(a.getCenterX() + dx);
+                a.setCenterY(a.getCenterY() + dy);
+                if(a.getCenterX() < 0 + a.getRadiusX()) a.setCenterX(a.getRadiusX());
+                if(a.getCenterX() > mapa.getFitWidth() - a.getRadiusX()) a.setCenterX(mapa.getFitWidth() - a.getRadiusX());
+                if(a.getCenterY() < 0 + a.getRadiusY()) a.setCenterY(a.getRadiusY());
+                if(a.getCenterY() > mapa.getFitHeight() - a.getRadiusY()) a.setCenterY(mapa.getFitHeight() - a.getRadiusY());
+                offsetX[0] = g.getX();
+                offsetY[0] = g.getY();
             }
             if(n instanceof Line){
                 g.consume();
@@ -932,6 +951,25 @@ public class FXMLDocumentController implements Initializable {
             colorHandler = e -> {
                 if (nodoSeleccionado == arc) {
                     arc.setStroke(colorPicker.getValue());
+                }
+            };
+            colorPicker.setOnAction(colorHandler);
+        }
+        else if(nodoSeleccionado instanceof Text t){
+            spinnerGrosor.getValueFactory().setValue(t.getFont().getSize());
+            colorPicker.setValue((Color)t.getFill());
+            
+            // Crear nuevos listeners
+            sizeListener = (obs, oldVal, newVal) -> {
+                if (nodoSeleccionado == t) {
+                    t.setFont(Font.font(t.getFont().toString(), newVal));
+                }
+            };
+            spinnerGrosor.valueProperty().addListener(sizeListener);
+
+            colorHandler = e -> {
+                if (nodoSeleccionado == t) {
+                    t.setFill(colorPicker.getValue());
                 }
             };
             colorPicker.setOnAction(colorHandler);
@@ -1136,6 +1174,9 @@ public class FXMLDocumentController implements Initializable {
         double radio = Math.sqrt(Math.pow(localPoint.getX() - inicioXarc, 2) +
                              Math.pow(localPoint.getY() - inicioYarc, 2));
         circlePainting.setRadius(radio);
+        nodoSeleccionado = circlePainting;
+        nodoSeleccionado.setEffect(glow);
+        actualizarControles();
         event.consume();
     }
     
@@ -1196,6 +1237,9 @@ public class FXMLDocumentController implements Initializable {
         arcPainting.setStartAngle(Math.toDegrees(Math.atan2(-ry, rx))-90);
         arcPainting.setRadiusX(radio);
         arcPainting.setRadiusY(radio);
+        nodoSeleccionado = arcPainting;
+        nodoSeleccionado.setEffect(glow);
+        actualizarControles();
         event.consume();
         
     }
@@ -1275,7 +1319,9 @@ public class FXMLDocumentController implements Initializable {
                 textoT.setFont(Font.font("Gafata", size));       
                 textoT.setFill(colorPicker.getValue());    
                 dibujar.getChildren().add(textoT);
-                dibujos.add(textoT);           
+                dibujos.add(textoT);
+                seleccionable(textoT);
+                texto.setText(null);
                 zoomGroup.getChildren().remove(texto);
                 e.consume();
                 }

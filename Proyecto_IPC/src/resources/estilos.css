@@ -17,6 +17,10 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
 
+.button:hover {
+    -fx-cursor: hand;
+}
+
 /* Botón Login estilo antiguo */
 #loginButton {
     -fx-background-color: #6b4423; /* Marrón oscuro */
@@ -105,6 +109,10 @@
 
 /* Textos especiales para elementos de navegación */
 .label {
+    -fx-text-fill: #5d4037;
+    -fx-font-style: italic;
+}
+.text{
     -fx-text-fill: #5d4037;
     -fx-font-style: italic;
 }
