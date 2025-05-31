@@ -91,10 +91,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ScrollPane map_scrollpane;
     @FXML private Slider zoom_slider;
-    @FXML
-    private MenuButton map_pin;
-    @FXML
-    private MenuItem pin_info;
     @FXML private SplitPane splitPane;
     @FXML private Label mousePosition;
     @FXML private Button loginButton;
@@ -263,6 +259,15 @@ public class FXMLDocumentController implements Initializable {
         arcoBoton.setToggleGroup(dibujos);
         transButton.setToggleGroup(dibujos);
         reglaBoton.setToggleGroup(dibujos);
+        dibujos.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
+            if(nodoSeleccionado != null){
+                nodoSeleccionado.setEffect(null);
+                nodoSeleccionado = null;
+                dibujar.getChildren().remove(latitud);
+                dibujar.getChildren().remove(longitud);
+                actualizarControles();
+            }
+        });
         
         configurarTransportador();
         configurarRegla();
@@ -804,6 +809,8 @@ public class FXMLDocumentController implements Initializable {
             }
             if(botonGoma.isSelected()){
                 dibujar.getChildren().remove(nodoSeleccionado);
+                dibujar.getChildren().remove(latitud);
+                dibujar.getChildren().remove(longitud);
                 dibujos.remove(nodoSeleccionado);
                 nodoSeleccionado = null;
                 actualizarControles();
@@ -813,14 +820,6 @@ public class FXMLDocumentController implements Initializable {
         n.setOnMousePressed(f -> {
             offsetX[0] = f.getX();
             offsetY[0] = f.getY();
-            /*if(n instanceof Circle c){
-                cx = c.getCenterX();
-                cy = c.getCenterY();
-            }
-            if(n instanceof Arc a){
-                cx = a.getCenterX();
-                cy = a.getCenterY();
-            }*/
         });
         
         n.setOnMouseDragged(g -> {
@@ -864,6 +863,14 @@ public class FXMLDocumentController implements Initializable {
                 ((Line)n).setEndX(((Line)n).getEndX() + dx);
                 ((Line)n).setEndY(((Line)n).getEndY() + dy);
                 offsetX[0] = g.getX(); 
+                offsetY[0] = g.getY();
+            }
+            if(n instanceof Text t){
+                g.consume();
+                double dx = g.getX() - offsetX[0], dy = g.getY() - offsetY[0];
+                t.setX(t.getX() + dx);
+                t.setY(t.getY() + dy);
+                offsetX[0] = g.getX();
                 offsetY[0] = g.getY();
             }
         });
