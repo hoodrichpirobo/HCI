@@ -154,7 +154,7 @@
                   </graphic>
                </ToggleButton>
           <Region prefHeight="40.0" prefWidth="15.0" />
-               <ToggleButton fx:id="arcoBoton" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
+               <ToggleButton fx:id="arcoBoton" alignment="CENTER_LEFT" layoutX="281.0" layoutY="10.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="46.0">
                   <graphic>
               <ImageView fitHeight="35.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                 <image>
@@ -188,7 +188,7 @@
                   
                                                 <HBox alignment="CENTER_RIGHT" layoutX="57.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="300.0" spacing="5.0" AnchorPane.rightAnchor="-27.666666666666686">
                     <children>
-                      <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" text="Centrar" />
+                      <Button fx:id="centerButton" alignment="CENTER" mnemonicParsing="false" onAction="#center" prefHeight="32.0" prefWidth="74.0" text="Centrar" />
                       <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="34.0" text="Zoom">
                               <font>
                                  <Font name="System Bold" size="12.0" />
@@ -381,29 +381,25 @@
     <children>
          <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="745.0">
             <children>
-             
-               <VBox fx:id="modificadoresObjetos" alignment="BOTTOM_LEFT" prefHeight="19.0" prefWidth="651.0">
-                  <children>
-                     
-                     <ButtonBar fx:id="barraEditar" prefHeight="40.0" prefWidth="200.0">
-                       <buttons>
-                           <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" focusTraversable="true" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@../resources/360.png" />
-                              </image>
-                           </ImageView>
-                           <Slider fx:id="rotate" prefHeight="36.0" prefWidth="76.0" />
-                           <ImageView fx:id="fotoAumento" fitHeight="21.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                              <image>
-                                 <Image url="@../resources/opcion-de-aumento-de-tamano.png" />
-                              </image>
-                           </ImageView>
-                           <Slider fx:id="tamano" />
-                           <Region prefHeight="200.0" prefWidth="200.0" />
-                       </buttons>
-                     </ButtonBar>
-                  </children></VBox>
-               <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0" />
+               
+                                       <ButtonBar fx:id="barraEditar" nodeOrientation="LEFT_TO_RIGHT" prefHeight="33.0" prefWidth="380.0">
+                 <buttons>
+                     <ImageView fx:id="fotoGiro" fitHeight="33.0" fitWidth="35.0" focusTraversable="true" layoutX="133.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/360.png" />
+                        </image>
+                     </ImageView>
+                     <Slider fx:id="rotate" prefHeight="36.0" prefWidth="76.0" />
+                     <ImageView fx:id="fotoAumento" fitHeight="21.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../resources/opcion-de-aumento-de-tamano.png" />
+                        </image>
+                     </ImageView>
+                     <Slider fx:id="tamano" prefHeight="14.0" />
+                 </buttons>
+               </ButtonBar>
+               <Region prefHeight="33.0" prefWidth="62.0" />
+               <Spinner fx:id="spinnerGrosor" editable="true" minWidth="64.0" prefHeight="25.0" prefWidth="69.0" />
                <ColorPicker fx:id="colorPicker">
                   <HBox.margin>
                      <Insets left="5.0" right="5.0" />
@@ -435,5 +431,6 @@
       <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
     </VBox.margin>
   </HBox>
+   <AnchorPane />
 
 </VBox>

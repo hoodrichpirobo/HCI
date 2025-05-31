@@ -147,8 +147,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ToggleButton botonPunto;
     @FXML
-    private VBox modificadoresObjetos;
-    @FXML
     private Button papelera;
     @FXML
     private ColorPicker colorPicker;
